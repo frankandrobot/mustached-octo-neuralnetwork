@@ -56,4 +56,18 @@ public class NVector {
     {
         return this.aCoords[i];
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder string = new StringBuilder(100);
+        string.append("[");
+        for(float coord:aCoords)
+        {
+            string.append(coord);
+            string.append(", ");
+        }
+        string.append("]");
+        return string.toString();
+    }
 }

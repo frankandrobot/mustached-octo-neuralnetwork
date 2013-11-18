@@ -31,6 +31,18 @@ public class XORNetwork implements INeuralNetwork
         return output(0, input);
     }
 
+    @Override
+    public NVector rawoutput(NVector input)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int getNumberOfNeurons()
+    {
+        return 3;
+    }
+
     protected NVector output(int layer, NVector input)
     {
         NVector output = aLayers[layer].output(input);
