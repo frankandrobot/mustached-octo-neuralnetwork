@@ -5,52 +5,89 @@ import static org.junit.Assert.assertThat;
 
 public class XORBackPropagationTest
 {
+    protected XORBackPropagationNetwork network = new XORBackPropagationNetwork();
 
     @org.junit.Test
-    public void testOutput() throws Exception
+    public void testErrorDecreases() throws Exception
     {
-        XORBackPropagationNetwork network = new XORBackPropagationNetwork();
-        NVector output;
+        NVector input = new NVector(0f, 0f);
 
-        output = network.output(new NVector(0f, 0f));
+        NVector output1 = network.output(input);
 
-        assertThat(output.size(), is(1));
-        assertThat(output.first(), is(0f));
+        network.backpropagation(input,
+                                new NVector(0f));
+
+        NVector output2 = network.output(input);
+
+        assertThat(output1.get(0) - output2.get(0) >= 0, is(true));
     }
 
     @org.junit.Test
-    public void testOutput2() throws Exception
+    public void testErrorDecreases2() throws Exception
     {
-        XORBackPropagationNetwork network = new XORBackPropagationNetwork();
-        NVector output;
+        NVector input = new NVector(0f, 1f);
 
-        output = network.output(new NVector(0f, 1f));
+        NVector output1 = network.output(input);
 
-        assertThat(output.size(), is(1));
-        assertThat(output.first(), is(1f));
+        network.backpropagation(input, new NVector(1f));
+
+        NVector output2 = network.output(input);
+
+        assertThat((1f - output1.get(0)) //first error
+                   - (1f - output2.get(0)) //second error
+                    >= 0,
+                is(true));
     }
 
     @org.junit.Test
-    public void testOutput3() throws Exception
+    public void testErrorDecreases3() throws Exception
     {
-        XORBackPropagationNetwork network = new XORBackPropagationNetwork();
-        NVector output;
+        NVector input = new NVector(1f, 1f);
 
-        output = network.output(new NVector(1f, 1f));
+        NVector output1 = network.output(input);
 
-        assertThat(output.size(), is(1));
-        assertThat(output.first(), is(0f));
+        network.backpropagation(input, new NVector(0f));
+
+        NVector output2 = network.output(input);
+
+        assertThat((0f - output1.get(0)) //first error
+                - (0f - output2.get(0)) //second error
+                >= 0,
+                is(true));
     }
 
     @org.junit.Test
-    public void testOutput4() throws Exception
+    public void testErrorsDecreases4() throws Exception
     {
-        XORBackPropagationNetwork network = new XORBackPropagationNetwork();
-        NVector output;
+        NVector input = new NVector(1f, 0f);
 
-        output = network.output(new NVector(1f, 0f));
+        NVector output1 = network.output(input);
 
-        assertThat(output.size(), is(1));
-        assertThat(output.first(), is(1f));
+        network.backpropagation(input, new NVector(1f));
+
+        NVector output2 = network.output(input);
+
+        assertThat((1f - output1.get(0)) //first error
+                - (1f - output2.get(0)) //second error
+                >= 0,
+                is(true));
+    }
+
+    @org.junit.Test
+    public void testAllErrorsDecrease() throws Exception
+    {
+        NVector input = new NVector(0f, 0f);
+        network.backpropagation(input, new NVector(0f));
+
+        input = new NVector(0f, 1f);
+        network.backpropagation(input, new NVector(1f));
+
+        input = new NVector(1f, 1f);
+        network.backpropagation(input, new NVector(0f));
+
+        input = new NVector(1f, 0f);
+        network.backpropagation(input, new NVector(1f));
+
+
     }
 }
