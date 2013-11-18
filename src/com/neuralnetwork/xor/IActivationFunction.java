@@ -4,7 +4,7 @@ public interface IActivationFunction
 {
     public float apply(float v);
 
-    public interface IDifferentiableActivationFunction extends IActivationFunction
+    public interface IDifferentiableFunction extends IActivationFunction
     {
         public float derivative(float v);
     }
@@ -19,7 +19,7 @@ public interface IActivationFunction
         }
     }
 
-    public class SigmoidFunction implements IDifferentiableActivationFunction
+    public class SigmoidFunction implements IDifferentiableFunction
     {
         private final float slope;
         private final float negSlope;

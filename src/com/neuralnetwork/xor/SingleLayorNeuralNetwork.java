@@ -1,15 +1,15 @@
 package com.neuralnetwork.xor;
 
-public class SingleLayorNeuralNetwork implements INeuralNetwork
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.Iterator;
+
+public class SingleLayorNeuralNetwork implements INeuralNetwork, Iterable<Neuron>
 {
     Neuron[] aNeurons;
     NVector vLatestOutput;
 
-    public SingleLayorNeuralNetwork(int size)
-    {
-        aNeurons = new Neuron[size];
-        vLatestOutput = new NVector(size);
-    }
+    public SingleLayorNeuralNetwork() { }
 
     public NVector output(NVector input)
     {
@@ -26,5 +26,31 @@ public class SingleLayorNeuralNetwork implements INeuralNetwork
     public void setNeurons(Neuron... aNeurons)
     {
         this.aNeurons = aNeurons;
+        this.vLatestOutput = new NVector(aNeurons.length);
+    }
+
+    @Override
+    public Iterator<Neuron> iterator()
+    {
+        return new Iterator<Neuron>() {
+
+            int len=0;
+
+            @Override
+            public boolean hasNext() {
+                return len < aNeurons.length;
+            }
+
+            @Override
+            public Neuron next() {
+                return aNeurons[len++];
+            }
+
+            @Override
+            public void remove()
+            {
+                throw new NotImplementedException();
+            }
+        };
     }
 }

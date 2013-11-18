@@ -5,14 +5,19 @@ import java.util.Arrays;
 public class NVector {
     float[] aCoords;
 
-    public NVector(float[] aCoords)
+    public NVector(int size)
+    {
+        this.aCoords = new float[size];
+    }
+
+    public NVector(float... aCoords)
     {
         this.aCoords = Arrays.copyOf(aCoords, aCoords.length);
     }
 
-    public NVector(int size)
+    public NVector(NVector vector)
     {
-        this.aCoords = new float[size];
+        this(vector.aCoords);
     }
 
     /**
@@ -31,6 +36,11 @@ public class NVector {
 
     public int size() { return aCoords.length; }
 
+    public float first()
+    {
+        return aCoords[0];
+    }
+
     public float last()
     {
         return aCoords[aCoords.length-1];
@@ -40,5 +50,10 @@ public class NVector {
     {
         this.aCoords[i] = output;
         return this;
+    }
+
+    public float get(int i)
+    {
+        return this.aCoords[i];
     }
 }
