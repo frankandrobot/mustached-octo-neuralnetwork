@@ -1,5 +1,9 @@
 package com.neuralnetwork.xor;
 
+/**
+ * By convention, the bias is at the _end_ of the weights list
+ *
+ */
 public class Neuron
 {
     NVector vWeights;
@@ -19,8 +23,7 @@ public class Neuron
 
     public float rawoutput(NVector input)
     {
-        return vWeights.dot(input)
-                + vWeights.last(); //don't forget the bias
+        return vWeights.dot(input);
     }
 
     public float output(NVector input)
@@ -41,5 +44,15 @@ public class Neuron
     public IActivationFunction phi()
     {
         return phi;
+    }
+
+    public NVector getWeights()
+    {
+        return vWeights;
+    }
+
+    public void setWeight(int weight, float newWeight)
+    {
+        vWeights.set(weight, newWeight);
     }
 }

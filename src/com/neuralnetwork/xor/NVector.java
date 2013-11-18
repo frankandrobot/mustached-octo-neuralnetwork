@@ -20,6 +20,13 @@ public class NVector {
         this(vector.aCoords);
     }
 
+    public NVector(NVector vector, float... aCoords)
+    {
+        this.aCoords = Arrays.copyOf(vector.aCoords, vector.aCoords.length + aCoords.length);
+        for(int i=0; i<aCoords.length; i++)
+            this.aCoords[vector.aCoords.length + i] = aCoords[i];
+    }
+
     /**
      * @warning assumes input.size() <= this.size()!
      *
@@ -69,5 +76,20 @@ public class NVector {
         }
         string.append("]");
         return string.toString();
+    }
+
+    public NVector set(NVector vector)
+    {
+        for(int i=0; i<aCoords.length; i++)
+            aCoords[i] = vector.aCoords[i];
+        return this;
+    }
+
+    public NVector subtract(NVector vector)
+    {
+        NVector rslt = new NVector(this);
+        for(int i=0; i<aCoords.length; i++)
+            rslt.aCoords[i] -= vector.aCoords[i];
+        return rslt;
     }
 }

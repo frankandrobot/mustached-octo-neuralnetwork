@@ -45,7 +45,8 @@ public class XORNetwork implements INeuralNetwork
 
     protected NVector output(int layer, NVector input)
     {
-        NVector output = aLayers[layer].output(input);
+        //add bias to the end
+        NVector output = aLayers[layer].output(new NVector(input, 1f));
         if (layer < aLayers.length - 1)
         {
             return output(layer+1, output);
