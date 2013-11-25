@@ -59,10 +59,10 @@ public class Neuron
     @Override
     public String toString()
     {
-        String rslt = String.format("%.5f", vWeights.get(0));
+        String rslt = String.format("%6.6g", vWeights.get(0));
         for(int i=1; i<vWeights.size(); ++i)
         {
-            rslt += "  "+String.format("%.5f", vWeights.get(i));
+            rslt += "  "+String.format("%6.6g", vWeights.get(i));
         }
         return rslt;
     }

@@ -33,17 +33,17 @@ public interface IActivationFunction
         @Override
         public double apply(double v)
         {
-            return (1f / (1f + Math.exp(negSlope*v)));
+            return (1.0 / (1.0 + Math.exp(negSlope*v)));
         }
 
         @Override
         public double derivative(double v)
         {
             double negSlopeV = negSlope * v;
-            double denom = (1f + Math.exp(negSlopeV));
+            double exp = Math.exp(negSlopeV);
+            double denom = (1.0 + exp);
 
-            return ( (slope * Math.exp(negSlopeV)) / denom * denom );
-
+            return ( (slope * exp) / (denom * denom) );
         }
     }
 
@@ -66,8 +66,8 @@ public interface IActivationFunction
         @Override
         public double derivative(double v)
         {
-            if (v<-15.0) return -1.0;
-            else if (v>15.0) return 1.0;
+//            if (v<-15.0) return 0.0;
+//            else if (v>15.0) return 0.0;
             return super.derivative(v);
         }
     }
