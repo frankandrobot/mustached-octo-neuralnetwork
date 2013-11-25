@@ -33,17 +33,42 @@ public interface IActivationFunction
         @Override
         public double apply(double v)
         {
-            return (double) (1f / (1f + Math.exp(negSlope*v)));
+            return (1f / (1f + Math.exp(negSlope*v)));
         }
 
         @Override
         public double derivative(double v)
         {
             double negSlopeV = negSlope * v;
-            double denom = (double) (1f + Math.exp(negSlopeV));
+            double denom = (1f + Math.exp(negSlopeV));
 
-            return (double) ( (slope * Math.exp(negSlopeV)) / denom * denom );
+            return ( (slope * Math.exp(negSlopeV)) / denom * denom );
 
+        }
+    }
+
+    public class SigmoidUnityFunction extends SigmoidFunction
+    {
+
+        public SigmoidUnityFunction()
+        {
+            super(1.0);
+        }
+
+        @Override
+        public double apply(double v)
+        {
+            if (v < -45.0) return 0.0;
+            else if (v > 45.0) return 1.0;
+            return super.apply(v);
+        }
+
+        @Override
+        public double derivative(double v)
+        {
+            if (v<-15.0) return -1.0;
+            else if (v>15.0) return 1.0;
+            return super.derivative(v);
         }
     }
 }

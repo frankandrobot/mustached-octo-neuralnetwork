@@ -24,17 +24,17 @@ public class XORBackPropagationNetworkVersionA
 
     public XORBackPropagationNetworkVersionA()
     {
-        phi = new IActivationFunction.SigmoidFunction(1f);
+        phi = new IActivationFunction.SigmoidUnityFunction();
 
         firstPass = new SingleLayorNeuralNetwork();
         secondPass = new SingleLayorNeuralNetwork();
 
         Random r = new Random();
 
-        firstPass.setNeurons(new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
-                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()));
+        firstPass.setNeurons(new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
+                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5));
 
-        secondPass.setNeurons(new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()));
+        secondPass.setNeurons(new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5));
    }
 
     protected void initializeExampleLayer(int layer)
@@ -116,14 +116,24 @@ public class XORBackPropagationNetworkVersionA
 
     public void backpropagation(double error, NVector... aInputExpected)
     {
-       backpropagation(aInputExpected);
+        backpropagation(aInputExpected);
 
-       while(vError.mylen() > error)
-       {
-           System.out.format("Weights are%n%s ", new Output().weights());
-           System.out.format("%nError is %s %n%n", vError.mylen());
-           backpropagation(aInputExpected);
-       }
+        int len = 1;
+
+        while(vError.mylen() > error)
+        {
+            System.out.println("====================================================================");
+            System.out.println("Iteration = "+len++);
+            System.out.format("Weights =%n%s", new Output().weights());
+            System.out.format("Error = %s %n", vError.mylen());
+            System.out.format("%5s %20s %20s%n", "i", "Expected", "Actual");
+            for(int i=0; i<aExampleLayers.length; ++i)
+                System.out.format("%5s %20s %20s%n",
+                                  i,
+                                  aExpected[i],
+                                  aExampleLayers[i][aExampleLayers[i].length-1].vImpulseFunction);
+            backpropagation(aInputExpected);
+        }
     }
 
     /**
@@ -306,7 +316,7 @@ public class XORBackPropagationNetworkVersionA
                 for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
                 {
                     double newWeight = neuron.getWeight(weight)
-                            + alpha * layorInfo.aPrevWeights[neuronPos].get(weight) //momentum
+                            //+ alpha * layorInfo.aPrevWeights[neuronPos].get(weight) //momentum
                             + eta * layorInfo.vGradients.get(neuronPos) * layorInfo.vInput.get(weight); //delta correction
 
                     //backup previous weight

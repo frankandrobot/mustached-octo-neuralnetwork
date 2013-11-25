@@ -73,10 +73,10 @@ public class NVector implements Iterable<Double>
     {
         StringBuilder string = new StringBuilder(100);
         string.append("[");
-        for(double coord:aCoords)
+        for(int i=0; i<aCoords.length; ++i)
         {
-            string.append(coord);
-            string.append(", ");
+            string.append(String.format("%6.6g",aCoords[i]));
+            if (i<aCoords.length-1) string.append("  ");
         }
         string.append("]");
         return string.toString();
