@@ -15,23 +15,23 @@ public class Neuron
         this.phi = phi;
     }
 
-    public Neuron(IActivationFunction phi, float... aWeights)
+    public Neuron(IActivationFunction phi, double... aWeights)
     {
         this.vWeights = new NVector(aWeights);
         this.phi = phi;
     }
 
-    public float rawoutput(NVector input)
+    public double rawoutput(NVector input)
     {
         return vWeights.dot(input);
     }
 
-    public float output(NVector input)
+    public double output(NVector input)
     {
         return phi.apply(rawoutput(input));
     }
 
-    public float getWeight(int weight)
+    public double getWeight(int weight)
     {
         return vWeights.get(weight);
     }
@@ -51,8 +51,19 @@ public class Neuron
         return vWeights;
     }
 
-    public void setWeight(int weight, float newWeight)
+    public void setWeight(int weight, double newWeight)
     {
         vWeights.set(weight, newWeight);
+    }
+
+    @Override
+    public String toString()
+    {
+        String rslt = String.format("%.5f", vWeights.get(0));
+        for(int i=1; i<vWeights.size(); ++i)
+        {
+            rslt += "  "+String.format("%.5f", vWeights.get(i));
+        }
+        return rslt;
     }
 }

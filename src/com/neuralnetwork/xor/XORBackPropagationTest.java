@@ -5,9 +5,9 @@ import static org.junit.Assert.assertThat;
 
 public class XORBackPropagationTest
 {
-    protected XORBackPropagationNetwork network = new XORBackPropagationNetwork();
+    protected XORBackPropagationNetworkVersionA network = new XORBackPropagationNetworkVersionA();
 
-    @org.junit.Test
+    /*@org.junit.Test
     public void testErrorDecreases() throws Exception
     {
         NVector input = new NVector(0f, 0f);
@@ -71,23 +71,15 @@ public class XORBackPropagationTest
                 - (1f - output2.get(0)) //second error
                 >= 0,
                 is(true));
-    }
+    }*/
 
     @org.junit.Test
     public void testAllErrorsDecrease() throws Exception
     {
-        NVector input = new NVector(0f, 0f);
-        network.backpropagation(input, new NVector(0f));
-
-        input = new NVector(0f, 1f);
-        network.backpropagation(input, new NVector(1f));
-
-        input = new NVector(1f, 1f);
-        network.backpropagation(input, new NVector(0f));
-
-        input = new NVector(1f, 0f);
-        network.backpropagation(input, new NVector(1f));
-
-
+        network.backpropagation(0.1f,
+                new NVector(0f, 0f), new NVector(0f));
+//                new NVector(0f, 1f), new NVector(1f),
+//                new NVector(1f, 1f), new NVector(0f),
+//                new NVector(1f, 0f), new NVector(1f));
     }
 }

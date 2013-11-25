@@ -1,16 +1,20 @@
 package com.neuralnetwork.xor;
 
-import java.util.Arrays;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class NVector {
-    float[] aCoords;
+import java.util.Arrays;
+import java.util.Iterator;
+
+public class NVector implements Iterable<Double>
+{
+    double[] aCoords;
 
     public NVector(int size)
     {
-        this.aCoords = new float[size];
+        this.aCoords = new double[size];
     }
 
-    public NVector(float... aCoords)
+    public NVector(double... aCoords)
     {
         this.aCoords = Arrays.copyOf(aCoords, aCoords.length);
     }
@@ -20,7 +24,7 @@ public class NVector {
         this(vector.aCoords);
     }
 
-    public NVector(NVector vector, float... aCoords)
+    public NVector(NVector vector, double... aCoords)
     {
         this.aCoords = Arrays.copyOf(vector.aCoords, vector.aCoords.length + aCoords.length);
         for(int i=0; i<aCoords.length; i++)
@@ -33,9 +37,9 @@ public class NVector {
      * @param input vector
      * @return dot product
      */
-    public float dot(NVector input)
+    public double dot(NVector input)
     {
-        float rslt=0;
+        double rslt=0;
         for(int i=0; i<input.size(); i++)
             rslt += aCoords[i] * input.aCoords[i];
         return rslt;
@@ -43,23 +47,23 @@ public class NVector {
 
     public int size() { return aCoords.length; }
 
-    public float first()
+    public double first()
     {
         return aCoords[0];
     }
 
-    public float last()
+    public double last()
     {
         return aCoords[aCoords.length-1];
     }
 
-    public NVector set(int i, float output)
+    public NVector set(int i, double output)
     {
         this.aCoords[i] = output;
         return this;
     }
 
-    public float get(int i)
+    public double get(int i)
     {
         return this.aCoords[i];
     }
@@ -69,7 +73,7 @@ public class NVector {
     {
         StringBuilder string = new StringBuilder(100);
         string.append("[");
-        for(float coord:aCoords)
+        for(double coord:aCoords)
         {
             string.append(coord);
             string.append(", ");
@@ -91,5 +95,57 @@ public class NVector {
         for(int i=0; i<aCoords.length; i++)
             rslt.aCoords[i] -= vector.aCoords[i];
         return rslt;
+    }
+
+    /**
+     * Computes ||this.this||^2
+     *
+     * @return
+     */
+    public double error()
+    {
+        double rslt = 0f;
+        for(int i=0; i<aCoords.length; i++)
+            rslt += aCoords[i] * aCoords[i];
+        return rslt;
+    }
+
+    public double mylen()
+    {
+        double rslt = 0f;
+        for(int i=0; i<aCoords.length; i++)
+            rslt += aCoords[i];
+        return rslt;
+    }
+
+    public NVector concatenate(NVector weights)
+    {
+        return new NVector(this, weights.aCoords);
+    }
+
+    @Override
+    public Iterator<Double> iterator()
+    {
+        return new Iterator<Double>() {
+            int len = 0;
+
+            @Override
+            public boolean hasNext()
+            {
+                return len < aCoords.length;
+            }
+
+            @Override
+            public Double next()
+            {
+                return aCoords[len++];
+            }
+
+            @Override
+            public void remove()
+            {
+                throw new NotImplementedException();
+            }
+        };
     }
 }

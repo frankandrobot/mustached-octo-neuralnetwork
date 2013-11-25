@@ -92,4 +92,19 @@ public class SingleLayorNeuralNetwork implements INeuralNetwork, Iterable<Neuron
             }
         };
     }
+
+    public NVector weights()
+    {
+        NVector rslt = new NVector(aNeurons[0].getWeights());
+        for(Neuron neuron:aNeurons)
+        {
+            if (neuron != aNeurons[0])
+            {
+                rslt = rslt.concatenate(neuron.getWeights());
+            }
+        }
+
+        return rslt;
+    }
+
 }

@@ -2,18 +2,18 @@ package com.neuralnetwork.xor;
 
 public interface IActivationFunction
 {
-    public float apply(float v);
+    public double apply(double v);
 
     public interface IDifferentiableFunction extends IActivationFunction
     {
-        public float derivative(float v);
+        public double derivative(double v);
     }
 
     public class ThresholdFunction implements IActivationFunction
     {
 
         @Override
-        public float apply(float v)
+        public double apply(double v)
         {
             return v >= 0f ? 1f : 0f;
         }
@@ -21,28 +21,28 @@ public interface IActivationFunction
 
     public class SigmoidFunction implements IDifferentiableFunction
     {
-        private final float slope;
-        private final float negSlope;
+        private final double slope;
+        private final double negSlope;
 
-        public SigmoidFunction(float slope)
+        public SigmoidFunction(double slope)
         {
             this.slope = slope;
             this.negSlope = -slope;
         }
 
         @Override
-        public float apply(float v)
+        public double apply(double v)
         {
-            return (float) (1f / (1f + Math.exp(negSlope*v)));
+            return (double) (1f / (1f + Math.exp(negSlope*v)));
         }
 
         @Override
-        public float derivative(float v)
+        public double derivative(double v)
         {
-            float negSlopeV = negSlope * v;
-            float denom = (float) (1f + Math.exp(negSlopeV));
+            double negSlopeV = negSlope * v;
+            double denom = (double) (1f + Math.exp(negSlopeV));
 
-            return (float) ( (slope * Math.exp(negSlopeV)) / denom * denom );
+            return (double) ( (slope * Math.exp(negSlopeV)) / denom * denom );
 
         }
     }
