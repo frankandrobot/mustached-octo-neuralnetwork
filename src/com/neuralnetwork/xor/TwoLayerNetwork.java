@@ -118,10 +118,10 @@ public class TwoLayerNetwork
         public LayorInfo(SingleLayorNeuralNetwork layer)
         {
             this.layer = layer;
-            this.vInducedLocalField = new NVector(this.layer.getNumberOfNeurons());
-            this.vImpulseFunction = new NVector(this.layer.getNumberOfNeurons());
+            this.vInducedLocalField = new NVector().setSize(this.layer.getNumberOfNeurons());
+            this.vImpulseFunction = new NVector().setSize(this.layer.getNumberOfNeurons());
             this.aPrevWeights = new NVector[this.layer.getNumberOfNeurons()];
-            this.vGradients = new NVector(this.layer.getNumberOfNeurons());
+            this.vGradients = new NVector().setSize(this.layer.getNumberOfNeurons());
         }
     }
 
@@ -175,7 +175,7 @@ public class TwoLayerNetwork
         aExampleLayers = new LayorInfo[1][];
         aInput = new NVector[aExampleLayers.length];
         aExpected = new NVector[aExampleLayers.length];
-        vError = new NVector(aExampleLayers.length);
+        vError = new NVector().setSize(aExampleLayers.length);
 
         for(int i=0; i<aExampleLayers.length; i++)
         {
@@ -216,7 +216,7 @@ public class TwoLayerNetwork
         aExampleLayers = new LayorInfo[aInputExpected.length / 2][];
         aInput = new NVector[aExampleLayers.length];
         aExpected = new NVector[aExampleLayers.length];
-        vError = new NVector(aExampleLayers.length);
+        vError = new NVector().setSize(aExampleLayers.length);
 
         //save aInputExpected
         for(int i=0; i<aExampleLayers.length; i++)
@@ -362,7 +362,7 @@ public class TwoLayerNetwork
             for(Neuron neuron:layorInfo.layer)
             {
                 if (layorInfo.aPrevWeights[neuronPos] == null)
-                    layorInfo.aPrevWeights[neuronPos] = new NVector(neuron.getNumberOfWeights());
+                    layorInfo.aPrevWeights[neuronPos] = new NVector().setSize(neuron.getNumberOfWeights());
 
                 //iterate thru the neuron's weights
                 for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)

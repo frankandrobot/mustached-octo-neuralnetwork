@@ -53,5 +53,7 @@ public class TwoLayerNetworkTest
         double phiPrime = phi.derivative(1.75);
         double gradient = e*phiPrime;
         assertThat(network.aExampleLayers[0][0].vGradients.get(0), is(gradient));
+
+        //check
     }
 }

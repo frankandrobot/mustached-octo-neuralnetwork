@@ -1,7 +1,5 @@
 package com.neuralnetwork.xor;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -14,7 +12,7 @@ public class NVectorTest
     {
         NVector a;
         //NVector(int size)
-        a = new NVector(10);
+        a = new NVector().setSize(10);
         assertThat(a.size(), is(10));
 
         //NVector(double... aCoords)
