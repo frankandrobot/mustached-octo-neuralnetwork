@@ -7,8 +7,8 @@ public class XORBackPropagationNetworkVersionA extends TwoLayerNetwork
     public XORBackPropagationNetworkVersionA()
     {
         super(new Builder()
-                .setMomentumParam(0.9)
-                .setLearningParam(0.04)
+                .setMomentumParam(0.04)
+                .setLearningParam(0.9)
                 .setGlobalActivationFunction(new IActivationFunction.SigmoidUnityFunction())
                 .setFirstLayer(new SingleLayorNeuralNetwork())
                 .setSecondLayer(new SingleLayorNeuralNetwork()));
