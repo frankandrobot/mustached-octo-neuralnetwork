@@ -16,7 +16,7 @@ public class NVector implements Iterable<Double>
 
     public NVector setSize(int i)
     {
-        if (aCoords != null) aCoords = new double[i];
+        if (aCoords == null) aCoords = new double[i];
         else aCoords = Arrays.copyOf(aCoords, i);
         return this;
     }

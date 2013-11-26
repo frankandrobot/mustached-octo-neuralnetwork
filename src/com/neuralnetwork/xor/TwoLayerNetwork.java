@@ -157,17 +157,24 @@ public class TwoLayerNetwork
 
         while( backpropagation() > errorBound && len <= 1000)
         {
-            System.out.println("====================================================================");
-            System.out.println("Iteration = "+len++);
-            System.out.format("Weights =%n%s", new Output().weights());
-            System.out.format("Error = %s %n", vError.sumOfCoords());
-            System.out.format("%5s %20s %20s%n", "i", "Expected", "Actual");
-            for(int i=0; i<aExampleLayers.length; ++i)
-                System.out.format("%5s %20s %20s%n",
-                                  i,
-                                  aExpected[i],
-                                  aExampleLayers[i][aExampleLayers[i].length-1].vImpulseFunction);
+            len = debugOutput(len);
         }
+        debugOutput(len);
+    }
+
+    private int debugOutput(int len)
+    {
+        System.out.println("====================================================================");
+        System.out.println("Iteration = "+len++);
+        System.out.format("Weights =%n%s", new Output().weights());
+        System.out.format("Error = %s %n", vError.sumOfCoords());
+        System.out.format("%5s %20s %20s%n", "i", "Expected", "Actual");
+        for(int i=0; i<aExampleLayers.length; ++i)
+            System.out.format("%5s %20s %20s%n",
+                              i,
+                              aExpected[i],
+                              aExampleLayers[i][aExampleLayers[i].length-1].vImpulseFunction);
+        return len;
     }
 
     public NVector output(NVector input)
