@@ -66,8 +66,8 @@ public interface IActivationFunction
         @Override
         public double derivative(double v)
         {
-//            if (v<-15.0) return 0.0;
-//            else if (v>15.0) return 0.0;
+            if (v<-15.0) return 0.0;
+            else if (v>15.0) return 0.0;
             return super.derivative(v);
         }
     }
