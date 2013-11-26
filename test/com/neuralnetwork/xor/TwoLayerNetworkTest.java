@@ -80,18 +80,25 @@ public class TwoLayerNetworkTest
     public void testNetworkOutput()
     {
         IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
-        SingleLayorNeuralNetwork layer = new SingleLayorNeuralNetwork();
-        layer.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
+        SingleLayorNeuralNetwork layer1 = new SingleLayorNeuralNetwork();
+        layer1.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
+        SingleLayorNeuralNetwork layer2 = new SingleLayorNeuralNetwork();
+        layer2.setNeurons(new Neuron(phi, 0.10, -0.25));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
         builder.setLearningParam(0.9)
                .setMomentumParam(0.04)
                .setGlobalActivationFunction(phi)
-               .setFirstLayer(layer);
+               .setFirstLayer(layer1)
+               .setSecondLayer(layer2);
 
         TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
+        double vh = 1.75;
+        double vo = 0.10 * phi.apply(1.75) - 0.25;
+        double o = phi.apply(vo);
+
         NVector rslt = network.output(new NVector(-1,2));
-        assertThat(rslt.toString(), is("[0.851953]"));
+        assertThat(rslt.get(0), is(o));
     }
 }
