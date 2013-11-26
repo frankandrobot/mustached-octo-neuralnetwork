@@ -55,13 +55,13 @@ public class TwoLayerNetwork
             return this;
         }
 
-        public Builder setLearningParam(Double alpha)
+        public Builder setMomentumParam(Double alpha)
         {
             this.alpha = alpha;
             return this;
         }
 
-        public Builder setMomentumParam(Double eta)
+        public Builder setLearningParam(Double eta)
         {
             this.eta = eta;
             return this;

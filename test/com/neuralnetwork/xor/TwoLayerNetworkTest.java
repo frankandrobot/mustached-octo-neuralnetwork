@@ -7,16 +7,30 @@ import static org.junit.Assert.assertThat;
 
 public class TwoLayerNetworkTest
 {
+    /**
+     * Test 1-layer network
+     *
+
+     f(s,x):=1/(1 + exp(-s*x));
+     g(s,x):=at(diff(f(s,y),y),y=x);
+
+     w:[0.25,0.75,0.5];
+     i:[-1,2,1];
+
+     v:sum(w[j]*i[j],j,1,3);
+     (0.25 - f(1,v)) * g(1,v);
+
+     */
     @Test
-    public void testSimpleNetworkOutput()
+    public void testOneLayerNetworkOutput()
     {
         IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
         SingleLayorNeuralNetwork layer = new SingleLayorNeuralNetwork();
         layer.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
-        builder.setMomentumParam(0.9)
-               .setLearningParam(0.04)
+        builder.setLearningParam(0.9)
+               .setMomentumParam(0.04)
                .setGlobalActivationFunction(phi)
                .setFirstLayer(layer);
 
@@ -26,16 +40,19 @@ public class TwoLayerNetworkTest
         assertThat(rslt.toString(), is("[0.851953]"));
     }
 
+    /**
+     * Test 1-layer network
+     */
     @Test
-    public void testSimpleBackpropagation1()
+    public void testOneLayerBackpropagation()
     {
         IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
         SingleLayorNeuralNetwork layer = new SingleLayorNeuralNetwork();
         layer.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
-        builder.setMomentumParam(0.9)
-               .setLearningParam(0.04)
+        builder.setLearningParam(0.9)
+               .setMomentumParam(0.04)
                .setGlobalActivationFunction(phi)
                .setFirstLayer(layer);
 
@@ -54,6 +71,27 @@ public class TwoLayerNetworkTest
         double gradient = e*phiPrime;
         assertThat(network.aExampleLayers[0][0].vGradients.get(0), is(gradient));
 
-        //check
+        //check weights were updated correctly
+        double w1 = 0.25 + 0.9 * gradient * -1.0;
+        assertThat(network.aExampleLayers[0][0].layer.aNeurons[0].getWeight(0), is(w1));
+    }
+
+    @Test
+    public void testNetworkOutput()
+    {
+        IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
+        SingleLayorNeuralNetwork layer = new SingleLayorNeuralNetwork();
+        layer.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
+
+        TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
+        builder.setLearningParam(0.9)
+               .setMomentumParam(0.04)
+               .setGlobalActivationFunction(phi)
+               .setFirstLayer(layer);
+
+        TwoLayerNetwork network = new TwoLayerNetwork(builder);
+
+        NVector rslt = network.output(new NVector(-1,2));
+        assertThat(rslt.toString(), is("[0.851953]"));
     }
 }
