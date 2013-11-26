@@ -25,7 +25,7 @@ public class SingleLayorNeuralNetwork implements INeuralNetwork, Iterable<Neuron
      * @return
      */
     @Override
-    public NVector rawoutput(NVector input)
+    public NVector inducedLocalField(NVector input)
     {
         int len=0;
 

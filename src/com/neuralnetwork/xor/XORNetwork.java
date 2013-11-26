@@ -32,7 +32,7 @@ public class XORNetwork implements INeuralNetwork
     }
 
     @Override
-    public NVector rawoutput(NVector input)
+    public NVector inducedLocalField(NVector input)
     {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
