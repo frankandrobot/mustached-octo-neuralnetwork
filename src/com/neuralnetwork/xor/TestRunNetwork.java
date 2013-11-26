@@ -127,12 +127,12 @@ public class TestRunNetwork
 
         int len = 1;
 
-        while(vError.mylen() > error && len <= 1000)
+        while(vError.sumOfCoords() > error && len <= 1000)
         {
             System.out.println("====================================================================");
             System.out.println("Iteration = "+len++);
             System.out.format("Weights =%n%s", new Output().weights());
-            System.out.format("Error = %s %n", vError.mylen());
+            System.out.format("Error = %s %n", vError.sumOfCoords());
             System.out.format("%5s %20s %20s%n", "i", "Expected", "Actual");
             for(int i=0; i<aExampleLayers.length; ++i)
                 System.out.format("%5s %20s %20s%n",

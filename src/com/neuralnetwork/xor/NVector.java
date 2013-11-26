@@ -82,13 +82,6 @@ public class NVector implements Iterable<Double>
         return string.toString();
     }
 
-    public NVector set(NVector vector)
-    {
-        for(int i=0; i<aCoords.length; i++)
-            aCoords[i] = vector.aCoords[i];
-        return this;
-    }
-
     public NVector subtract(NVector vector)
     {
         NVector rslt = new NVector(this);
@@ -100,7 +93,9 @@ public class NVector implements Iterable<Double>
     /**
      * Computes ||this.this||^2
      *
-     * @return
+     * Ex: if vector is 3D, then error() = x^2 + y^2 + z^2
+     *
+     * @return ||this.this||^2
      */
     public double error()
     {
@@ -110,7 +105,12 @@ public class NVector implements Iterable<Double>
         return rslt;
     }
 
-    public double mylen()
+    /**
+     * Sum of coordinates
+     *
+     * @return double
+     */
+    public double sumOfCoords()
     {
         double rslt = 0f;
         for(int i=0; i<aCoords.length; i++)
