@@ -76,7 +76,7 @@ public class XORBackPropagationTest
     @org.junit.Test
     public void testAllErrorsDecrease() throws Exception
     {
-        network.backpropagation(0.1f,
+        network.backpropagation(0.01f,
                 new NVector(0f, 0f), new NVector(0f));
 //                new NVector(0f, 1f), new NVector(1f),
 //                new NVector(1f, 1f), new NVector(0f),
