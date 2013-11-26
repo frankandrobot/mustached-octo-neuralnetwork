@@ -125,15 +125,20 @@ public class TwoLayerNetworkTest
     @Test
     public void testNetworkBackprop()
     {
+        final double ETA = 0.9;
+        final double ALPHA = 0.04;
+        final double[] orig_wh = {0.25, 0.75, 0.5};
+        final double[] orig_wo = {0.10, -0.35};
+
         IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
         SingleLayorNeuralNetwork layer1 = new SingleLayorNeuralNetwork();
-        layer1.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
+        layer1.setNeurons(new Neuron(phi, orig_wh));
         SingleLayorNeuralNetwork layer2 = new SingleLayorNeuralNetwork();
-        layer2.setNeurons(new Neuron(phi, 0.10, -0.35));
+        layer2.setNeurons(new Neuron(phi, orig_wo));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
-        builder.setLearningParam(0.9)
-               .setMomentumParam(0.04)
+        builder.setLearningParam(ETA)
+               .setMomentumParam(ALPHA)
                .setGlobalActivationFunction(phi)
                .setFirstLayer(layer1)
                .setSecondLayer(layer2);
@@ -147,48 +152,47 @@ public class TwoLayerNetworkTest
 
         double error = network.backpropagation();
 
-        //check that gradients were built correctly
+        //calculate gradients and weights i.e., perform backprop manually
         double vh = 1.75;
         double yh = phi.apply(vh);
-        double vo = 0.10 * yh - 0.35;
+        double vo = orig_wo[0]*yh + orig_wo[1];
         double o = phi.apply(vo);
 
         double outputGradient = (expected.get(0) - o) * phi.derivative(vo);
-        assertThat(network.aExampleLayers[0][1].vGradients.get(0), is(outputGradient));
+        double hiddenGradient = phi.derivative(vh) * outputGradient * orig_wo[0];
 
-        double hiddenGradient = phi.derivative(vh) * outputGradient * 0.10;
+        double wo1 = orig_wo[0] + ETA*outputGradient*yh;
+        double wo2 = orig_wo[1] + ETA*outputGradient;
+        double wh1 = orig_wh[0] + ETA*hiddenGradient*example.get(0);
+
+        final Neuron nh = network.aExampleLayers[0][0].layer.aNeurons[0];
+        final Neuron no = network.aExampleLayers[0][1].layer.aNeurons[0];
+
+        //check that gradients calculated correctly
+        assertThat(network.aExampleLayers[0][1].vGradients.get(0), is(outputGradient));
         assertThat(round(network.aExampleLayers[0][0].vGradients.get(0), 7),
-                   is(round(hiddenGradient, 7)));
+                is(round(hiddenGradient, 7)));
 
         //check that weights were updated correctly
-        double wo1 = 0.10 + 0.9 * outputGradient * phi.apply(vh);
-        assertThat(wo1, is(network.aExampleLayers[0][1].layer.aNeurons[0].getWeight(0)));
+        assertThat(wo1, is(no.getWeight(0)));
+        assertThat(wo2, is(no.getWeight(1)));
+        assertThat(wh1, is(nh.getWeight(0)));
 
-        double wo2 = -0.35 + 0.9 * outputGradient;
-        assertThat(wo2, is(network.aExampleLayers[0][1].layer.aNeurons[0].getWeight(1)));
-
-        double wh1 = 0.25 + 0.9 * hiddenGradient * (example.get(0));
-        assertThat(wh1, is(network.aExampleLayers[0][0].layer.aNeurons[0].getWeight(0)));
-
-        Neuron nh = network.aExampleLayers[0][0].layer.aNeurons[0];
-        Neuron no = network.aExampleLayers[0][1].layer.aNeurons[0];
-
-        //run back prop again and check weights again
-        double wo1prev = wo1;
-
+        //manually re-run back prop and check gradients and weights
         vh = example.get(0)*nh.getWeight(0) + example.get(1)*nh.getWeight(1) + nh.getWeight(2);
         yh = phi.apply(vh);
-        vo = no.getWeight(0) * yh + no.getWeight(1);
+        vo = no.getWeight(0)*yh + no.getWeight(1);
         o = phi.apply(vo);
+
+        outputGradient = (expected.get(0) - o) * phi.derivative(vo);
+        final double wo1prev = wo1;
+        wo1 = wo1prev + ALPHA*orig_wo[0] + ETA*outputGradient*yh;
 
         network.backpropagation();
 
 //        double actual = network.output(0,0,example).first();
 //        assertThat(o, is(actual));
 
-        //check that weights were updated correctly
-        outputGradient = (expected.get(0) - o) * phi.derivative(vo);
-        wo1 = wo1prev + 0.04 * 0.10 + 0.9 * outputGradient * yh;
         assertThat(wo1, is(no.getWeight(0)));
     }
 
