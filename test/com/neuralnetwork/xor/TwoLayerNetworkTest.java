@@ -70,11 +70,11 @@ public class TwoLayerNetworkTest
         double e = 0.25 - phi.apply(1.75);
         double phiPrime = phi.derivative(1.75);
         double gradient = e*phiPrime;
-        assertThat(network.aLayers[0][0].vGradients.get(0), is(gradient));
+        assertThat(network.aLayers[0].vGradients.get(0), is(gradient));
 
         //check weights were updated correctly
         double w1 = 0.25 + 0.9 * gradient * -1.0;
-        assertThat(network.aLayers[0][0].layer.aNeurons[0].getWeight(0), is(w1));
+        assertThat(network.aLayers[0].layer.aNeurons[0].getWeight(0), is(w1));
     }
 
     @Test
@@ -165,12 +165,12 @@ public class TwoLayerNetworkTest
         double wo2 = orig_wo[1] + ETA*outputGradient;
         double wh1 = orig_wh[0] + ETA*hiddenGradient*example.get(0);
 
-        final Neuron nh = network.aLayers[0][0].layer.aNeurons[0];
-        final Neuron no = network.aLayers[0][1].layer.aNeurons[0];
+        final Neuron nh = network.aLayers[0].layer.aNeurons[0];
+        final Neuron no = network.aLayers[1].layer.aNeurons[0];
 
         //check that gradients calculated correctly
-        assertThat(network.aLayers[0][1].vGradients.get(0), is(outputGradient));
-        assertThat(round(network.aLayers[0][0].vGradients.get(0), 7),
+        assertThat(network.aLayers[1].vGradients.get(0), is(outputGradient));
+        assertThat(round(network.aLayers[0].vGradients.get(0), 7),
                 is(round(hiddenGradient, 7)));
 
         //check that weights were updated correctly
