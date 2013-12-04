@@ -4,14 +4,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class TwoLayerNetwork
 {
-    /**
-     * The layers indexed by training example and layer
-     */
-    protected LayorInfo[][] aExampleLayers;
-    protected NVector[] aInput;
-    protected NVector[] aExpected;
+    protected LayorInfo[] aLayers;
 
+    protected NVector[] aExampleInput;
+    protected NVector[] aExpected;
     protected NVector vError;
+    protected int numberExamples;
 
     final protected double alpha; /** momentum **/
     final protected double eta; /** learning parameter **/
@@ -68,14 +66,6 @@ public class TwoLayerNetwork
         }
     }
 
-    protected void initializeExampleLayer(int layer)
-    {
-        aExampleLayers[layer] = new LayorInfo[secondLayer != null ? 2 : 1];
-
-        aExampleLayers[layer][0] = new LayorInfo(firstLayer);
-        if (secondLayer != null) aExampleLayers[layer][1] = new LayorInfo(secondLayer);
-    }
-
     /**
      * This class wraps the SingleLayorNeuralNetwork
      * with additional information.
@@ -93,14 +83,11 @@ public class TwoLayerNetwork
         public NVector vInducedLocalField;
         /**
          * For each neuron k in the layer,
-         * store y_k (value of impulse function).
+         * store value of impulse function.
          */
         public NVector vImpulseFunction;
         /**
-         * Store the inputs from the previous layer.
-         * vInput[i] is matched with a neuron's ith weight w_i
-         * to produce the output i.e.,
-         * vInput[i] = y^(l-1)_i
+         * Store the inputs (y_k) from the previous layer.
          */
         public NVector vInput;
         /**
@@ -145,6 +132,35 @@ public class TwoLayerNetwork
         }
     }
 
+    protected void initializeLayers()
+    {
+        aLayers = new LayorInfo[secondLayer != null ? 2 : 1];
+
+        aLayers[0] = new LayorInfo(firstLayer);
+        if (secondLayer != null) aLayers[1] = new LayorInfo(secondLayer);
+    }
+
+    protected void initLayers(NVector... aInputExpected)
+    {
+        if (aInputExpected.length % 2 != 0)
+            throw new IllegalArgumentException();
+
+        initializeLayers();
+
+        numberExamples = aInputExpected.length / 2;
+
+        aExampleInput = new NVector[numberExamples];
+        aExpected = new NVector[numberExamples];
+        vError = new NVector().setSize(numberExamples);
+
+        //save aInputExpected
+        for(int i=0; i< numberExamples; i++)
+        {
+            aExampleInput[i] = aInputExpected[2*i];
+            aExpected[i] = aInputExpected[2*i+1];
+        }
+    }
+
     public void backpropagation(double errorBound, NVector... aInputExpected)
     {
         if (aInputExpected.length % 2 != 0)
@@ -162,35 +178,34 @@ public class TwoLayerNetwork
         debugOutput(len);
     }
 
-    private int debugOutput(int len)
+    protected int debugOutput(int len)
     {
         System.out.println("====================================================================");
         System.out.println("Iteration = "+len++);
         System.out.format("Weights =%n%s", new Output().weights());
         System.out.format("Error = %s %n", vError.sumOfCoords());
         System.out.format("%5s %20s %20s%n", "i", "Expected", "Actual");
-        for(int i=0; i<aExampleLayers.length; ++i)
+        for(int i=0; i< numberExamples; ++i)
             System.out.format("%5s %20s %20s%n",
                               i,
                               aExpected[i],
-                              aExampleLayers[i][aExampleLayers[i].length-1].vImpulseFunction);
+                              aLayers[aLayers.length-1].vImpulseFunction);
         return len;
     }
 
     public NVector output(NVector input)
     {
-        aExampleLayers = new LayorInfo[1][];
-        aInput = new NVector[aExampleLayers.length];
-        aExpected = new NVector[aExampleLayers.length];
-        vError = new NVector().setSize(aExampleLayers.length);
+        initializeLayers();
 
-        for(int i=0; i<aExampleLayers.length; i++)
-        {
-            initializeExampleLayer(i);
-            aInput[i] = input;
-        }
+        numberExamples = 1;
 
-        return output(0,0,input);
+        aExampleInput = new NVector[numberExamples];
+        aExpected = new NVector[numberExamples];
+        vError = new NVector().setSize(numberExamples);
+
+        aExampleInput[0] = input;
+
+        return output(0,input);
     }
 
     /**
@@ -200,43 +215,20 @@ public class TwoLayerNetwork
      */
     protected double backpropagation()
     {
-        for(int i=0; i<aExampleLayers.length; i++)
+        for(int i=0; i< numberExamples; i++)
         {
             constructErrorFunction(i);
-        }
-
-        for(int i=0; i<aExampleLayers.length; i++)
-        {
             constructGradients(i);
+            adjustWeights();
         }
 
-        for(int i=0; i<aExampleLayers.length; i++)
-        {
-            adjustWeights(i);
-        }
 
         return vError.sumOfCoords();
     }
 
-    protected void initLayers(NVector... aInputExpected)
-    {
-        aExampleLayers = new LayorInfo[aInputExpected.length / 2][];
-        aInput = new NVector[aExampleLayers.length];
-        aExpected = new NVector[aExampleLayers.length];
-        vError = new NVector().setSize(aExampleLayers.length);
-
-        //save aInputExpected
-        for(int i=0; i<aExampleLayers.length; i++)
-        {
-            initializeExampleLayer(i);
-            aInput[i] = aInputExpected[2*i];
-            aExpected[i] = aInputExpected[2*i+1];
-        }
-    }
-
     protected void constructErrorFunction(int example)
     {
-        NVector actual = output(example, 0, aInput[example]);
+        NVector actual = output(0, aExampleInput[example]);
         vError.set(example, aExpected[example].subtract(actual).error());
     }
 
@@ -245,22 +237,22 @@ public class TwoLayerNetwork
      *
      * Side effect: store stuff (induced local field, impulse function, etc) in the layer info
      *
-     * @param example index to example in aExampleLayers
      * @param layer the example's layer
      * @return output
      */
-    protected NVector output(int example, int layer, NVector input)
+    protected NVector output(int layer, NVector input)
     {
-        LayorInfo layorInfo = aExampleLayers[example][layer];
+        LayorInfo layorInfo = aLayers[layer];
 
         //save info for back propagation
         layorInfo.vInput = new NVector(input, 1f); //tack on bias at end
+
         constructInducedLocalField(layorInfo);
         constructImpulseFunction(layorInfo);
 
-        if (layer < aExampleLayers[example].length - 1)
+        if (layer < aLayers.length - 1)
         {
-            return output(example, layer+1, aExampleLayers[example][layer].vImpulseFunction);
+            return output(layer+1, aLayers[layer].vImpulseFunction);
         }
         return layorInfo.vImpulseFunction;
     }
@@ -287,21 +279,18 @@ public class TwoLayerNetwork
 
     protected void constructGradients(int example)
     {
-       constructGradients(example, aExampleLayers[example].length - 1);
+       constructGradients(example, aLayers.length - 1);
     }
 
     protected void constructGradients(int example, int layer)
     {
         if (layer >= 0)
         {
-            LayorInfo layorInfo = aExampleLayers[example][layer];
+            LayorInfo layorInfo = aLayers[layer];
 
-            int neuronPos = 0;
-            for(Neuron neuron:layorInfo.layer)
+            for(int neuronPos=0; neuronPos<layorInfo.layer.getNumberOfNeurons(); neuronPos++)
             {
                 layorInfo.vGradients.set(neuronPos, gradient(example, layer, neuronPos));
-
-                neuronPos++;
             }
 
             constructGradients(example, layer - 1);
@@ -309,26 +298,26 @@ public class TwoLayerNetwork
     }
 
     /**
-     * Given a network layor and the neuron's position (in the array)
-     * return its gradient.
+     * Gradient for the given example, layer, and neuron
      *
-     * @param layerLevel
-     * @param neuron
-     * @return
+     * @param example example
+     * @param layerLevel layer level
+     * @param neuron neuron
+     * @return gradient value for the given example, layer, and neuron
      */
     protected double gradient(int example, int layerLevel, int neuron)
     {
-        if (layerLevel == aExampleLayers[example].length-1)
+        if (layerLevel == aLayers.length-1)
         {
             // (oj - tj) * phi'_j(v^L_j)
-            final double inducedLocalField = aExampleLayers[example][layerLevel].vInducedLocalField.get(neuron);
-            final double impulseFunction = aExampleLayers[example][layerLevel].vImpulseFunction.get(neuron);
+            final double inducedLocalField = aLayers[layerLevel].vInducedLocalField.get(neuron);
+            final double impulseFunction = aLayers[layerLevel].vImpulseFunction.get(neuron);
             return (aExpected[example].get(neuron) - impulseFunction)
                     * phi.derivative(inducedLocalField);
         }
         else
         {
-             return phi.derivative( aExampleLayers[example][layerLevel].vInducedLocalField.get(neuron))
+             return phi.derivative( aLayers[layerLevel].vInducedLocalField.get(neuron))
                      * sumGradients(example, layerLevel + 1, neuron);
         }
     }
@@ -337,13 +326,16 @@ public class TwoLayerNetwork
      * Find the sum of the gradients times the weights of the next layer
      * for the current neuron
      *
+     *
+     *
+     * @param example
      * @param layerLevel layer level
      * @param currentNeuron current neuron
      * @return
      */
     protected double sumGradients(int example, int layerLevel, int currentNeuron)
     {
-        LayorInfo layorInfo = aExampleLayers[example][layerLevel];
+        LayorInfo layorInfo = aLayers[layerLevel];
         double rslt = 0f;
 
         int neuronPos = 0;
@@ -354,16 +346,16 @@ public class TwoLayerNetwork
         return rslt;
     }
 
-    protected void adjustWeights(int example)
+    protected void adjustWeights()
     {
-        adjustWeights(example, aExampleLayers[example].length - 1);
+        adjustWeights(aLayers.length - 1);
     }
 
-    protected void adjustWeights(int example, int layer)
+    protected void adjustWeights(int layer)
     {
         if (layer >= 0)
         {
-            LayorInfo layorInfo = aExampleLayers[example][layer];
+            LayorInfo layorInfo = aLayers[layer];
 
             int neuronPos = 0;
             for(Neuron neuron:layorInfo.layer)
@@ -387,7 +379,7 @@ public class TwoLayerNetwork
                 neuronPos++;
             }
 
-            adjustWeights(example, layer - 1);
+            adjustWeights(layer - 1);
         }
     }
 
