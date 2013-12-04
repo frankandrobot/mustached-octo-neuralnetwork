@@ -9,9 +9,16 @@ public class NVector implements Iterable<Double>
 {
     double[] aCoords;
 
-    public NVector(int size)
+    /**
+     * Make sure to call #setSize
+     */
+    public NVector() {}
+
+    public NVector setSize(int i)
     {
-        this.aCoords = new double[size];
+        if (aCoords == null) aCoords = new double[i];
+        else aCoords = Arrays.copyOf(aCoords, i);
+        return this;
     }
 
     public NVector(double... aCoords)

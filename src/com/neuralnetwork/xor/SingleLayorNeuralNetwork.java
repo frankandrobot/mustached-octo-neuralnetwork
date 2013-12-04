@@ -65,7 +65,7 @@ public class SingleLayorNeuralNetwork implements INeuralNetwork, Iterable<Neuron
     public void setNeurons(Neuron... aNeurons)
     {
         this.aNeurons = aNeurons;
-        this.vLatestOutput = new NVector(aNeurons.length);
+        this.vLatestOutput = new NVector().setSize(aNeurons.length);
     }
 
     @Override
