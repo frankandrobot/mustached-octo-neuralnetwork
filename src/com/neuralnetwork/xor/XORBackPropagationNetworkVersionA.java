@@ -15,9 +15,10 @@ public class XORBackPropagationNetworkVersionA extends TwoLayerNetwork
 
         Random r = new Random();
 
-        this.firstLayer.setNeurons(new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
-                                   new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5));
+        getLayer(0).layer.setNeurons(new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
+                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()));
 
-        this.secondLayer.setNeurons(new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5));
+        getLayer(1).layer.setNeurons(new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()));
    }
+
 }

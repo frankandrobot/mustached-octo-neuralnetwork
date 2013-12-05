@@ -29,6 +29,11 @@ public class TwoLayerNetwork
         initializeLayers(builder);
     }
 
+    protected LayorInfo getLayer(int i)
+    {
+        return aLayers[i];
+    }
+
     static public class Builder
     {
         private IActivationFunction.IDifferentiableFunction phi;
@@ -202,6 +207,7 @@ public class TwoLayerNetwork
         //save aInputExpected
         for(int i=0; i< numberExamples; i++)
         {
+            aExamples[i] = new ExampleInfo();
             aExamples[i].vExampleInput = aInputExpected[2*i];
             aExamples[i].vExpected = aInputExpected[2*i+1];
         }
