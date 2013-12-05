@@ -12,25 +12,21 @@ public class XORBackPropagationTest
     {
         IActivationFunction.SigmoidUnityFunction phi = new IActivationFunction.SigmoidUnityFunction();
 
-        final long stableSeed = 991000;
+        final long stableSeed = 99991000;
         Random r = new Random(stableSeed);
 
         SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
         firstLayer.setNeurons(
-                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
-                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
-                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
-                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
-                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble())
+                new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()),
+                new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()),
+                new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian())
         );
         SingleLayorNeuralNetwork secondLayer = new SingleLayorNeuralNetwork();
         secondLayer.setNeurons(new Neuron(phi,
-                r.nextDouble(),
-                r.nextDouble(),
-                r.nextDouble(),
-                r.nextDouble(),
-                r.nextDouble(),
-                r.nextDouble()));
+                r.nextGaussian(),
+                r.nextGaussian(),
+                r.nextGaussian(),
+                r.nextGaussian()));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
                 .setMomentumParam(0.9)
