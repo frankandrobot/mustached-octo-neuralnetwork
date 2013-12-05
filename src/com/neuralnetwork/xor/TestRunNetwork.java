@@ -186,7 +186,7 @@ public class TestRunNetwork
     protected void constructErrorFunction(int example)
     {
         NVector actual = output(example, 0, aInput[example]);
-        vError.set(example, aExpected[example].subtract(actual).error());
+        vError.set(example, aExpected[example].subtract(actual).dotProduct());
     }
 
     /**

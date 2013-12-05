@@ -8,6 +8,7 @@ public class TwoLayerNetwork
 
     protected NVector[] aExampleInput;
     protected NVector[] aExpected;
+    protected NVector[] aActual;
     protected NVector vError;
     protected int numberExamples;
 
@@ -152,6 +153,7 @@ public class TwoLayerNetwork
         aExampleInput = new NVector[numberExamples];
         aExpected = new NVector[numberExamples];
         vError = new NVector().setSize(numberExamples);
+        aActual = new NVector[numberExamples];
 
         //save aInputExpected
         for(int i=0; i< numberExamples; i++)
@@ -189,29 +191,32 @@ public class TwoLayerNetwork
             System.out.format("%5s %20s %20s%n",
                               i,
                               aExpected[i],
-                              aLayers[aLayers.length-1].vImpulseFunction);
+                              aActual[i]);
         return len;
     }
 
     public NVector output(NVector input)
     {
-        initializeLayers();
+        if (aLayers == null)
+        {
+            initializeLayers();
+            numberExamples = 1;
 
-        numberExamples = 1;
-
-        aExampleInput = new NVector[numberExamples];
-        aExpected = new NVector[numberExamples];
-        vError = new NVector().setSize(numberExamples);
+            aExampleInput = new NVector[numberExamples];
+            aExpected = new NVector[numberExamples];
+            vError = new NVector().setSize(numberExamples);
+            aActual = new NVector[numberExamples];
+        }
 
         aExampleInput[0] = input;
 
-        return output(0,input);
+        return output(0, 0, input);
     }
 
     /**
      * Trains the network using pairs of inputs/expected values
      *
-     * @return error
+     * @return dotProduct
      */
     protected double backpropagation()
     {
@@ -220,6 +225,7 @@ public class TwoLayerNetwork
             constructErrorFunction(i);
             constructGradients(i);
             adjustWeights();
+            constructErrorFunction(i);
         }
 
 
@@ -228,8 +234,8 @@ public class TwoLayerNetwork
 
     protected void constructErrorFunction(int example)
     {
-        NVector actual = output(0, aExampleInput[example]);
-        vError.set(example, aExpected[example].subtract(actual).error());
+        NVector actual = output(example, 0, aExampleInput[example]);
+        vError.set(example, aExpected[example].subtract(actual).dotProduct());
     }
 
     /**
@@ -237,10 +243,12 @@ public class TwoLayerNetwork
      *
      * Side effect: store stuff (induced local field, impulse function, etc) in the layer info
      *
+     *
+     * @param example
      * @param layer the example's layer
      * @return output
      */
-    protected NVector output(int layer, NVector input)
+    protected NVector output(int example, int layer, NVector input)
     {
         LayorInfo layorInfo = aLayers[layer];
 
@@ -252,7 +260,11 @@ public class TwoLayerNetwork
 
         if (layer < aLayers.length - 1)
         {
-            return output(layer+1, aLayers[layer].vImpulseFunction);
+            return output(example, layer+1, aLayers[layer].vImpulseFunction);
+        }
+        else
+        {
+            aActual[example] = new NVector(aLayers[layer].vImpulseFunction);
         }
         return layorInfo.vImpulseFunction;
     }

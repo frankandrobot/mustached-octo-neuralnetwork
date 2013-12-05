@@ -103,7 +103,7 @@ public class NVectorTest
     public void testError() throws Exception
     {
         NVector a = new NVector(1,2,3,4);
-        assertThat(a.error(), is(1+4+9+16.0));
+        assertThat(a.dotProduct(), is(1+4+9+16.0));
     }
 
     @Test

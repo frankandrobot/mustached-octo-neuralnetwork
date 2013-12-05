@@ -2,6 +2,8 @@ package com.neuralnetwork.xor;
 
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -199,5 +201,42 @@ public class TwoLayerNetworkTest
     private String round(double num, int precision)
     {
         return String.format("%"+precision+"g", num);
+    }
+
+    @Test
+    public void testStability()
+    {
+        IActivationFunction.SigmoidUnityFunction phi = new IActivationFunction.SigmoidUnityFunction();
+
+        final long stableSeed = 10001;
+        Random r = new Random(stableSeed);
+
+        SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
+        firstLayer.setNeurons(
+                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
+                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5));
+        SingleLayorNeuralNetwork secondLayer = new SingleLayorNeuralNetwork();
+        secondLayer.setNeurons(new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5));
+
+        TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
+                .setMomentumParam(0.05)
+                .setLearningParam(9.0)
+                .setGlobalActivationFunction(phi)
+                .setFirstLayer(firstLayer)
+                .setSecondLayer(secondLayer);
+
+        TwoLayerNetwork network = new TwoLayerNetwork(builder);
+
+        final NVector input = new NVector(0.5, 0.2);
+        final NVector expected = new NVector(0.8);
+        final double errorTol = 0.00001;
+        network.backpropagation(
+                errorTol,
+                input, expected);
+
+        NVector rslt = network.output(0,0,input);
+        System.out.format("%nrslt - expected = %s - %s = %s%n", rslt, expected, rslt.subtract(expected));
+        System.out.println("error: "+rslt.subtract(expected).dotProduct());
+        assertThat(rslt.subtract(expected).dotProduct() < errorTol, is(true));
     }
 }

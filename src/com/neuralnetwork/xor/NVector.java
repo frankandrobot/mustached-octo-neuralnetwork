@@ -98,13 +98,13 @@ public class NVector implements Iterable<Double>
     }
 
     /**
-     * Computes ||this.this||^2
+     * Computes this.this
      *
-     * Ex: if vector is 3D, then error() = x^2 + y^2 + z^2
+     * Ex: if vector is 3D, then dotProduct() = x^2 + y^2 + z^2
      *
-     * @return ||this.this||^2
+     * @return this.this
      */
-    public double error()
+    public double dotProduct()
     {
         double rslt = 0f;
         for(int i=0; i<aCoords.length; i++)
