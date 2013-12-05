@@ -49,12 +49,15 @@ public class TwoLayerNetworkTest
     @Test
     public void testOneLayerBackpropagation()
     {
+        final double[] aWeights = {0.25, 0.75, 0.5};
+        final double eta = 0.9;
+
         IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
         SingleLayorNeuralNetwork layer = new SingleLayorNeuralNetwork();
-        layer.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
+        layer.setNeurons(new Neuron(phi, aWeights));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
-        builder.setLearningParam(0.9)
+        builder.setLearningParam(eta)
                .setMomentumParam(0.04)
                .setGlobalActivationFunction(phi)
                .setFirstLayer(layer);
@@ -69,14 +72,19 @@ public class TwoLayerNetworkTest
         double error = network.backpropagation();
 
         //check gradients were built correctly
-        double e = 0.25 - phi.apply(1.75);
+        double e = expected.get(0) - phi.apply(1.75);
         double phiPrime = phi.derivative(1.75);
         double gradient = e*phiPrime;
         assertThat(network.aLayers[0].vGradients.get(0), is(gradient));
 
         //check weights were updated correctly
-        double w1 = 0.25 + 0.9 * gradient * -1.0;
-        assertThat(network.aLayers[0].layer.aNeurons[0].getWeight(0), is(w1));
+        for(int i=0; i<2; i++)
+        {
+            double deltaWi = eta*gradient*example.get(i);
+            assertThat(network.getLayer(0).aWeightAdjustments[0].get(i), is(deltaWi));
+            double wi = aWeights[i] + deltaWi;
+            assertThat(network.getLayer(0).layer.aNeurons[0].getWeight(i), is(wi));
+        }
     }
 
     @Test

@@ -121,7 +121,8 @@ public class TwoLayerNetwork
         public NVector vInput;
         /**
          * For each neuron k in the layer,
-         * aPrevWeights[k] is its previous set of weights
+         * aPrevWeights[k] is its previous set of weights.
+         * aPrevWeights[k].get(j) is neuron k's jth previous weight.
          */
         public NVector[] aPrevWeights;
 
@@ -131,13 +132,28 @@ public class TwoLayerNetwork
          */
         public NVector vGradients;
 
+        /**
+         * For neuron k's jth weight in the layer,
+         * aWeightAdjustments[k].get(j) is the quantity to add to its jth weight
+         * when adjusting the weight with the backprop algorithm
+         */
+        public NVector[] aWeightAdjustments;
+
         public LayorInfo(SingleLayorNeuralNetwork layer)
         {
             this.layer = layer;
             this.vInducedLocalField = new NVector().setSize(this.layer.getNumberOfNeurons());
             this.vImpulseFunction = new NVector().setSize(this.layer.getNumberOfNeurons());
-            this.aPrevWeights = new NVector[this.layer.getNumberOfNeurons()];
             this.vGradients = new NVector().setSize(this.layer.getNumberOfNeurons());
+            this.aPrevWeights = new NVector[this.layer.getNumberOfNeurons()];
+            this.aWeightAdjustments = new NVector[this.layer.getNumberOfNeurons()];
+            int len=0;
+            for(Neuron neuron:this.layer)
+            {
+                this.aPrevWeights[len] = new NVector().setSize(neuron.getNumberOfWeights());
+                this.aWeightAdjustments[len] = new NVector().setSize(neuron.getNumberOfWeights());
+                ++len;
+            }
         }
     }
 
@@ -195,7 +211,7 @@ public class TwoLayerNetwork
         if (numberLayers > 1) aLayers[1] = new LayorInfo(builder.secondLayer);
     }
 
-    protected void setupExampleInfo(NVector... aInputExpected)
+    public void setupExampleInfo(NVector... aInputExpected)
     {
         if (aInputExpected.length % 2 != 0)
             throw new IllegalArgumentException();
@@ -248,16 +264,20 @@ public class TwoLayerNetwork
     /**
      * Trains the network using pairs of inputs/expected values
      *
-     * @return dotProduct
+     * @return sum of the total differnce squared (error)
      */
     protected double backpropagation()
     {
+        resetWeightAdjustments();
+
         for(int i=0; i< numberExamples; i++)
         {
             forwardPropagation(i);
             constructGradients(i);
-            adjustWeights();
+            saveWeightAdjustments();
         }
+
+        adjustWeights();
 
         for(int i=0; i< numberExamples; i++)
         {
@@ -271,8 +291,8 @@ public class TwoLayerNetwork
     {
         NVector vActual = forwardPropagation(example);
         NVector vExpected = aExamples[example].vExpected;
-
-        vTotalDifferenceSquared.set(example, vExpected.subtract(vActual).dotProduct());
+        aExamples[example].differenceSquared = vExpected.subtract(vActual).dotProduct();
+        vTotalDifferenceSquared.set(example, aExamples[example].differenceSquared);
     }
 
     protected NVector forwardPropagation(int example)
@@ -400,12 +420,12 @@ public class TwoLayerNetwork
         return rslt;
     }
 
-    protected void adjustWeights()
+    protected void saveWeightAdjustments()
     {
-        adjustWeights(aLayers.length - 1);
+        saveWeightAdjustments(aLayers.length - 1);
     }
 
-    protected void adjustWeights(int layer)
+    protected void saveWeightAdjustments(int layer)
     {
         if (layer >= 0)
         {
@@ -414,29 +434,66 @@ public class TwoLayerNetwork
             int neuronPos = 0;
             for(Neuron neuron:layorInfo.layer)
             {
-                if (layorInfo.aPrevWeights[neuronPos] == null)
-                    layorInfo.aPrevWeights[neuronPos] = new NVector().setSize(neuron.getNumberOfWeights());
-
                 //iterate thru the neuron's weights
                 for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
                 {
-                    double newWeight = neuron.getWeight(weight)
-                            + alpha * layorInfo.aPrevWeights[neuronPos].get(weight) //momentum
+                    double weightAdjustment =
+                              alpha * layorInfo.aPrevWeights[neuronPos].get(weight) //momentum
                             + eta * layorInfo.vGradients.get(neuronPos) * layorInfo.vInput.get(weight); //delta correction
 
-                    //backup previous weight
-                    layorInfo.aPrevWeights[neuronPos].set(weight, neuron.getWeight(weight));
-
-                    neuron.setWeight(weight, newWeight);
+                    //save weight adjustment
+                    double curWeightAdjustment = layorInfo.aWeightAdjustments[neuronPos].get(weight);
+                    layorInfo.aWeightAdjustments[neuronPos].set(weight, curWeightAdjustment + weightAdjustment);
                 }
 
                 neuronPos++;
             }
 
-            adjustWeights(layer - 1);
+            saveWeightAdjustments(layer - 1);
         }
     }
 
+    protected void adjustWeights()
+    {
+        for(LayorInfo layorInfo:aLayers)
+        {
+            //iterate thru the neurons in the layer
+            int neuronPos = 0;
+            for(Neuron neuron:layorInfo.layer)
+            {
+                //iterate thru the neuron's weights
+                for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
+                {
+                    //backup previous weight
+                    layorInfo.aPrevWeights[neuronPos].set(weight, neuron.getWeight(weight));
+
+                    //adjust weights
+                    double curWeight = neuron.getWeight(weight);
+                    neuron.setWeight(weight,
+                                     curWeight + layorInfo.aWeightAdjustments[neuronPos].get(weight));
+                }
+                neuronPos++;
+            }
+        }
+    }
+
+    protected void resetWeightAdjustments()
+    {
+        for(LayorInfo layorInfo:aLayers)
+        {
+            //iterate thru the neurons in the layer
+            int neuronPos = 0;
+            for(Neuron neuron:layorInfo.layer)
+            {
+                //iterate thru the neuron's weights
+                for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
+                {
+                    layorInfo.aWeightAdjustments[neuronPos].set(weight, 0);
+                }
+                neuronPos++;
+            }
+        }
+    }
 
     public NVector rawoutput(NVector input)
     {
