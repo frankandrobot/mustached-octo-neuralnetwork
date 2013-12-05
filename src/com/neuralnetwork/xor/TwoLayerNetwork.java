@@ -222,7 +222,7 @@ public class TwoLayerNetwork
     {
         for(int i=0; i< numberExamples; i++)
         {
-            constructErrorFunction(i);
+            forwardPropagation(i);
             constructGradients(i);
             adjustWeights();
         }
@@ -238,8 +238,13 @@ public class TwoLayerNetwork
 
     protected void constructErrorFunction(int example)
     {
-        NVector actual = output(example, 0, aExampleInput[example]);
+        NVector actual = forwardPropagation(example);
         vError.set(example, aExpected[example].subtract(actual).dotProduct());
+    }
+
+    protected NVector forwardPropagation(int example)
+    {
+        return output(example, 0, aExampleInput[example]);
     }
 
     /**

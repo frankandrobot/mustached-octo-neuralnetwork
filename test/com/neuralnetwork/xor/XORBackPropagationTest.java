@@ -17,24 +17,24 @@ public class XORBackPropagationTest
 
         SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
         firstLayer.setNeurons(
-                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
-                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
-                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
-                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
-                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5)
+                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
+                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
+                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
+                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble()),
+                new Neuron(phi, r.nextDouble(), r.nextDouble(), r.nextDouble())
         );
         SingleLayorNeuralNetwork secondLayer = new SingleLayorNeuralNetwork();
         secondLayer.setNeurons(new Neuron(phi,
-                r.nextDouble()-0.5,
-                r.nextDouble()-0.5,
-                r.nextDouble()-0.5,
-                r.nextDouble()-0.5,
-                r.nextDouble()-0.5,
-                r.nextDouble()-0.5));
+                r.nextDouble(),
+                r.nextDouble(),
+                r.nextDouble(),
+                r.nextDouble(),
+                r.nextDouble(),
+                r.nextDouble()));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
-                .setMomentumParam(0.12)
-                .setLearningParam(0.99)
+                .setMomentumParam(0.9)
+                .setLearningParam(0.01)
                 .setGlobalActivationFunction(phi)
                 .setFirstLayer(firstLayer)
                 .setSecondLayer(secondLayer);
