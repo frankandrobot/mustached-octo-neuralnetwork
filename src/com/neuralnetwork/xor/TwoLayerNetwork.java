@@ -17,6 +17,7 @@ public class TwoLayerNetwork
 
     final protected double alpha; /** momentum **/
     final protected double eta; /** learning parameter **/
+    final protected int numberIterations;
 
     protected IActivationFunction.IDifferentiableFunction phi;
 
@@ -25,6 +26,7 @@ public class TwoLayerNetwork
         this.eta = builder.eta;
         this.alpha = builder.alpha;
         this.phi = builder.phi;
+        this.numberIterations = builder.numberIterations == 0 ? 1000 : builder.numberIterations;
 
         initializeLayers(builder);
     }
@@ -41,6 +43,7 @@ public class TwoLayerNetwork
         protected SingleLayorNeuralNetwork secondLayer;
         protected Double alpha;
         protected Double eta;
+        protected int numberIterations;
 
         public Builder setGlobalActivationFunction(IActivationFunction.IDifferentiableFunction phi)
         {
@@ -69,6 +72,12 @@ public class TwoLayerNetwork
         public Builder setLearningParam(Double eta)
         {
             this.eta = eta;
+            return this;
+        }
+
+        public Builder setIterations(int numberIterations)
+        {
+            this.numberIterations = numberIterations;
             return this;
         }
     }
@@ -243,7 +252,7 @@ public class TwoLayerNetwork
         DebugOutput debugOutput = new DebugOutput();
         int iteration = 1;
 
-        while( backpropagation() > errorBound && iteration <= 1000)
+        while( backpropagation() > errorBound && iteration <= numberIterations)
         {
             debugOutput.backpropDump(iteration);
             iteration++;
@@ -438,8 +447,7 @@ public class TwoLayerNetwork
                 for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
                 {
                     double weightAdjustment =
-                              alpha * layorInfo.aPrevWeights[neuronPos].get(weight) //momentum
-                            + eta * layorInfo.vGradients.get(neuronPos) * layorInfo.vInput.get(weight); //delta correction
+                            eta * layorInfo.vGradients.get(neuronPos) * layorInfo.vInput.get(weight); //delta correction
 
                     //save weight adjustment
                     double curWeightAdjustment = layorInfo.aWeightAdjustments[neuronPos].get(weight);
@@ -464,13 +472,18 @@ public class TwoLayerNetwork
                 //iterate thru the neuron's weights
                 for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
                 {
+                    //adjust weights
+                    double momentum = alpha * layorInfo.aPrevWeights[neuronPos].get(weight);
+                    double curWeight = neuron.getWeight(weight);
+
                     //backup previous weight
                     layorInfo.aPrevWeights[neuronPos].set(weight, neuron.getWeight(weight));
 
-                    //adjust weights
-                    double curWeight = neuron.getWeight(weight);
                     neuron.setWeight(weight,
-                                     curWeight + layorInfo.aWeightAdjustments[neuronPos].get(weight));
+                                     curWeight
+                                     + momentum
+                                     + layorInfo.aWeightAdjustments[neuronPos].get(weight) // total delta weights
+                    );
                 }
                 neuronPos++;
             }

@@ -258,30 +258,41 @@ public class TwoLayerNetworkTest
 
         SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
         firstLayer.setNeurons(
-                new Neuron(phi, r.nextGaussian()-0.5, r.nextGaussian()-0.5, r.nextGaussian()-0.5),
-                new Neuron(phi, r.nextGaussian()-0.5, r.nextGaussian()-0.5, r.nextGaussian()-0.5));
+                new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()),
+                new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()));
         SingleLayorNeuralNetwork secondLayer = new SingleLayorNeuralNetwork();
-        secondLayer.setNeurons(new Neuron(phi, r.nextGaussian()-0.5, r.nextGaussian()-0.5, r.nextGaussian()-0.5));
+        secondLayer.setNeurons(new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
-                .setMomentumParam(0.05)
-                .setLearningParam(0.9)
+                .setMomentumParam(0.00002)
+                .setLearningParam(0.1)
                 .setGlobalActivationFunction(phi)
                 .setFirstLayer(firstLayer)
-                .setSecondLayer(secondLayer);
+                .setSecondLayer(secondLayer)
+                .setIterations(35000);
 
         TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
-        final NVector input = new NVector(0.5, 0.2);
-        final NVector expected = new NVector(0.8);
-        final double errorTol = 0.00001;
+        final double errorTol = 0.0001;
+        final NVector[] input = {
+                new NVector(0.5, 0.2),
+                new NVector(10, 20)
+        };
+        final NVector[] expected = {
+                new NVector(0.2),
+                new NVector(0.8)
+        };
         network.backpropagation(
                 errorTol,
-                input, expected);
+                input[0], expected[0],
+                input[1], expected[1]);
 
-        NVector rslt = network.output(0,0,input);
-        System.out.format("%nrslt - expected = %s - %s = %s%n", rslt, expected, rslt.subtract(expected));
-        System.out.println("error: "+rslt.subtract(expected).dotProduct());
-        assertThat(rslt.subtract(expected).dotProduct() < errorTol, is(true));
+        for(int i=0; i<input.length; i++)
+        {
+            NVector rslt = network.output(0,0,input[i]);
+            System.out.format("%nrslt - expected = %s - %s = %s%n", rslt, expected[i], rslt.subtract(expected[i]));
+            System.out.println("error: "+rslt.subtract(expected[i]).dotProduct());
+            assertThat(rslt.subtract(expected[i]).dotProduct() < errorTol, is(true));
+        }
     }
 }
