@@ -29,15 +29,16 @@ public class XORBackPropagationTest
                 r.nextGaussian()));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
-                .setMomentumParam(0.9)
-                .setLearningParam(0.01)
+                .setMomentumParam(0.00001)
+                .setLearningParam(0.1)
                 .setGlobalActivationFunction(phi)
                 .setFirstLayer(firstLayer)
-                .setSecondLayer(secondLayer);
+                .setSecondLayer(secondLayer)
+                .setIterations(15000);
 
         TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
-        final double tolerance = 0.1;
+        final double tolerance = 0.0001;
 
         final NVector input1 = new NVector(0, 0);
         final NVector expected1 = new NVector(0.2);
