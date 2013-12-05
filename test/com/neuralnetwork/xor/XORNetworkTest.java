@@ -3,7 +3,8 @@ package com.neuralnetwork.xor;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class XORNetworkTest {
+public class XORNetworkTest
+{
 
     @org.junit.Test
     public void testOutput() throws Exception
