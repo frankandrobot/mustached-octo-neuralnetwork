@@ -213,7 +213,7 @@ public class TwoLayerNetwork
         }
 
         //setup error
-        vTotalDifferenceSquared = new NVector(numberExamples);
+        vTotalDifferenceSquared = new NVector().setSize(numberExamples);
     }
 
     public void backpropagation(double errorBound, NVector... aInputExpected)
