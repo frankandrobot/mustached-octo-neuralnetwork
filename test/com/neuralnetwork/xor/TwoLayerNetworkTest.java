@@ -64,7 +64,7 @@ public class TwoLayerNetworkTest
         NVector example = new NVector(-1,2);
         NVector expected = new NVector(0.25);
 
-        network.initLayers(example, expected);
+        network.setupExampleInfo(example, expected);
 
         double error = network.backpropagation();
 
@@ -150,7 +150,7 @@ public class TwoLayerNetworkTest
         NVector example = new NVector(-1,2);
         NVector expected = new NVector(0.15);
 
-        network.initLayers(example, expected);
+        network.setupExampleInfo(example, expected);
 
         double error = network.backpropagation();
 

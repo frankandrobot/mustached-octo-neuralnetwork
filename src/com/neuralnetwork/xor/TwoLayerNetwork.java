@@ -5,34 +5,35 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class TwoLayerNetwork
 {
     protected LayorInfo[] aLayers;
+    protected int numberLayers;
 
-    protected NVector[] aExampleInput;
-    protected NVector[] aExpected;
-    protected NVector[] aActual;
-    protected NVector vError;
+    protected ExampleInfo[] aExamples;
     protected int numberExamples;
+
+    /**
+     * Aka ... error
+     */
+    protected NVector vTotalDifferenceSquared;
 
     final protected double alpha; /** momentum **/
     final protected double eta; /** learning parameter **/
 
     protected IActivationFunction.IDifferentiableFunction phi;
-    protected SingleLayorNeuralNetwork firstLayer;
-    protected SingleLayorNeuralNetwork secondLayer;
 
     public TwoLayerNetwork(Builder builder)
     {
         this.eta = builder.eta;
         this.alpha = builder.alpha;
         this.phi = builder.phi;
-        this.firstLayer = builder.firstPass;
-        this.secondLayer = builder.secondPass;
+
+        initializeLayers(builder);
     }
 
     static public class Builder
     {
         private IActivationFunction.IDifferentiableFunction phi;
-        private SingleLayorNeuralNetwork firstPass;
-        private SingleLayorNeuralNetwork secondPass;
+        protected SingleLayorNeuralNetwork firstLayer;
+        protected SingleLayorNeuralNetwork secondLayer;
         protected Double alpha;
         protected Double eta;
 
@@ -44,13 +45,13 @@ public class TwoLayerNetwork
 
         public Builder setFirstLayer(SingleLayorNeuralNetwork firstLayer)
         {
-            this.firstPass = firstLayer;
+            this.firstLayer = firstLayer;
             return this;
         }
 
         public Builder setSecondLayer(SingleLayorNeuralNetwork secondLayer)
         {
-            this.secondPass = secondLayer;
+            this.secondLayer = secondLayer;
             return this;
         }
 
@@ -65,6 +66,28 @@ public class TwoLayerNetwork
             this.eta = eta;
             return this;
         }
+    }
+
+    /**
+     * (vExampleInput, vExpected) form the training example
+     */
+    protected class ExampleInfo
+    {
+        protected NVector vExampleInput;
+        protected NVector vExpected;
+
+        /**
+         * Used to store the actual output for the given example input
+         */
+        protected NVector vActual;
+        /**
+         * Stores (vActual - vExpected).(vActual - vExpected) for the given example
+         * If vActual = od and vExpected = td,
+         * then these are vectors (od = [od_x,od_y], td = [td_x, td_y])
+         * so then (od - td).(od - td) = (od_x - td_x)^2 + (od_y - td_y)^2
+         * Hence the name #differenceSquared
+         */
+        protected double differenceSquared;
     }
 
     /**
@@ -113,54 +136,78 @@ public class TwoLayerNetwork
         }
     }
 
-    protected class Output
+    protected class DebugOutput
     {
         String weights()
         {
             String rslt = "";
-            for(int neuron=0; neuron< firstLayer.getNumberOfNeurons(); neuron++)
+            for(int neuron=0; neuron< aLayers[0].layer.getNumberOfNeurons(); neuron++)
             {
-                rslt += String.format("%20s | %20s %n", firstLayer.aNeurons[neuron], getNeuron(secondLayer, neuron));
+                rslt += String.format("%20s | %20s %n",
+                        getNeuron(aLayers[0].layer, neuron),
+                        getNeuron(aLayers[1] != null ? aLayers[1].layer : null, neuron));
             }
             return rslt;
         }
 
-        private String getNeuron(SingleLayorNeuralNetwork network, int neuron)
+        private String getNeuron(SingleLayorNeuralNetwork network,
+                                 int neuron)
         {
-            return neuron < network.getNumberOfNeurons()
-                    ? network.aNeurons[neuron].toString()
-                    : "";
+            if (network != null)
+                return neuron < network.getNumberOfNeurons()
+                        ? network.aNeurons[neuron].toString()
+                        : "";
+            return "";
+        }
+
+        /**
+         * Dumps the debug info for the given backprop iteration
+         *
+         * @param iteration given iteration of the backprop algorithm
+         */
+        protected void backpropDump(int iteration)
+        {
+            System.out.println("====================================================================");
+            System.out.println("Iteration = "+ iteration);
+            System.out.format("Weights =%n%s", weights());
+            System.out.format("Error = %s %n", vTotalDifferenceSquared.sumOfCoords());
+            System.out.format("%5s %20s %20s%n", "i", "Expected", "Actual");
+            for(int i=0; i< numberExamples; ++i)
+                System.out.format("%5s %20s %20s%n",
+                        i,
+                        aExamples[i].vExpected,
+                        aExamples[i].vActual);
         }
     }
 
-    protected void initializeLayers()
+    protected void initializeLayers(Builder builder)
     {
-        aLayers = new LayorInfo[secondLayer != null ? 2 : 1];
+        numberLayers = (builder.secondLayer != null) ? 2 : 1;
 
-        aLayers[0] = new LayorInfo(firstLayer);
-        if (secondLayer != null) aLayers[1] = new LayorInfo(secondLayer);
+        aLayers = new LayorInfo[numberLayers];
+
+        aLayers[0] = new LayorInfo(builder.firstLayer);
+        if (numberLayers > 1) aLayers[1] = new LayorInfo(builder.secondLayer);
     }
 
-    protected void initLayers(NVector... aInputExpected)
+    protected void setupExampleInfo(NVector... aInputExpected)
     {
         if (aInputExpected.length % 2 != 0)
             throw new IllegalArgumentException();
 
-        initializeLayers();
-
         numberExamples = aInputExpected.length / 2;
 
-        aExampleInput = new NVector[numberExamples];
-        aExpected = new NVector[numberExamples];
-        vError = new NVector().setSize(numberExamples);
-        aActual = new NVector[numberExamples];
+        aExamples = new ExampleInfo[numberExamples];
 
         //save aInputExpected
         for(int i=0; i< numberExamples; i++)
         {
-            aExampleInput[i] = aInputExpected[2*i];
-            aExpected[i] = aInputExpected[2*i+1];
+            aExamples[i].vExampleInput = aInputExpected[2*i];
+            aExamples[i].vExpected = aInputExpected[2*i+1];
         }
+
+        //setup error
+        vTotalDifferenceSquared = new NVector(numberExamples);
     }
 
     public void backpropagation(double errorBound, NVector... aInputExpected)
@@ -169,46 +216,25 @@ public class TwoLayerNetwork
             throw new IllegalArgumentException();
 
         //initialization
-        initLayers(aInputExpected);
+        setupExampleInfo(aInputExpected);
 
-        int len = 1;
+        DebugOutput debugOutput = new DebugOutput();
+        int iteration = 1;
 
-        while( backpropagation() > errorBound && len <= 1000)
+        while( backpropagation() > errorBound && iteration <= 1000)
         {
-            len = debugOutput(len);
+            debugOutput.backpropDump(iteration);
+            iteration++;
         }
-        debugOutput(len);
-    }
-
-    protected int debugOutput(int len)
-    {
-        System.out.println("====================================================================");
-        System.out.println("Iteration = "+len++);
-        System.out.format("Weights =%n%s", new Output().weights());
-        System.out.format("Error = %s %n", vError.sumOfCoords());
-        System.out.format("%5s %20s %20s%n", "i", "Expected", "Actual");
-        for(int i=0; i< numberExamples; ++i)
-            System.out.format("%5s %20s %20s%n",
-                              i,
-                              aExpected[i],
-                              aActual[i]);
-        return len;
+        debugOutput.backpropDump(iteration);
     }
 
     public NVector output(NVector input)
     {
-        if (aLayers == null)
+        if (aExamples == null)
         {
-            initializeLayers();
-            numberExamples = 1;
-
-            aExampleInput = new NVector[numberExamples];
-            aExpected = new NVector[numberExamples];
-            vError = new NVector().setSize(numberExamples);
-            aActual = new NVector[numberExamples];
+            setupExampleInfo(input, new NVector(0));
         }
-
-        aExampleInput[0] = input;
 
         return output(0, 0, input);
     }
@@ -232,19 +258,20 @@ public class TwoLayerNetwork
             constructErrorFunction(i);
         }
 
-
-        return vError.sumOfCoords();
+        return vTotalDifferenceSquared.sumOfCoords();
     }
 
     protected void constructErrorFunction(int example)
     {
-        NVector actual = forwardPropagation(example);
-        vError.set(example, aExpected[example].subtract(actual).dotProduct());
+        NVector vActual = forwardPropagation(example);
+        NVector vExpected = aExamples[example].vExpected;
+
+        vTotalDifferenceSquared.set(example, vExpected.subtract(vActual).dotProduct());
     }
 
     protected NVector forwardPropagation(int example)
     {
-        return output(example, 0, aExampleInput[example]);
+        return output(example, 0, aExamples[example].vExampleInput);
     }
 
     /**
@@ -273,7 +300,7 @@ public class TwoLayerNetwork
         }
         else
         {
-            aActual[example] = new NVector(aLayers[layer].vImpulseFunction);
+            aExamples[example].vActual = new NVector(aLayers[layer].vImpulseFunction);
         }
         return layorInfo.vImpulseFunction;
     }
@@ -333,7 +360,7 @@ public class TwoLayerNetwork
             // (oj - tj) * phi'_j(v^L_j)
             final double inducedLocalField = aLayers[layerLevel].vInducedLocalField.get(neuron);
             final double impulseFunction = aLayers[layerLevel].vImpulseFunction.get(neuron);
-            return (aExpected[example].get(neuron) - impulseFunction)
+            return (aExamples[example].vExpected.get(neuron) - impulseFunction)
                     * phi.derivative(inducedLocalField);
         }
         else
