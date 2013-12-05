@@ -12,21 +12,29 @@ public class XORBackPropagationTest
     {
         IActivationFunction.SigmoidUnityFunction phi = new IActivationFunction.SigmoidUnityFunction();
 
-        final long stableSeed = 10001;
+        final long stableSeed = 991000;
         Random r = new Random(stableSeed);
 
         SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
         firstLayer.setNeurons(
                 new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
                 new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
+                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
+                new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5),
                 new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5)
         );
         SingleLayorNeuralNetwork secondLayer = new SingleLayorNeuralNetwork();
-        secondLayer.setNeurons(new Neuron(phi, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5, r.nextDouble()-0.5));
+        secondLayer.setNeurons(new Neuron(phi,
+                r.nextDouble()-0.5,
+                r.nextDouble()-0.5,
+                r.nextDouble()-0.5,
+                r.nextDouble()-0.5,
+                r.nextDouble()-0.5,
+                r.nextDouble()-0.5));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
-                .setMomentumParam(0.05)
-                .setLearningParam(9.0)
+                .setMomentumParam(0.12)
+                .setLearningParam(0.99)
                 .setGlobalActivationFunction(phi)
                 .setFirstLayer(firstLayer)
                 .setSecondLayer(secondLayer);

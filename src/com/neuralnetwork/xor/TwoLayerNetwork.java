@@ -225,6 +225,10 @@ public class TwoLayerNetwork
             constructErrorFunction(i);
             constructGradients(i);
             adjustWeights();
+        }
+
+        for(int i=0; i< numberExamples; i++)
+        {
             constructErrorFunction(i);
         }
 

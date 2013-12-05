@@ -208,7 +208,7 @@ public class TwoLayerNetworkTest
     {
         IActivationFunction.SigmoidUnityFunction phi = new IActivationFunction.SigmoidUnityFunction();
 
-        final long stableSeed = 10001;
+        final long stableSeed = 100012;
         Random r = new Random(stableSeed);
 
         SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
@@ -220,7 +220,7 @@ public class TwoLayerNetworkTest
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
                 .setMomentumParam(0.05)
-                .setLearningParam(9.0)
+                .setLearningParam(0.9)
                 .setGlobalActivationFunction(phi)
                 .setFirstLayer(firstLayer)
                 .setSecondLayer(secondLayer);
