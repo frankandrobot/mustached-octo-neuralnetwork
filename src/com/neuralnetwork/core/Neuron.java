@@ -1,4 +1,6 @@
-package com.neuralnetwork.xor;
+package com.neuralnetwork.core;
+
+import com.neuralnetwork.core.interfaces.IActivationFunction;
 
 /**
  * By convention, the bias is at the _end_ of the weights list

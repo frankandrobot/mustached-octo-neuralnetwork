@@ -1,5 +1,7 @@
 package com.neuralnetwork.xor;
 
+import com.neuralnetwork.core.NVector;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

@@ -1,5 +1,12 @@
 package com.neuralnetwork.xor;
 
+import com.neuralnetwork.core.ActivationFunctions;
+import com.neuralnetwork.core.NVector;
+import com.neuralnetwork.core.Neuron;
+import com.neuralnetwork.core.SingleLayerNeuralNetwork;
+import com.neuralnetwork.core.interfaces.IActivationFunction;
+import com.neuralnetwork.core.interfaces.INeuralNetwork;
+
 /**
  * This neural network solves the XOR problem
  */
@@ -9,15 +16,15 @@ public class XORNetwork implements INeuralNetwork
 
     public XORNetwork()
     {
-        IActivationFunction phi = new IActivationFunction.ThresholdFunction();
-        INeuralNetwork firstPass = new SingleLayorNeuralNetwork();
-        INeuralNetwork secondPass = new SingleLayorNeuralNetwork();
+        IActivationFunction phi = new ActivationFunctions.ThresholdFunction();
+        INeuralNetwork firstPass = new SingleLayerNeuralNetwork();
+        INeuralNetwork secondPass = new SingleLayerNeuralNetwork();
 
-        ((SingleLayorNeuralNetwork)firstPass)
+        ((SingleLayerNeuralNetwork)firstPass)
                 .setNeurons(new Neuron(phi, 1f,1f,-1.5f),
                         new Neuron(phi, 1f,1f,-0.5f));
 
-        ((SingleLayorNeuralNetwork)secondPass)
+        ((SingleLayerNeuralNetwork)secondPass)
                 .setNeurons(new Neuron(phi, -2f,1f,-0.5f));
 
         aLayers = new INeuralNetwork[2];

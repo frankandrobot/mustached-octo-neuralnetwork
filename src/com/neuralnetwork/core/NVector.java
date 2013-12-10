@@ -1,4 +1,4 @@
-package com.neuralnetwork.xor;
+package com.neuralnetwork.core;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

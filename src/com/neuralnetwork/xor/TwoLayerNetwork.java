@@ -1,5 +1,9 @@
 package com.neuralnetwork.xor;
 
+import com.neuralnetwork.core.NVector;
+import com.neuralnetwork.core.Neuron;
+import com.neuralnetwork.core.SingleLayerNeuralNetwork;
+import com.neuralnetwork.core.interfaces.IActivationFunction;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class TwoLayerNetwork
@@ -39,8 +43,8 @@ public class TwoLayerNetwork
     static public class Builder
     {
         private IActivationFunction.IDifferentiableFunction phi;
-        protected SingleLayorNeuralNetwork firstLayer;
-        protected SingleLayorNeuralNetwork secondLayer;
+        protected SingleLayerNeuralNetwork firstLayer;
+        protected SingleLayerNeuralNetwork secondLayer;
         protected Double alpha;
         protected Double eta;
         protected int numberIterations;
@@ -51,13 +55,13 @@ public class TwoLayerNetwork
             return this;
         }
 
-        public Builder setFirstLayer(SingleLayorNeuralNetwork firstLayer)
+        public Builder setFirstLayer(SingleLayerNeuralNetwork firstLayer)
         {
             this.firstLayer = firstLayer;
             return this;
         }
 
-        public Builder setSecondLayer(SingleLayorNeuralNetwork secondLayer)
+        public Builder setSecondLayer(SingleLayerNeuralNetwork secondLayer)
         {
             this.secondLayer = secondLayer;
             return this;
@@ -113,7 +117,7 @@ public class TwoLayerNetwork
      */
     protected class LayorInfo
     {
-        final public SingleLayorNeuralNetwork layer;
+        final public SingleLayerNeuralNetwork layer;
         /**
          * For each neuron k in the layer,
          * store v_k (induced local field).
@@ -148,7 +152,7 @@ public class TwoLayerNetwork
          */
         public NVector[] aWeightAdjustments;
 
-        public LayorInfo(SingleLayorNeuralNetwork layer)
+        public LayorInfo(SingleLayerNeuralNetwork layer)
         {
             this.layer = layer;
             this.vInducedLocalField = new NVector().setSize(this.layer.getNumberOfNeurons());
@@ -180,12 +184,12 @@ public class TwoLayerNetwork
             return rslt;
         }
 
-        private String getNeuron(SingleLayorNeuralNetwork network,
+        private String getNeuron(SingleLayerNeuralNetwork network,
                                  int neuron)
         {
             if (network != null)
                 return neuron < network.getNumberOfNeurons()
-                        ? network.aNeurons[neuron].toString()
+                        ? network.getNeuron(neuron).toString()
                         : "";
             return "";
         }

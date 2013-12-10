@@ -1,10 +1,11 @@
-package com.neuralnetwork.xor;
+package com.neuralnetwork.core;
 
+import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
-public class SingleLayorNeuralNetwork implements INeuralNetwork, Iterable<Neuron>
+public class SingleLayerNeuralNetwork implements INeuralNetwork, Iterable<Neuron>
 {
     protected Neuron[] aNeurons;
     /**
@@ -12,7 +13,7 @@ public class SingleLayorNeuralNetwork implements INeuralNetwork, Iterable<Neuron
      */
     private NVector vLatestOutput;
 
-    public SingleLayorNeuralNetwork() { }
+    public SingleLayerNeuralNetwork() { }
 
     /**
      * For each neuron k, let W_k be its vector of weights.
@@ -93,18 +94,6 @@ public class SingleLayorNeuralNetwork implements INeuralNetwork, Iterable<Neuron
         };
     }
 
-    public NVector weights()
-    {
-        NVector rslt = new NVector(aNeurons[0].getWeights());
-        for(Neuron neuron:aNeurons)
-        {
-            if (neuron != aNeurons[0])
-            {
-                rslt = rslt.concatenate(neuron.getWeights());
-            }
-        }
-
-        return rslt;
-    }
+    public Neuron getNeuron(int neuron) { return aNeurons[neuron]; }
 
 }

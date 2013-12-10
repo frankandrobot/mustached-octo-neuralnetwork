@@ -1,5 +1,7 @@
-package com.neuralnetwork.xor;
+package com.neuralnetwork.core;
 
+import com.neuralnetwork.core.ActivationFunctions;
+import com.neuralnetwork.core.interfaces.IActivationFunction;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -10,7 +12,7 @@ public class IActivationFunctionTest
     @Test
     public void testSigmoidFunction()
     {
-        IActivationFunction sig = new IActivationFunction.SigmoidFunction(2.0);
+        IActivationFunction sig = new ActivationFunctions.SigmoidFunction(2.0);
 
 
         assertThat(output(sig, 1.0), is("0.880797"));
@@ -26,7 +28,7 @@ public class IActivationFunctionTest
     @Test
     public void testUnitySigmoidFunction()
     {
-        IActivationFunction sig = new IActivationFunction.SigmoidUnityFunction();
+        IActivationFunction sig = new ActivationFunctions.SigmoidUnityFunction();
 
 
         assertThat(output(sig, 0.0), is("0.500000"));
@@ -48,7 +50,7 @@ public class IActivationFunctionTest
     @Test
     public void testSigmoidFunctionDeriv()
     {
-        IActivationFunction.IDifferentiableFunction sig = new IActivationFunction.SigmoidFunction(2.0);
+        IActivationFunction.IDifferentiableFunction sig = new ActivationFunctions.SigmoidFunction(2.0);
 
 
         assertThat(output(sig, 0.0), is("0.500000"));
@@ -65,7 +67,7 @@ public class IActivationFunctionTest
     @Test
     public void testUnitySigmoidFunctionDeriv()
     {
-        IActivationFunction.IDifferentiableFunction sig = new IActivationFunction.SigmoidUnityFunction();
+        IActivationFunction.IDifferentiableFunction sig = new ActivationFunctions.SigmoidUnityFunction();
 
         assertThat(output(sig, 0.0), is("0.250000"));
         assertThat(output(sig, 3.0), is("0.045177"));

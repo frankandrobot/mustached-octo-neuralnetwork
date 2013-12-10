@@ -1,5 +1,10 @@
 package com.neuralnetwork.xor;
 
+import com.neuralnetwork.core.ActivationFunctions;
+import com.neuralnetwork.core.NVector;
+import com.neuralnetwork.core.Neuron;
+import com.neuralnetwork.core.SingleLayerNeuralNetwork;
+import com.neuralnetwork.core.interfaces.IActivationFunction;
 import org.junit.Test;
 
 import java.util.Random;
@@ -27,8 +32,8 @@ public class TwoLayerNetworkTest
     @Test
     public void testOneLayerNetworkOutput()
     {
-        IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
-        SingleLayorNeuralNetwork layer = new SingleLayorNeuralNetwork();
+        IActivationFunction.IDifferentiableFunction phi = new ActivationFunctions.SigmoidUnityFunction();
+        SingleLayerNeuralNetwork layer = new SingleLayerNeuralNetwork();
         layer.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
@@ -52,8 +57,8 @@ public class TwoLayerNetworkTest
         final double[] aWeights = {0.25, 0.75, 0.5};
         final double eta = 0.9;
 
-        IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
-        SingleLayorNeuralNetwork layer = new SingleLayorNeuralNetwork();
+        IActivationFunction.IDifferentiableFunction phi = new ActivationFunctions.SigmoidUnityFunction();
+        SingleLayerNeuralNetwork layer = new SingleLayerNeuralNetwork();
         layer.setNeurons(new Neuron(phi, aWeights));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
@@ -83,17 +88,17 @@ public class TwoLayerNetworkTest
             double deltaWi = eta*gradient*example.get(i);
             assertThat(network.getLayer(0).aWeightAdjustments[0].get(i), is(deltaWi));
             double wi = aWeights[i] + deltaWi;
-            assertThat(network.getLayer(0).layer.aNeurons[0].getWeight(i), is(wi));
+            assertThat(network.getLayer(0).layer.getNeuron(0).getWeight(i), is(wi));
         }
     }
 
     @Test
     public void testNetworkOutput()
     {
-        IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
-        SingleLayorNeuralNetwork layer1 = new SingleLayorNeuralNetwork();
+        IActivationFunction.IDifferentiableFunction phi = new ActivationFunctions.SigmoidUnityFunction();
+        SingleLayerNeuralNetwork layer1 = new SingleLayerNeuralNetwork();
         layer1.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
-        SingleLayorNeuralNetwork layer2 = new SingleLayorNeuralNetwork();
+        SingleLayerNeuralNetwork layer2 = new SingleLayerNeuralNetwork();
         layer2.setNeurons(new Neuron(phi, 0.10, -0.25));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
@@ -140,10 +145,10 @@ public class TwoLayerNetworkTest
         final double[] orig_wh = {0.25, 0.75, 0.5};
         final double[] orig_wo = {0.10, -0.35};
 
-        IActivationFunction.IDifferentiableFunction phi = new IActivationFunction.SigmoidUnityFunction();
-        SingleLayorNeuralNetwork layer1 = new SingleLayorNeuralNetwork();
+        IActivationFunction.IDifferentiableFunction phi = new ActivationFunctions.SigmoidUnityFunction();
+        SingleLayerNeuralNetwork layer1 = new SingleLayerNeuralNetwork();
         layer1.setNeurons(new Neuron(phi, orig_wh));
-        SingleLayorNeuralNetwork layer2 = new SingleLayorNeuralNetwork();
+        SingleLayerNeuralNetwork layer2 = new SingleLayerNeuralNetwork();
         layer2.setNeurons(new Neuron(phi, orig_wo));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
@@ -175,8 +180,8 @@ public class TwoLayerNetworkTest
         double wo2 = orig_wo[1] + ETA*outputGradient;
         double wh1 = orig_wh[0] + ETA*hiddenGradient*example.get(0);
 
-        final Neuron nh = network.aLayers[0].layer.aNeurons[0];
-        final Neuron no = network.aLayers[1].layer.aNeurons[0];
+        final Neuron nh = network.aLayers[0].layer.getNeuron(0);
+        final Neuron no = network.aLayers[1].layer.getNeuron(0);
 
         //check that gradients calculated correctly
         assertThat(network.aLayers[1].vGradients.get(0), is(outputGradient));
@@ -214,16 +219,16 @@ public class TwoLayerNetworkTest
     @Test
     public void testSingleExample()
     {
-        IActivationFunction.SigmoidUnityFunction phi = new IActivationFunction.SigmoidUnityFunction();
+        ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
         final long stableSeed = 100012;
         Random r = new Random(stableSeed);
 
-        SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
+        SingleLayerNeuralNetwork firstLayer = new SingleLayerNeuralNetwork();
         firstLayer.setNeurons(
                 new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()),
                 new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()));
-        SingleLayorNeuralNetwork secondLayer = new SingleLayorNeuralNetwork();
+        SingleLayerNeuralNetwork secondLayer = new SingleLayerNeuralNetwork();
         secondLayer.setNeurons(new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
@@ -251,16 +256,16 @@ public class TwoLayerNetworkTest
     @Test
     public void testTwoExamples()
     {
-        IActivationFunction.SigmoidUnityFunction phi = new IActivationFunction.SigmoidUnityFunction();
+        ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
         final long stableSeed = 100012;
         Random r = new Random(stableSeed);
 
-        SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
+        SingleLayerNeuralNetwork firstLayer = new SingleLayerNeuralNetwork();
         firstLayer.setNeurons(
                 new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()),
                 new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()));
-        SingleLayorNeuralNetwork secondLayer = new SingleLayorNeuralNetwork();
+        SingleLayerNeuralNetwork secondLayer = new SingleLayerNeuralNetwork();
         secondLayer.setNeurons(new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()));
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()

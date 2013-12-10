@@ -1,5 +1,10 @@
 package com.neuralnetwork.xor;
 
+import com.neuralnetwork.core.ActivationFunctions;
+import com.neuralnetwork.core.NVector;
+import com.neuralnetwork.core.Neuron;
+import com.neuralnetwork.core.SingleLayerNeuralNetwork;
+
 import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -10,18 +15,18 @@ public class XORBackPropagationTest
     @org.junit.Test
     public void testAllErrorsDecrease() throws Exception
     {
-        IActivationFunction.SigmoidUnityFunction phi = new IActivationFunction.SigmoidUnityFunction();
+        ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
         final long stableSeed = 99991000;
         Random r = new Random(stableSeed);
 
-        SingleLayorNeuralNetwork firstLayer = new SingleLayorNeuralNetwork();
+        SingleLayerNeuralNetwork firstLayer = new SingleLayerNeuralNetwork();
         firstLayer.setNeurons(
                 new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()),
                 new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()),
                 new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian())
         );
-        SingleLayorNeuralNetwork secondLayer = new SingleLayorNeuralNetwork();
+        SingleLayerNeuralNetwork secondLayer = new SingleLayerNeuralNetwork();
         secondLayer.setNeurons(new Neuron(phi,
                 r.nextGaussian(),
                 r.nextGaussian(),

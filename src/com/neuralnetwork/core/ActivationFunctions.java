@@ -1,15 +1,11 @@
-package com.neuralnetwork.xor;
+package com.neuralnetwork.core;
 
-public interface IActivationFunction
+import com.neuralnetwork.core.interfaces.IActivationFunction;
+
+final public class ActivationFunctions
 {
-    public double apply(double v);
 
-    public interface IDifferentiableFunction extends IActivationFunction
-    {
-        public double derivative(double v);
-    }
-
-    public class ThresholdFunction implements IActivationFunction
+    public static class ThresholdFunction implements IActivationFunction
     {
 
         @Override
@@ -19,7 +15,7 @@ public interface IActivationFunction
         }
     }
 
-    public class SigmoidFunction implements IDifferentiableFunction
+    public static class SigmoidFunction implements IActivationFunction.IDifferentiableFunction
     {
         private final double slope;
         private final double negSlope;
@@ -47,7 +43,7 @@ public interface IActivationFunction
         }
     }
 
-    public class SigmoidUnityFunction extends SigmoidFunction
+    public static class SigmoidUnityFunction extends SigmoidFunction
     {
 
         public SigmoidUnityFunction()

@@ -1,4 +1,6 @@
-package com.neuralnetwork.xor;
+package com.neuralnetwork.core.interfaces;
+
+import com.neuralnetwork.core.NVector;
 
 public interface INeuralNetwork
 {
