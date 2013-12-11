@@ -24,7 +24,7 @@ public class FeatureMap
         receptiveFieldSize = builder.receptiveFieldSize;
         sharedNeuron = builder.sharedNeuron;
 
-        final int n = inputSize - receptiveFieldSize;
+        final int n = inputSize - receptiveFieldSize + 1;
         aFeatureMap = new double[n][n];
 
         outputClass = new OutputClass();
@@ -60,13 +60,18 @@ public class FeatureMap
 
     protected class OutputClass
     {
-        NVector neuronInput = new NVector().setSize(receptiveFieldSize * receptiveFieldSize);
+        NVector neuronInput = new NVector().setSize(receptiveFieldSize * receptiveFieldSize + 1);
+
+        public OutputClass()
+        {
+            neuronInput.set(neuronInput.size()-1, 1);
+        }
 
         public void copy(final double[][]input, final int i, final int j)
         {
             int len=0;
-            for(int a=i; a< receptiveFieldSize; a++)
-                for(int b=j; b< receptiveFieldSize; b++)
+            for(int a=i; a < i+receptiveFieldSize; a++)
+                for(int b=j; b < j+receptiveFieldSize; b++)
                     neuronInput.set(len++, input[a][b]);
         }
 
@@ -78,8 +83,8 @@ public class FeatureMap
 
     public FeatureMap output(double[][] input)
     {
-        for(int i=0; i<input.length - receptiveFieldSize; i++)
-            for(int j=0; j<input[i].length - receptiveFieldSize; j++)
+        for(int i=0; i<=input.length - receptiveFieldSize; i++)
+            for(int j=0; j<=input[i].length - receptiveFieldSize; j++)
             {
                 //copy over input into data struct
                 outputClass.copy(input, i, j);
