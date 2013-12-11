@@ -5,27 +5,25 @@ import com.neuralnetwork.core.Neuron;
 
 public class FeatureMap
 {
+    protected final int inputSize;
     protected double[][] aFeatureMap;
 
-    protected final int inputSize;
-
-    protected Neuron sharedNeuron;
+    protected final MapFunction mapFunction;
     protected final int receptiveFieldSize;
 
     protected final OutputClass outputClass;
 
-    public FeatureMap(Builder builder)
-    {
-        if (builder.inputSize - builder.receptiveFieldSize <= 0)
+
+    public FeatureMap(Builder builder) {
+        if (builder.inputSize - builder.mapFunction.getReceptiveFieldSize() + 1 <= 0)
             throw new IllegalArgumentException("Receptive field size can't be larger than the input size");
 
         inputSize = builder.inputSize;
 
-        receptiveFieldSize = builder.receptiveFieldSize;
-        sharedNeuron = builder.sharedNeuron;
+        mapFunction = builder.mapFunction;
+        receptiveFieldSize = mapFunction.getReceptiveFieldSize();
 
-        final int n = inputSize - receptiveFieldSize + 1;
-        aFeatureMap = new double[n][n];
+        aFeatureMap = mapFunction.getFeatureMapCreator().createFeatureMap(inputSize);
 
         outputClass = new OutputClass();
     }
@@ -36,26 +34,21 @@ public class FeatureMap
          * The FeatureMap will operate on arrays of size #inputSize x #inputSize
          */
         private int inputSize;
-        /**
-         * Each neuron will be responsible for #receptiveFieldSize x #receptiveFieldSize square in the input
-         */
-        private int receptiveFieldSize;
-        private Neuron sharedNeuron;
 
-        public void setInputSize(int inputSize)
+        private MapFunction mapFunction;
+
+        public Builder setInputSize(int inputSize)
         {
             this.inputSize = inputSize;
+            return this;
         }
 
-        public void setReceptiveFieldSize(int receptiveFieldSize)
+        public Builder setMapFunction(MapFunction mapFunction)
         {
-            this.receptiveFieldSize = receptiveFieldSize;
+            this.mapFunction = mapFunction;
+            return this;
         }
 
-        public void setSharedNeuron(Neuron neuron)
-        {
-            this.sharedNeuron = neuron;
-        }
     }
 
     protected class OutputClass
@@ -74,10 +67,77 @@ public class FeatureMap
                 for(int b=j; b < j+receptiveFieldSize; b++)
                     neuronInput.set(len++, input[a][b]);
         }
+    }
 
-        protected void convolve(final int i, final int j)
+    static abstract protected class MapFunction
+    {
+        protected FeatureMapCreator featureMapCreator;
+
+        abstract public double apply(NVector input);
+
+        abstract public int getReceptiveFieldSize();
+
+        public FeatureMapCreator getFeatureMapCreator()
         {
-            aFeatureMap[i][j] = sharedNeuron.output(neuronInput);
+            return featureMapCreator;
+        }
+    }
+
+    protected interface FeatureMapCreator
+    {
+        public double[][] createFeatureMap(int inputSize);
+
+        public int getReceptiveFieldSize();
+    }
+
+    static public class Convolution extends MapFunction
+    {
+        protected Neuron sharedNeuron;
+
+        public Convolution(Neuron neuron, int receptiveFieldSize)
+        {
+            if (receptiveFieldSize * receptiveFieldSize != neuron.getNumberOfWeights() - 1)
+                throw new IllegalArgumentException("receptive field size squared must equal the number of weights minus the bias"
+                        + "; otherwise it's not a receptive field");
+
+            featureMapCreator = new ConvolutionFeatureMapCreator(receptiveFieldSize);
+            sharedNeuron = neuron;
+        }
+
+        @Override
+        public double apply(NVector input)
+        {
+            return sharedNeuron.output(input);
+        }
+
+        @Override
+        public int getReceptiveFieldSize()
+        {
+            return featureMapCreator.getReceptiveFieldSize();
+        }
+    }
+
+    static protected class ConvolutionFeatureMapCreator implements FeatureMapCreator
+    {
+        final protected int receptiveFieldSize;
+
+        protected ConvolutionFeatureMapCreator(final int receptiveFieldSize)
+        {
+            this.receptiveFieldSize = receptiveFieldSize;
+        }
+
+        @Override
+        public double[][] createFeatureMap(int inputSize)
+        {
+            final int n = inputSize - receptiveFieldSize + 1;
+            return new double[n][n];
+
+        }
+
+        @Override
+        public int getReceptiveFieldSize()
+        {
+            return receptiveFieldSize;
         }
     }
 
@@ -89,7 +149,7 @@ public class FeatureMap
                 //copy over input into data struct
                 outputClass.copy(input, i, j);
                 //do it
-                outputClass.convolve(i, j);
+                aFeatureMap[i][j] = mapFunction.apply(outputClass.neuronInput);
             }
         return this;
     }

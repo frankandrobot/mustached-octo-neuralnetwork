@@ -23,9 +23,10 @@ public class FeatureMapTest
         FeatureMap.Builder builder = new FeatureMap.Builder();
         ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
         Neuron neuron = new Neuron(phi, weights);
-        builder.setSharedNeuron(neuron);
-        builder.setInputSize(3);
-        builder.setReceptiveFieldSize(2);
+        FeatureMap.MapFunction mapFunction = new FeatureMap.Convolution(neuron, 2);
+
+        builder.setInputSize(3)
+               .setMapFunction(mapFunction);
         FeatureMap featureMap = new FeatureMap(builder);
 
         featureMap.output(input);
