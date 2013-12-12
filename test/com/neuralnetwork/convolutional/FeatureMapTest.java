@@ -23,7 +23,8 @@ public class FeatureMapTest
         FeatureMap.Builder builder = new FeatureMap.Builder();
         ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
         Neuron neuron = new Neuron(phi, weights);
-        FeatureMap.MapFunction mapFunction = new FeatureMap.Convolution(neuron, 2);
+        FeatureMap.MapFunction mapFunction = new FeatureMap.ConvolutionFunction(neuron);
+        mapFunction.setReceptiveFieldSize(2);
 
         builder.setInputSize(3)
                .setMapFunction(mapFunction);
@@ -54,5 +55,52 @@ public class FeatureMapTest
         o21 = phi.apply(o21);
 
         assertThat(featureMap.aFeatureMap[1][0], is(o21));
+    }
+
+    @Test
+    public void testSubsampling()
+    {
+        final double[][] input = {
+                new double[]{1, 2, 3, 4}
+                ,new double[]{5, 6, 7, 8}
+                ,new double[]{9, 10, 11, 12}
+                ,new double[]{13, 14, 15, 16}
+        };
+
+        final double[] weights = {0.3, 0.4};
+
+        FeatureMap.Builder builder = new FeatureMap.Builder();
+        ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
+        Neuron neuron = new Neuron(phi, weights);
+        FeatureMap.MapFunction mapFunction = new FeatureMap.SubSamplingFunction(neuron);
+        mapFunction.setReceptiveFieldSize(2);
+
+        builder.setInputSize(4)
+                .setMapFunction(mapFunction);
+        FeatureMap featureMap = new FeatureMap(builder);
+
+        featureMap.output(input);
+
+        //1 2 3 4 5 ... 24 25 26 27 28
+        assertThat(featureMap.aFeatureMap.length, is(2) );
+
+        double o11 = (1 + 2 + 5 + 6) / 4.0;
+        o11 = o11 * weights[0] + weights[1];
+        o11 = phi.apply(o11);
+
+        assertThat(featureMap.aFeatureMap[0][0], is(o11));
+
+        double o12 = (3 + 4 + 7 + 8) / 4.0;
+        o12 = o12 * weights[0] + weights[1];
+        o12 = phi.apply(o12);
+
+        assertThat(featureMap.aFeatureMap[0][1], is(o12));
+
+        double o21 = (9 + 10 + 13 + 14) / 4.0;
+        o21 = o21 * weights[0] + weights[1];
+        o21 = phi.apply(o21);
+
+        assertThat(featureMap.aFeatureMap[1][0], is(o21));
+
     }
 }
