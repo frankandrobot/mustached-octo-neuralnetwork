@@ -5,7 +5,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
-public class SingleLayerNeuralNetwork implements INeuralNetwork<NVector>, Iterable<Neuron>
+public class SingleLayerNeuralNetwork implements INeuralNetwork<NVector,NVector>, Iterable<Neuron>
 {
     protected Neuron[] aNeurons;
     /**

@@ -111,7 +111,7 @@ public class MultiLayerNetwork
      */
     protected class LayorInfo
     {
-        final public INeuralNetwork layer;
+        final public INeuralNetwork<?,?> layer;
         /**
          * For each neuron k in the layer,
          * store v_k (induced local field).
