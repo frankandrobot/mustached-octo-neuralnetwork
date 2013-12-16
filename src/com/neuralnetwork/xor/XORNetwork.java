@@ -7,6 +7,8 @@ import com.neuralnetwork.core.SingleLayerNeuralNetwork;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 
+import java.util.Iterator;
+
 /**
  * This neural network solves the XOR problem
  */
@@ -59,5 +61,17 @@ public class XORNetwork implements INeuralNetwork
             return output(layer+1, output);
         }
         return output;
+    }
+
+    @Override
+    public Neuron getNeuron(int neuron)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Iterator<Neuron> iterator()
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
