@@ -20,7 +20,7 @@ public class FeatureMap
     protected final MapFunction mapFunction;
 
     public FeatureMap(Builder builder) {
-        if (builder.inputSize - builder.mapFunction.getReceptiveFieldSize() + 1 <= 0)
+        if (builder.inputSize - builder.mapFunction.sqrtReceptiveFieldSize + 1 <= 0)
             throw new IllegalArgumentException("Receptive field size can't be larger than the input size");
 
         inputSize = builder.inputSize;
@@ -76,7 +76,12 @@ public class FeatureMap
 
     static abstract protected class MapFunction
     {
+        /**
+         * Receptive field size is the size of the input of the neuron.
+         * It should be a square.
+         */
         protected int receptiveFieldSize;
+        protected int sqrtReceptiveFieldSize;
         protected OutputClass outputClass = new OutputClass();
 
         abstract protected double apply(NVector input);
@@ -103,11 +108,12 @@ public class FeatureMap
         @Override
         public MapFunction setReceptiveFieldSize(int receptiveFieldSize)
         {
-            if (receptiveFieldSize * receptiveFieldSize != sharedNeuron.getNumberOfWeights() - 1)
-                throw new IllegalArgumentException("receptive field size squared must equal the number of weights minus the bias"
+            if (receptiveFieldSize != sharedNeuron.getNumberOfWeights() - 1)
+                throw new IllegalArgumentException("receptive field size must equal the number of weights minus the bias"
                         + "; otherwise it's not a receptive field");
 
             this.receptiveFieldSize = receptiveFieldSize;
+            this.sqrtReceptiveFieldSize = (int) Math.sqrt(receptiveFieldSize);
             outputClass.setMapInput(generateMapInputCache());
             return this;
         }
@@ -121,7 +127,7 @@ public class FeatureMap
         @Override
         protected double[][] createFeatureMap(int inputSize)
         {
-            final int n = inputSize - receptiveFieldSize + 1;
+            final int n = inputSize - sqrtReceptiveFieldSize + 1;
             return new double[n][n];
 
         }
@@ -129,7 +135,7 @@ public class FeatureMap
         @Override
         protected NVector generateMapInputCache()
         {
-            NVector neuronInput = new NVector().setSize(receptiveFieldSize * receptiveFieldSize + 1);
+            NVector neuronInput = new NVector().setSize(receptiveFieldSize + 1);
             neuronInput.set(neuronInput.size()-1, 1);
             return neuronInput;
         }
@@ -137,11 +143,11 @@ public class FeatureMap
         @Override
         protected void output(double[][] input, double[][] aFeatureMap)
         {
-            for(int i=0; i<=input.length - receptiveFieldSize; i++)
-                for(int j=0; j<=input[i].length - receptiveFieldSize; j++)
+            for(int i=0; i<=input.length - sqrtReceptiveFieldSize; i++)
+                for(int j=0; j<=input[i].length - sqrtReceptiveFieldSize; j++)
                 {
                     //copy over input into data struct
-                    outputClass.copy(input, receptiveFieldSize, i, j);
+                    outputClass.copy(input, sqrtReceptiveFieldSize, i, j);
                     //do it
                     aFeatureMap[i][j] = apply(outputClass.mapInput);
                 }
@@ -149,7 +155,7 @@ public class FeatureMap
     }
 
     /**
-     * Takes the average of the input of size #receptiveFieldSize x #receptiveFieldSize
+     * Takes the average of the input of size #sqrtReceptiveFieldSize x #sqrtReceptiveFieldSize
      * then multiplies it by a scale factor, adds a bias, then applies an activation function
      */
     static public class SubSamplingFunction extends MapFunction
@@ -158,7 +164,6 @@ public class FeatureMap
         /**
          * For speed improvements
          */
-        protected double oneOverInputSize;
         protected NVector neuronInput;
 
         public SubSamplingFunction(Neuron neuron)
@@ -171,8 +176,7 @@ public class FeatureMap
         @Override
         protected double apply(NVector input)
         {
-            double avg = oneOverInputSize * input.sumOfCoords();
-            neuronInput.set(0, avg);
+            neuronInput.set(0, input.sumOfCoords());
             return sharedNeuron.output(neuronInput);
         }
 
@@ -180,7 +184,7 @@ public class FeatureMap
         public MapFunction setReceptiveFieldSize(int receptiveFieldSize)
         {
             this.receptiveFieldSize = receptiveFieldSize;
-            this.oneOverInputSize = 1.0 / (receptiveFieldSize * receptiveFieldSize);
+            this.sqrtReceptiveFieldSize = (int) Math.sqrt(receptiveFieldSize);
             outputClass.setMapInput(generateMapInputCache());
             return this;
         }
@@ -188,25 +192,25 @@ public class FeatureMap
         @Override
         protected double[][] createFeatureMap(int inputSize)
         {
-            if (inputSize % receptiveFieldSize != 0)
+            if (inputSize % sqrtReceptiveFieldSize != 0)
                 throw new IllegalArgumentException("input size must be a multiple of the receptive field size");
-            final int n = inputSize / receptiveFieldSize;
+            final int n = inputSize / sqrtReceptiveFieldSize;
             return new double[n][n];
         }
 
         @Override
         public NVector generateMapInputCache()
         {
-            return new NVector().setSize(receptiveFieldSize * receptiveFieldSize);
+            return new NVector().setSize(receptiveFieldSize);
         }
 
         public void output(double[][] input, double[][] aFeatureMap)
         {
-            for(int i=0, smallI=0; i<=input.length - receptiveFieldSize; i+=receptiveFieldSize, smallI++)
-                for(int j=0, smallJ=0; j<=input[i].length - receptiveFieldSize; j+=receptiveFieldSize, smallJ++)
+            for(int i=0, smallI=0; i<=input.length - sqrtReceptiveFieldSize; i+=sqrtReceptiveFieldSize, smallI++)
+                for(int j=0, smallJ=0; j<=input[i].length - sqrtReceptiveFieldSize; j+=sqrtReceptiveFieldSize, smallJ++)
                 {
                     //copy over input into data struct
-                    outputClass.copy(input, receptiveFieldSize, i, j);
+                    outputClass.copy(input, sqrtReceptiveFieldSize, i, j);
                     //do it
                     aFeatureMap[smallI][smallJ] = apply(outputClass.mapInput);
                 }
