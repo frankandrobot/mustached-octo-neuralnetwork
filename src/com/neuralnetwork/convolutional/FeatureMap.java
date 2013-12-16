@@ -168,6 +168,9 @@ public class FeatureMap
 
         public SubSamplingFunction(Neuron neuron)
         {
+            if (neuron.getNumberOfWeights() != 2)
+                throw new IllegalArgumentException(SubSamplingFunction.class.getSimpleName()+" needs exactly 2 weights");
+
             sharedNeuron = neuron;
             neuronInput = new NVector().setSize(2);
             neuronInput.set(1, 1);
@@ -221,5 +224,10 @@ public class FeatureMap
     {
         mapFunction.output(input, aFeatureMap);
         return this;
+    }
+
+    public double[][] getFeatureMap()
+    {
+        return aFeatureMap;
     }
 }
