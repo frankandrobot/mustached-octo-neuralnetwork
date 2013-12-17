@@ -350,7 +350,7 @@ public class ConvolutionalNetwork
             {
                 MNeuron neuron = layorInfo.layer.getNeuron(len++);
                 //you must vectorize the input
-                layorInfo.mInducedLocalField.set(i,j,neuron.rawoutput(layorInfo.mInput));
+                layorInfo.mInducedLocalField.unsafe_set(i,j,neuron.rawoutput(layorInfo.mInput));
             }
     }
 
@@ -362,8 +362,8 @@ public class ConvolutionalNetwork
             for(int j=0; j<layorInfo.mImpulseFunction.numCols; j++)
             {
                 MNeuron neuron = layorInfo.layer.getNeuron(len++);
-                layorInfo.mImpulseFunction.set(i,j,
-                                                 neuron.phi().apply(layorInfo.mInducedLocalField.get(i,j)));
+                layorInfo.mImpulseFunction.unsafe_set(i,j,
+                                                      neuron.phi().apply(layorInfo.mInducedLocalField.unsafe_get(i,j)));
 
             }
     }

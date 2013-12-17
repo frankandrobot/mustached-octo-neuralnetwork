@@ -1,6 +1,7 @@
 package com.neuralnetwork.convolutional;
 
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 public class FeatureMap
 {
@@ -52,6 +53,10 @@ public class FeatureMap
      */
     static protected class OutputClass
     {
+        /**
+         * Used for computations.
+         * - passed directly to the neuron for #ConvolutionFunction
+         */
         DenseMatrix64F mapInput;
 
         protected OutputClass() {}
@@ -69,7 +74,19 @@ public class FeatureMap
             int len=0;
             for(int a=i; a < i+size; a++)
                 for(int b=j; b < j+size; b++)
-                    mapInput.set(0, len++, input.unsafe_get(a,b));
+                    mapInput.unsafe_set(0, len++, input.unsafe_get(a,b));
+        }
+
+        /**
+         * Sums over the elements in a chunk of size x size from the input starting at location i,j
+         */
+        public double elementSum(DenseMatrix64F input, final int size, final int i, final int j)
+        {
+            double len=0;
+            for(int a=i; a < i+size; a++)
+                for(int b=j; b < j+size; b++)
+                    len += input.unsafe_get(a,b);
+            return len;
         }
     }
 
@@ -91,8 +108,6 @@ public class FeatureMap
 
         abstract protected DenseMatrix64F createFeatureMap(int inputSize);
 
-        abstract protected DenseMatrix64F generateMapInputCache();
-
         abstract protected void output(DenseMatrix64F input, DenseMatrix64F aFeatureMap);
     }
 
@@ -112,7 +127,7 @@ public class FeatureMap
 
             this.receptiveFieldSize = receptiveFieldSize;
             this.sqrtReceptiveFieldSize = (int) Math.sqrt(receptiveFieldSize);
-            outputClass.setMapInput(generateMapInputCache());
+            outputClass.setMapInput(new DenseMatrix64F(1, receptiveFieldSize));
             return this;
         }
 
@@ -131,13 +146,6 @@ public class FeatureMap
         }
 
         @Override
-        protected DenseMatrix64F generateMapInputCache()
-        {
-            DenseMatrix64F neuronInput = new DenseMatrix64F(1, receptiveFieldSize);
-            return neuronInput;
-        }
-
-        @Override
         protected void output(DenseMatrix64F input, DenseMatrix64F aFeatureMap)
         {
             for(int i=0; i<=input.numRows - sqrtReceptiveFieldSize; i++)
@@ -146,7 +154,7 @@ public class FeatureMap
                     //copy over input into data struct
                     outputClass.copy(input, sqrtReceptiveFieldSize, i, j);
                     //do it
-                    aFeatureMap.set(i,j, apply(outputClass.mapInput));
+                    aFeatureMap.unsafe_set(i,j, apply(outputClass.mapInput));
                 }
         }
     }
@@ -155,8 +163,10 @@ public class FeatureMap
      * Takes the average of the input of size #sqrtReceptiveFieldSize x #sqrtReceptiveFieldSize
      * then multiplies it by a scale factor, adds a bias, then applies an activation function
      */
-    /*static public class SubSamplingFunction extends MapFunction
+    static public class SubSamplingFunction extends MapFunction
     {
+        DenseMatrix64F neuronInput = new DenseMatrix64F(1,1);
+
         public SubSamplingFunction(MNeuron neuron)
         {
             if (neuron.getNumberOfWeights() != 2)
@@ -168,7 +178,6 @@ public class FeatureMap
         @Override
         protected double apply(DenseMatrix64F input)
         {
-            neuronInput.set(0, input.sumOfCoords());
             return sharedNeuron.output(neuronInput);
         }
 
@@ -177,7 +186,6 @@ public class FeatureMap
         {
             this.receptiveFieldSize = receptiveFieldSize;
             this.sqrtReceptiveFieldSize = (int) Math.sqrt(receptiveFieldSize);
-            outputClass.setMapInput(generateMapInputCache());
             return this;
         }
 
@@ -190,24 +198,19 @@ public class FeatureMap
             return new DenseMatrix64F(n,n);
         }
 
-        @Override
-        public NVector generateMapInputCache()
-        {
-            return new NVector().setSize(receptiveFieldSize);
-        }
-
         public void output(DenseMatrix64F input, DenseMatrix64F aFeatureMap)
         {
-            for(int i=0, smallI=0; i<=input.length - sqrtReceptiveFieldSize; i+=sqrtReceptiveFieldSize, smallI++)
-                for(int j=0, smallJ=0; j<=input[i].length - sqrtReceptiveFieldSize; j+=sqrtReceptiveFieldSize, smallJ++)
+            for(int i=0, smallI=0; i<=input.numRows - sqrtReceptiveFieldSize; i+=sqrtReceptiveFieldSize, smallI++)
+                for(int j=0, smallJ=0; j<=input.numCols - sqrtReceptiveFieldSize; j+=sqrtReceptiveFieldSize, smallJ++)
                 {
                     //copy over input into data struct
-                    outputClass.copy(input, sqrtReceptiveFieldSize, i, j);
+                    double sum = outputClass.elementSum(input, sqrtReceptiveFieldSize, i, j);
+                    neuronInput.unsafe_set(0,0,sum);
                     //do it
-                    aFeatureMap[smallI][smallJ] = apply(outputClass.mapInput);
+                    aFeatureMap.unsafe_set(smallI,smallJ, apply(neuronInput));
                 }
         }
-    }*/
+    }
 
     public DenseMatrix64F output(DenseMatrix64F input)
     {

@@ -85,7 +85,7 @@ public class MNeuron implements INeuron<DenseMatrix64F>
     public void setWeight(int weight, double newWeight)
     {
         if (weight < mWeights.numRows)
-            mWeights.set(weight, 0, newWeight);
+            mWeights.unsafe_set(weight, 0, newWeight);
         else
             bias = newWeight;
     }
@@ -96,7 +96,7 @@ public class MNeuron implements INeuron<DenseMatrix64F>
         String rslt = String.format("%6.6g", mWeights.get(0));
         for(int i=1; i< mWeights.numRows; ++i)
         {
-            rslt += "  "+String.format("%6.6g", mWeights.get(i,0));
+            rslt += "  "+String.format("%6.6g", mWeights.unsafe_get(i,0));
         }
         rslt += "  "+String.format("%6.6g", bias);
         return rslt;
