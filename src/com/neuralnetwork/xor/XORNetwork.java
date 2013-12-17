@@ -12,9 +12,9 @@ import java.util.Iterator;
 /**
  * This neural network solves the XOR problem
  */
-public class XORNetwork implements INeuralNetwork<NVector,NVector>
+public class XORNetwork implements INeuralNetwork<NVector,NVector,Neuron>
 {
-    INeuralNetwork<NVector,NVector>[] aLayers;
+    INeuralNetwork<NVector,NVector,Neuron>[] aLayers;
 
     public XORNetwork()
     {

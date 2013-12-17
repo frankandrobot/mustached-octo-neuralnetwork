@@ -1,11 +1,9 @@
 package com.neuralnetwork.convolutional;
 
-import com.neuralnetwork.core.NVector;
 import com.neuralnetwork.core.Neuron;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ConvolutionalNetwork
 {
@@ -44,7 +42,7 @@ public class ConvolutionalNetwork
     static public class Builder
     {
         private IActivationFunction.IDifferentiableFunction phi;
-        protected INeuralNetwork<DenseMatrix64F,DenseMatrix64F>[] aLayers;
+        protected INeuralNetwork<DenseMatrix64F,DenseMatrix64F,MNeuron>[] aLayers;
         protected Double alpha;
         protected Double eta;
         protected int numberIterations;
@@ -55,7 +53,7 @@ public class ConvolutionalNetwork
             return this;
         }
 
-        public Builder setLayers(INeuralNetwork<DenseMatrix64F,DenseMatrix64F>... aLayers)
+        public Builder setLayers(INeuralNetwork<DenseMatrix64F,DenseMatrix64F,MNeuron>... aLayers)
         {
             this.aLayers = aLayers;
             return this;
@@ -114,50 +112,49 @@ public class ConvolutionalNetwork
      */
     protected class LayorInfo
     {
-        final public INeuralNetwork<DenseMatrix64F,DenseMatrix64F> layer;
+        final public INeuralNetwork<DenseMatrix64F,DenseMatrix64F,MNeuron> layer;
         /**
          * For each neuron k in the layer,
          * store v_k (induced local field).
          */
-        public DenseMatrix64F vInducedLocalField;
+        public DenseMatrix64F mInducedLocalField;
         /**
          * For each neuron k in the layer,
          * store value of impulse function.
          */
-        public DenseMatrix64F vImpulseFunction;
+        public DenseMatrix64F mImpulseFunction;
         /**
          * Store the inputs (y_k) from the previous layer.
          */
-        public DenseMatrix64F vInput;
+        public DenseMatrix64F mInput;
+        /**
+         * For each neuron k in the layer,
+         * store its gradient
+         */
+        public DenseMatrix64F mGradients;
+
         /**
          * For each neuron k in the layer,
          * aPrevWeights[k] is its previous set of weights.
          * aPrevWeights[k].get(j) is neuron k's jth previous weight.
          */
-        public DenseMatrix64F[][] aPrevWeights;
-
-        /**
-         * For each neuron k in the layer,
-         * store its gradient
-         */
-        public DenseMatrix64F vGradients;
-
+        public MNeuron[][] aPrevWeights;
         /**
          * For neuron k's jth weight in the layer,
          * aWeightAdjustments[k].get(j) is the quantity to add to its jth weight
          * when adjusting the weight with the backprop algorithm
          */
-        public DenseMatrix64F[][] aWeightAdjustments;
+        public MNeuron[][] aWeightAdjustments;
 
         public LayorInfo(INeuralNetwork layer)
         {
             this.layer = layer;
             final int n = this.layer.getNumberOfNeurons();
-            this.vInducedLocalField = new DenseMatrix64F(n,n);
-            this.vImpulseFunction = new DenseMatrix64F(n,n);
-            this.vGradients = new DenseMatrix64F(n,n);
-            this.aPrevWeights = new DenseMatrix64F[n][n];
-            this.aWeightAdjustments = new DenseMatrix64F[n][n];
+            this.mInducedLocalField = new DenseMatrix64F(n,n);
+            this.mImpulseFunction = new DenseMatrix64F(n,n);
+            this.mGradients = new DenseMatrix64F(n,n);
+            this.aPrevWeights = new MNeuron[n][n];
+            this.aWeightAdjustments = new MNeuron[n][n];
 
             /*for(int i=0; i<n; i++)
                 for(int j=0; j<n; j++)
@@ -328,40 +325,47 @@ public class ConvolutionalNetwork
         LayorInfo layorInfo = aLayers[layer];
 
         //save info for back propagation
-        layorInfo.vInput = new DenseMatrix64F(input);
+        layorInfo.mInput = new DenseMatrix64F(input);
 
         constructInducedLocalField(layorInfo);
         constructImpulseFunction(layorInfo);
 
         if (layer < aLayers.length - 1)
         {
-            return output(example, layer+1, aLayers[layer].vImpulseFunction);
+            return output(example, layer+1, aLayers[layer].mImpulseFunction);
         }
         else
         {
-            aExamples[example].mActual = new DenseMatrix64F(aLayers[layer].vImpulseFunction);
+            aExamples[example].mActual = new DenseMatrix64F(aLayers[layer].mImpulseFunction);
         }
-        return layorInfo.vImpulseFunction;
+        return layorInfo.mImpulseFunction;
     }
 
     private void constructInducedLocalField(LayorInfo layorInfo)
     {
         //calculate v_k's
         int len=0;
-        for(Neuron neuron:layorInfo.layer)
-        {
-            //layorInfo.vInducedLocalField.set(len++, neuron.rawoutput(layorInfo.vInput));
-        }
+        for(int i=0; i<layorInfo.mInducedLocalField.numRows; i++)
+            for(int j=0; j<layorInfo.mInducedLocalField.numCols; j++)
+            {
+                MNeuron neuron = layorInfo.layer.getNeuron(len++);
+                //you must vectorize the input
+                layorInfo.mInducedLocalField.set(i,j,neuron.rawoutput(layorInfo.mInput));
+            }
     }
 
     private void constructImpulseFunction(LayorInfo layorInfo)
     {
         //calculate y_k's aka output
         int len=0;
-        for(Neuron neuron:layorInfo.layer)
-        {
-            layorInfo.vImpulseFunction.set(len, neuron.phi().apply(layorInfo.vInducedLocalField.get(len++)));
-        }
+        for(int i=0; i<layorInfo.mImpulseFunction.numRows; i++)
+            for(int j=0; j<layorInfo.mImpulseFunction.numCols; j++)
+            {
+                MNeuron neuron = layorInfo.layer.getNeuron(len++);
+                layorInfo.mImpulseFunction.set(i,j,
+                                                 neuron.phi().apply(layorInfo.mInducedLocalField.get(i,j)));
+
+            }
     }
 /*
     protected void constructGradients(int example)

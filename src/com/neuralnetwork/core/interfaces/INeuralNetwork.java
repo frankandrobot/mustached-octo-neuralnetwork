@@ -1,8 +1,6 @@
 package com.neuralnetwork.core.interfaces;
 
-import com.neuralnetwork.core.Neuron;
-
-public interface INeuralNetwork<I,O> extends Iterable<Neuron>
+public interface INeuralNetwork<I,O,N extends INeuron<?>> extends Iterable<N>
 {
     public O output(I input);
 
@@ -10,5 +8,5 @@ public interface INeuralNetwork<I,O> extends Iterable<Neuron>
 
     public int getNumberOfNeurons();
 
-    public Neuron getNeuron(int neuron);
+    public N getNeuron(int neuron);
 }

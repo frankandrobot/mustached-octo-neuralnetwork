@@ -1,6 +1,7 @@
 package com.neuralnetwork.convolutional;
 
 import com.neuralnetwork.core.interfaces.IActivationFunction;
+import com.neuralnetwork.core.interfaces.INeuron;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
@@ -10,7 +11,7 @@ import java.util.Arrays;
  * By convention, the bias is at the _end_ of the weights list
  *
  */
-public class MNeuron
+public class MNeuron implements INeuron<DenseMatrix64F>
 {
     /**
      * A n x 1 matrix
