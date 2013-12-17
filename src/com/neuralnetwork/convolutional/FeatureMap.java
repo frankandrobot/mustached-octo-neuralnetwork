@@ -1,9 +1,12 @@
 package com.neuralnetwork.convolutional;
 
+import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class FeatureMap
+import java.util.Iterator;
+
+public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
 {
     /**
      * The input array has dimensions #inputSize x #inputSize
@@ -13,6 +16,7 @@ public class FeatureMap
      * The actual feature map. The dimensions depend on the MapFunction
      */
     protected DenseMatrix64F mFeatureMap;
+    final protected int numberNeurons;
 
     /**
      * One of Convolution or subsampling
@@ -27,6 +31,34 @@ public class FeatureMap
 
         mapFunction = builder.mapFunction;
         mFeatureMap = mapFunction.createFeatureMap(inputSize);
+
+        numberNeurons = mFeatureMap.numCols * mFeatureMap.numRows;
+    }
+
+    @Override
+    public Iterator<MNeuron> iterator()
+    {
+        return new Iterator<MNeuron>() {
+            int len = 0;
+            @Override
+            public boolean hasNext()
+            {
+                return len < numberNeurons;
+            }
+
+            @Override
+            public MNeuron next()
+            {
+                ++len;
+                return mapFunction.sharedNeuron;
+            }
+
+            @Override
+            public void remove()
+            {
+                throw new NotImplementedException();
+            }
+        };
     }
 
     static public class Builder
@@ -154,7 +186,7 @@ public class FeatureMap
                     //copy over input into data struct
                     outputClass.copy(input, sqrtReceptiveFieldSize, i, j);
                     //do it
-                    aFeatureMap.unsafe_set(i,j, apply(outputClass.mapInput));
+                    aFeatureMap.unsafe_set(i, j, apply(outputClass.mapInput));
                 }
         }
     }
@@ -212,10 +244,34 @@ public class FeatureMap
         }
     }
 
+    /**
+     * @param input unlike a {@link com.neuralnetwork.core.MultiLayerNetwork}, this is a square matrix.
+     *              The implementation transforms it to a 1 x n matrix suitable for passing into a neuron
+     * @return output
+     */
+    @Override
     public DenseMatrix64F output(DenseMatrix64F input)
     {
         mapFunction.output(input, mFeatureMap);
         return mFeatureMap;
+    }
+
+    @Override
+    public DenseMatrix64F inducedLocalField(DenseMatrix64F input)
+    {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public int getNumberOfNeurons()
+    {
+        return numberNeurons;
+    }
+
+    @Override
+    public MNeuron getNeuron(int neuron)
+    {
+        return mapFunction.sharedNeuron;
     }
 
     public DenseMatrix64F getFeatureMap()
