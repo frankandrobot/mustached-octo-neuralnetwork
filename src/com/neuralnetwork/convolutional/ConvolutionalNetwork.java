@@ -26,6 +26,8 @@ public class ConvolutionalNetwork
 
     protected IActivationFunction.IDifferentiableFunction phi;
 
+    final protected Output output = new Output();
+
     public ConvolutionalNetwork(Builder builder)
     {
         this.eta = builder.eta;
@@ -271,7 +273,7 @@ public class ConvolutionalNetwork
             setupExampleInfo(input, new DenseMatrix64F(1,1));
         }
 
-        return output(0, 0, input);
+        return output.output(0, 0, input);
     }
 
 /*    *//**
@@ -313,60 +315,63 @@ public class ConvolutionalNetwork
         return output(example, 0, aExamples[example].mExampleInput);
     }*/
 
-    /**
-     * Find the actual output for the given example.
-     *
-     * Side effect: store stuff (induced local field, impulse function, etc) in the layer info
-     *
-     *
-     * @param example
-     * @param layer the example's layer
-     * @return output
-     */
-    protected DenseMatrix64F output(int example, int layer, DenseMatrix64F input)
+    protected class Output
     {
-        LayorInfo layorInfo = aLayers[layer];
-
-        //save info for back propagation
-        layorInfo.mInput = new DenseMatrix64F(input);
-
-        constructInducedLocalField(layorInfo);
-        constructImpulseFunction(layorInfo);
-
-        if (layer < aLayers.length - 1)
+        /**
+         * Find the actual output for the given example.
+         *
+         * Side effect: store stuff (induced local field, impulse function, etc) in the layer info
+         *
+         *
+         * @param example
+         * @param layer the example's layer
+         * @return output
+         */
+        protected DenseMatrix64F output(int example, int layer, DenseMatrix64F input)
         {
-            return output(example, layer+1, aLayers[layer].mImpulseFunction);
+            LayorInfo layorInfo = aLayers[layer];
+
+            //save info for back propagation
+            layorInfo.mInput = new DenseMatrix64F(input);
+
+            constructInducedLocalField(layorInfo);
+            constructImpulseFunction(layorInfo);
+
+            if (layer < aLayers.length - 1)
+            {
+                return output(example, layer+1, aLayers[layer].mImpulseFunction);
+            }
+            else
+            {
+                aExamples[example].mActual = new DenseMatrix64F(aLayers[layer].mImpulseFunction);
+            }
+            return layorInfo.mImpulseFunction;
         }
-        else
+
+        protected void constructInducedLocalField(LayorInfo layorInfo)
         {
-            aExamples[example].mActual = new DenseMatrix64F(aLayers[layer].mImpulseFunction);
+            FeatureMap featureMap = ((FeatureMap)layorInfo.layer);
+            //calculate v_k's
+            for(int i=0; i<layorInfo.mInducedLocalField.numRows; i++)
+                for(int j=0; j<layorInfo.mInducedLocalField.numCols; j++)
+                {
+                    double inducedLocalField = featureMap.rawoutput(layorInfo.mInput, i, j);
+                    layorInfo.mInducedLocalField.unsafe_set(i, j, inducedLocalField);
+                }
         }
-        return layorInfo.mImpulseFunction;
-    }
 
-    private void constructInducedLocalField(LayorInfo layorInfo)
-    {
-        FeatureMap featureMap = ((FeatureMap)layorInfo.layer);
-        //calculate v_k's
-        for(int i=0; i<layorInfo.mInducedLocalField.numRows; i++)
-            for(int j=0; j<layorInfo.mInducedLocalField.numCols; j++)
-            {
-                double inducedLocalField = featureMap.rawoutput(layorInfo.mInput, i, j);
-                layorInfo.mInducedLocalField.unsafe_set(i, j, inducedLocalField);
-            }
-    }
-
-    private void constructImpulseFunction(LayorInfo layorInfo)
-    {
-        MNeuron sharedNeuron = layorInfo.layer.getNeuron(0);
-        FeatureMap featureMap = ((FeatureMap)layorInfo.layer);
-        //calculate y_k's aka output
-        for(int i=0; i<layorInfo.mImpulseFunction.numRows; i++)
-            for(int j=0; j<layorInfo.mImpulseFunction.numCols; j++)
-            {
-                double inducedLocalField = layorInfo.mInducedLocalField.unsafe_get(i,j);
-                layorInfo.mImpulseFunction.unsafe_set(i, j, sharedNeuron.phi().apply(inducedLocalField));
-            }
+        protected void constructImpulseFunction(LayorInfo layorInfo)
+        {
+            MNeuron sharedNeuron = layorInfo.layer.getNeuron(0);
+            FeatureMap featureMap = ((FeatureMap)layorInfo.layer);
+            //calculate y_k's aka output
+            for(int i=0; i<layorInfo.mImpulseFunction.numRows; i++)
+                for(int j=0; j<layorInfo.mImpulseFunction.numCols; j++)
+                {
+                    double inducedLocalField = layorInfo.mInducedLocalField.unsafe_get(i,j);
+                    layorInfo.mImpulseFunction.unsafe_set(i, j, sharedNeuron.phi().apply(inducedLocalField));
+                }
+        }
     }
 /*
     protected void constructGradients(int example)
