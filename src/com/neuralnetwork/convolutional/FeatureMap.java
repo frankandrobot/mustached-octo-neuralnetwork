@@ -133,14 +133,30 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
         protected int sqrtReceptiveFieldSize;
         protected OutputClass outputClass = new OutputClass();
 
-        abstract protected double apply(DenseMatrix64F input);
-
         abstract public MapFunction setReceptiveFieldSize(int receptiveFieldSize);
         protected int getReceptiveFieldSize() { return receptiveFieldSize; }
 
         abstract protected DenseMatrix64F createFeatureMap(int inputSize);
 
-        abstract protected void output(DenseMatrix64F input, DenseMatrix64F aFeatureMap);
+        /**
+         * Calculates the induced local field at (x,y) in the feature map
+         *
+         * @return induced local field at (x,y)
+         */
+        abstract public double rawoutput(final DenseMatrix64F input, final int x, final int y);
+
+        /**
+         * Calculates the value of the activation function at (x,y) in the feature map for the given input
+         *
+         * @return value of activation function at (x,y)
+         */
+        abstract public double output(final DenseMatrix64F input, final int x, final int y);
+
+        /**
+         * Calculates the value of the activation function over all (x,y) in the feature map
+         * *and* saves it into the feature map
+         */
+        abstract protected void output(DenseMatrix64F input, DenseMatrix64F mFeatureMap);
     }
 
     static public class ConvolutionFunction extends MapFunction
@@ -164,17 +180,25 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
         }
 
         @Override
-        protected double apply(DenseMatrix64F input)
-        {
-            return sharedNeuron.output(input);
-        }
-
-        @Override
         protected DenseMatrix64F createFeatureMap(int inputSize)
         {
             final int n = inputSize - sqrtReceptiveFieldSize + 1;
             return new DenseMatrix64F(n,n);
 
+        }
+
+        @Override
+        public double output(DenseMatrix64F input, int x, int y)
+        {
+            double inducedLocalField = rawoutput(input, x, y);
+            return sharedNeuron.phi().apply(inducedLocalField);
+        }
+
+        @Override
+        public double rawoutput(final DenseMatrix64F input, final int x, final int y)
+        {
+            outputClass.copy(input, sqrtReceptiveFieldSize, x, y);
+            return sharedNeuron.rawoutput(outputClass.mapInput);
         }
 
         @Override
@@ -186,7 +210,7 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
                     //copy over input into data struct
                     outputClass.copy(input, sqrtReceptiveFieldSize, i, j);
                     //do it
-                    aFeatureMap.unsafe_set(i, j, apply(outputClass.mapInput));
+                    aFeatureMap.unsafe_set(i, j, sharedNeuron.output(outputClass.mapInput));
                 }
         }
     }
@@ -208,12 +232,6 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
         }
 
         @Override
-        protected double apply(DenseMatrix64F input)
-        {
-            return sharedNeuron.output(neuronInput);
-        }
-
-        @Override
         public MapFunction setReceptiveFieldSize(int receptiveFieldSize)
         {
             this.receptiveFieldSize = receptiveFieldSize;
@@ -230,6 +248,24 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
             return new DenseMatrix64F(n,n);
         }
 
+        @Override
+        public double output(DenseMatrix64F input, int x, int y)
+        {
+            double inducedLocalField = rawoutput(input, x, y);
+            return sharedNeuron.phi().apply(inducedLocalField);
+        }
+
+        @Override
+        public double rawoutput(final DenseMatrix64F input, final int x, final int y)
+        {
+            double sum = outputClass.elementSum(input,
+                                                sqrtReceptiveFieldSize,
+                                                x*sqrtReceptiveFieldSize,
+                                                y*sqrtReceptiveFieldSize);
+            neuronInput.unsafe_set(0,0,sum);
+            return sharedNeuron.rawoutput(neuronInput);
+        }
+
         public void output(DenseMatrix64F input, DenseMatrix64F aFeatureMap)
         {
             for(int i=0, smallI=0; i<=input.numRows - sqrtReceptiveFieldSize; i+=sqrtReceptiveFieldSize, smallI++)
@@ -239,9 +275,15 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
                     double sum = outputClass.elementSum(input, sqrtReceptiveFieldSize, i, j);
                     neuronInput.unsafe_set(0,0,sum);
                     //do it
-                    aFeatureMap.unsafe_set(smallI,smallJ, apply(neuronInput));
+                    aFeatureMap.unsafe_set(smallI,smallJ, sharedNeuron.output(neuronInput));
                 }
         }
+    }
+
+    public DenseMatrix64F calculateFeatureMap(DenseMatrix64F input)
+    {
+        mapFunction.output(input, mFeatureMap);
+        return mFeatureMap;
     }
 
     /**
@@ -252,7 +294,7 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
     @Override
     public DenseMatrix64F output(DenseMatrix64F input)
     {
-        mapFunction.output(input, mFeatureMap);
+        calculateFeatureMap(input);
         return mFeatureMap;
     }
 
@@ -277,5 +319,25 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
     public DenseMatrix64F getFeatureMap()
     {
         return mFeatureMap;
+    }
+
+    /**
+     * Calculates the induced local field at (x,y) in the feature map
+     *
+     * @return induced local field at (x,y)
+     */
+    public double rawoutput(final DenseMatrix64F input, final int x, final int y)
+    {
+        return mapFunction.rawoutput(input,x,y);
+    }
+
+    /**
+     * Calculates the value of the activation function at (x,y) in the feature map for the given input
+     *
+     * @return value of activation function at (x,y)
+     */
+    public double output(final DenseMatrix64F input, final int x, final int y)
+    {
+        return mapFunction.output(input,x,y);
     }
 }
