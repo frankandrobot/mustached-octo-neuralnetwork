@@ -11,7 +11,7 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
     /**
      * The input array has dimensions #inputSize x #inputSize
      */
-    protected final int inputSize;
+    protected final int oneDimInputSize;
     /**
      * The actual feature map. The dimensions depend on the MapFunction
      */
@@ -27,10 +27,10 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
         if (builder.inputSize - builder.mapFunction.sqrtReceptiveFieldSize + 1 <= 0)
             throw new IllegalArgumentException("Receptive field size can't be larger than the input size");
 
-        inputSize = builder.inputSize;
+        oneDimInputSize = builder.inputSize;
 
         mapFunction = builder.mapFunction;
-        mFeatureMap = mapFunction.createFeatureMap(inputSize);
+        mFeatureMap = mapFunction.createFeatureMap(oneDimInputSize);
 
         numberNeurons = mFeatureMap.numCols * mFeatureMap.numRows;
     }
@@ -66,7 +66,7 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
         private int inputSize;
         private MapFunction mapFunction;
 
-        public Builder setInputSize(int inputSize)
+        public Builder set1DInputSize(int inputSize)
         {
             this.inputSize = inputSize;
             return this;
@@ -338,6 +338,12 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
      */
     public double output(final DenseMatrix64F input, final int x, final int y)
     {
-        return mapFunction.output(input,x,y);
+        return mapFunction.output(input, x, y);
+    }
+
+    @Override
+    public String toString()
+    {
+        return mapFunction != null ? mapFunction.getClass().getSimpleName() : getClass().getSimpleName();
     }
 }

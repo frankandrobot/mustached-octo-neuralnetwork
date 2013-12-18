@@ -1,7 +1,6 @@
 package com.neuralnetwork.convolutional;
 
 import com.neuralnetwork.core.ActivationFunctions;
-import com.neuralnetwork.core.Neuron;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 
@@ -27,7 +26,7 @@ public class FeatureMapTest
         FeatureMap.MapFunction mapFunction = new FeatureMap.ConvolutionFunction(neuron);
         mapFunction.setReceptiveFieldSize(2*2);
 
-        builder.setInputSize(3)
+        builder.set1DInputSize(3)
                .setMapFunction(mapFunction);
         FeatureMap featureMap = new FeatureMap(builder);
 
@@ -77,7 +76,7 @@ public class FeatureMapTest
         FeatureMap.MapFunction mapFunction = new FeatureMap.SubSamplingFunction(neuron);
         mapFunction.setReceptiveFieldSize(2*2);
 
-        builder.setInputSize(4)
+        builder.set1DInputSize(4)
                 .setMapFunction(mapFunction);
         FeatureMap featureMap = new FeatureMap(builder);
 
@@ -118,32 +117,35 @@ public class FeatureMapTest
                 ,13, 14, 15, 16
         });
 
-        final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
+        final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
+        //build first layer
+        final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
         FeatureMap.Builder builder = new FeatureMap.Builder();
-        ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
-        MNeuron neuron = new MNeuron(phi, weights);
-        FeatureMap.MapFunction convolutionFunc = new FeatureMap.ConvolutionFunction(neuron);
+        FeatureMap.MapFunction convolutionFunc = new FeatureMap.ConvolutionFunction(new MNeuron(phi, weights));
         convolutionFunc.setReceptiveFieldSize(3*3);
 
-        builder.setInputSize(4)
+        builder.set1DInputSize(4)
                .setMapFunction(convolutionFunc);
         FeatureMap convolutionMap = new FeatureMap(builder);
 
         final DenseMatrix64F output = convolutionMap.output(input);
+        assertThat(output.numCols, is(2));
+        assertThat(output.numRows, is(2));
 
+        //build second layer
         final double[] weights2 = {0.3, 0.4};
-
         builder = new FeatureMap.Builder();
-        MNeuron neuron2 = new MNeuron(phi, weights2);
-        FeatureMap.MapFunction subsampFunc = new FeatureMap.SubSamplingFunction(neuron2);
+        FeatureMap.MapFunction subsampFunc = new FeatureMap.SubSamplingFunction(new MNeuron(phi, weights2));
         subsampFunc.setReceptiveFieldSize(2*2);
 
-        builder.setInputSize(4)
+        builder.set1DInputSize(2)
                .setMapFunction(subsampFunc);
-        FeatureMap featureMap = new FeatureMap(builder);
+        FeatureMap subsamplingMap = new FeatureMap(builder);
 
-        final DenseMatrix64F rslt = featureMap.output(output);
+        final DenseMatrix64F rslt = subsamplingMap.output(output);
+        assertThat(rslt.numCols, is(1));
+        assertThat(rslt.numRows, is(1));
 
         final double o11 = phi.apply(
                            1*0.01 + 2*0.02 + 3*0.03
@@ -188,7 +190,7 @@ public class FeatureMapTest
         FeatureMap.MapFunction mapFunction = new FeatureMap.ConvolutionFunction(neuron);
         mapFunction.setReceptiveFieldSize(2*2);
 
-        builder.setInputSize(3)
+        builder.set1DInputSize(3)
                .setMapFunction(mapFunction);
         FeatureMap featureMap = new FeatureMap(builder);
 
@@ -209,7 +211,7 @@ public class FeatureMapTest
                 + input.get(1,1)*weights[2] + input.get(1,2)*weights[3]
                 + weights[4];
 
-        assertThat(featureMap.rawoutput(input,0,1), is(o12));
+        assertThat(featureMap.rawoutput(input, 0, 1), is(o12));
 
         final double o21 = input.get(1,0)*weights[0] + input.get(1,1)*weights[1]
                 + input.get(2,0)*weights[2] + input.get(2,1)*weights[3]
@@ -236,7 +238,7 @@ public class FeatureMapTest
         FeatureMap.MapFunction mapFunction = new FeatureMap.SubSamplingFunction(neuron);
         mapFunction.setReceptiveFieldSize(2*2);
 
-        builder.setInputSize(4)
+        builder.set1DInputSize(4)
                .setMapFunction(mapFunction);
         FeatureMap featureMap = new FeatureMap(builder);
 
@@ -249,7 +251,7 @@ public class FeatureMapTest
 
         final double o11 = (1 + 2 + 5 + 6) * weights[0] + weights[1];
 
-        assertThat(featureMap.rawoutput(input,0,0), is(o11));
+        assertThat(featureMap.rawoutput(input, 0, 0), is(o11));
 
         final double o12 = (3 + 4 + 7 + 8) * weights[0] + weights[1];
 

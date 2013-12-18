@@ -1,9 +1,10 @@
 package com.neuralnetwork.convolutional;
 
-import com.neuralnetwork.core.Neuron;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
+
+import static com.neuralnetwork.core.interfaces.INeuralNetwork.IMatrixNeuralNetwork;
 
 public class ConvolutionalNetwork
 {
@@ -14,7 +15,8 @@ public class ConvolutionalNetwork
     protected int numberExamples;
 
     /**
-     * Aka ... error
+     * Aka error.
+     * An 1 x n matrix containing the differences squared of each training example.
      */
     protected DenseMatrix64F mTotalDifferenceSquared;
 
@@ -42,7 +44,7 @@ public class ConvolutionalNetwork
     static public class Builder
     {
         private IActivationFunction.IDifferentiableFunction phi;
-        protected INeuralNetwork<DenseMatrix64F,DenseMatrix64F,MNeuron>[] aLayers;
+        protected IMatrixNeuralNetwork[] aLayers;
         protected Double alpha;
         protected Double eta;
         protected int numberIterations;
@@ -53,7 +55,7 @@ public class ConvolutionalNetwork
             return this;
         }
 
-        public Builder setLayers(INeuralNetwork<DenseMatrix64F,DenseMatrix64F,MNeuron>... aLayers)
+        public Builder setLayers(IMatrixNeuralNetwork... aLayers)
         {
             this.aLayers = aLayers;
             return this;
@@ -79,7 +81,7 @@ public class ConvolutionalNetwork
     }
 
     /**
-     * (vExampleInput, vExpected) form the training example
+     * (mExampleInput, mExpected) form the training example
      */
     protected class ExampleInfo
     {
@@ -112,7 +114,7 @@ public class ConvolutionalNetwork
      */
     protected class LayorInfo
     {
-        final public INeuralNetwork<DenseMatrix64F,DenseMatrix64F,MNeuron> layer;
+        final public IMatrixNeuralNetwork layer;
         /**
          * For each neuron k in the layer,
          * store v_k (induced local field).
@@ -146,10 +148,11 @@ public class ConvolutionalNetwork
          */
         public MNeuron[][] aWeightAdjustments;
 
-        public LayorInfo(INeuralNetwork layer)
+        public LayorInfo(IMatrixNeuralNetwork layer)
         {
             this.layer = layer;
-            final int n = this.layer.getNumberOfNeurons();
+            //these are all created to be the size of the feature map
+            final int n = (int)Math.sqrt(this.layer.getNumberOfNeurons());
             this.mInducedLocalField = new DenseMatrix64F(n,n);
             this.mImpulseFunction = new DenseMatrix64F(n,n);
             this.mGradients = new DenseMatrix64F(n,n);
@@ -239,7 +242,7 @@ public class ConvolutionalNetwork
         }
 
         //setup error
-        //mTotalDifferenceSquared = new DenseMatrix64F()NVector().setSize(numberExamples);
+        mTotalDifferenceSquared = new DenseMatrix64F(1, numberExamples);
     }
 
     /*public void backpropagation(double errorBound, NVector... aInputExpected)
@@ -343,28 +346,26 @@ public class ConvolutionalNetwork
 
     private void constructInducedLocalField(LayorInfo layorInfo)
     {
+        FeatureMap featureMap = ((FeatureMap)layorInfo.layer);
         //calculate v_k's
-        int len=0;
         for(int i=0; i<layorInfo.mInducedLocalField.numRows; i++)
             for(int j=0; j<layorInfo.mInducedLocalField.numCols; j++)
             {
-                MNeuron neuron = layorInfo.layer.getNeuron(len++);
-                //you must vectorize the input
-                layorInfo.mInducedLocalField.unsafe_set(i,j,neuron.rawoutput(layorInfo.mInput));
+                double inducedLocalField = featureMap.rawoutput(layorInfo.mInput, i, j);
+                layorInfo.mInducedLocalField.unsafe_set(i, j, inducedLocalField);
             }
     }
 
     private void constructImpulseFunction(LayorInfo layorInfo)
     {
+        MNeuron sharedNeuron = layorInfo.layer.getNeuron(0);
+        FeatureMap featureMap = ((FeatureMap)layorInfo.layer);
         //calculate y_k's aka output
-        int len=0;
         for(int i=0; i<layorInfo.mImpulseFunction.numRows; i++)
             for(int j=0; j<layorInfo.mImpulseFunction.numCols; j++)
             {
-                MNeuron neuron = layorInfo.layer.getNeuron(len++);
-                layorInfo.mImpulseFunction.unsafe_set(i,j,
-                                                      neuron.phi().apply(layorInfo.mInducedLocalField.unsafe_get(i,j)));
-
+                double inducedLocalField = layorInfo.mInducedLocalField.unsafe_get(i,j);
+                layorInfo.mImpulseFunction.unsafe_set(i, j, sharedNeuron.phi().apply(inducedLocalField));
             }
     }
 /*
