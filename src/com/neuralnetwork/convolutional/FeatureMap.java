@@ -346,4 +346,19 @@ public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
     {
         return mapFunction != null ? mapFunction.getClass().getSimpleName() : getClass().getSimpleName();
     }
+
+    /**
+     * Given a matrix (in 1D form) representing the receptive field of a neuron,
+     * fills the entries of the matrix: an entry (representing a weight) is enabled (set to 1)
+     * iff
+     *
+     * @param aWeightConnections
+     * @param i
+     * @param j
+     */
+    public void calculateWeightConnections(int[] aWeightConnections, int i, int j)
+    {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
 }

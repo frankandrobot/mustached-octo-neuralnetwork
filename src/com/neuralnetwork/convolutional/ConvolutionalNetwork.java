@@ -4,11 +4,13 @@ import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 
+import java.util.Arrays;
+
 import static com.neuralnetwork.core.interfaces.INeuralNetwork.IMatrixNeuralNetwork;
 
 public class ConvolutionalNetwork
 {
-    protected LayorInfo[] aLayers;
+    protected LayerInfo[] aLayers;
     protected int numberLayers;
 
     protected ExampleInfo[] aExamples;
@@ -26,7 +28,7 @@ public class ConvolutionalNetwork
 
     protected IActivationFunction.IDifferentiableFunction phi;
 
-    final protected Output output = new Output();
+    final protected ForwardPropagation forwardPropagation = new ForwardPropagation();
 
     public ConvolutionalNetwork(Builder builder)
     {
@@ -38,7 +40,7 @@ public class ConvolutionalNetwork
         initializeLayers(builder);
     }
 
-    protected LayorInfo getLayer(int i)
+    protected LayerInfo getLayer(int i)
     {
         return aLayers[i];
     }
@@ -114,7 +116,7 @@ public class ConvolutionalNetwork
      * Basically it works per layer
      * and you get back info about its individual neurons
      */
-    protected class LayorInfo
+    protected class LayerInfo
     {
         final public IMatrixNeuralNetwork layer;
         /**
@@ -150,7 +152,7 @@ public class ConvolutionalNetwork
          */
         public MNeuron[][] aWeightAdjustments;
 
-        public LayorInfo(IMatrixNeuralNetwork layer)
+        public LayerInfo(IMatrixNeuralNetwork layer)
         {
             this.layer = layer;
             //these are all created to be the size of the feature map
@@ -220,10 +222,10 @@ public class ConvolutionalNetwork
     {
         numberLayers = builder.aLayers.length;
 
-        aLayers = new LayorInfo[numberLayers];
+        aLayers = new LayerInfo[numberLayers];
 
         for(int i=0; i<numberLayers; i++)
-            aLayers[i] = new LayorInfo(builder.aLayers[i]);
+            aLayers[i] = new LayerInfo(builder.aLayers[i]);
     }
 
     public void setupExampleInfo(DenseMatrix64F... aInputExpected)
@@ -258,7 +260,7 @@ public class ConvolutionalNetwork
         DebugOutput debugOutput = new DebugOutput();
         int iteration = 1;
 
-        while( backpropagation() > errorBound && iteration <= numberIterations)
+        while( backpropagationOneIteration() > errorBound && iteration <= numberIterations)
         {
             debugOutput.backpropDump(iteration);
             iteration++;
@@ -273,50 +275,21 @@ public class ConvolutionalNetwork
             setupExampleInfo(input, new DenseMatrix64F(1,1));
         }
 
-        return output.output(0, 0, input);
+        return forwardPropagation.output(0, 0, input);
     }
 
-/*    *//**
-     * Trains the network using pairs of inputs/expected values
-     *
-     * @return sum of the total differnce squared (error)
-     *//*
-    protected double backpropagation()
+    protected class ForwardPropagation
     {
-        resetWeightAdjustments();
-
-        for(int i=0; i< numberExamples; i++)
+        /**
+         * You need to have setup the examples in order for this to work
+         * @param example index
+         * @return output
+         */
+        protected DenseMatrix64F calculateForwardPropOnePass(int example)
         {
-            forwardPropagation(i);
-            constructGradients(i);
-            saveWeightAdjustments();
+            return output(example, 0, aExamples[example].mExampleInput);
         }
 
-        adjustWeights();
-
-        for(int i=0; i< numberExamples; i++)
-        {
-            constructErrorFunction(i);
-        }
-
-        return mTotalDifferenceSquared.sumOfCoords();
-    }
-
-    protected void constructErrorFunction(int example)
-    {
-        NVector vActual = forwardPropagation(example);
-        NVector vExpected = aExamples[example].mExpected;
-        aExamples[example].differenceSquared = vExpected.subtract(vActual).dotProduct();
-        mTotalDifferenceSquared.set(example, aExamples[example].differenceSquared);
-    }*/
-
-    /*protected NVector forwardPropagation(int example)
-    {
-        return output(example, 0, aExamples[example].mExampleInput);
-    }*/
-
-    protected class Output
-    {
         /**
          * Find the actual output for the given example.
          *
@@ -329,15 +302,15 @@ public class ConvolutionalNetwork
          */
         protected DenseMatrix64F output(int example, int layer, DenseMatrix64F input)
         {
-            LayorInfo layorInfo = aLayers[layer];
+            LayerInfo layerInfo = aLayers[layer];
 
             //save info for back propagation
-            layorInfo.mInput = new DenseMatrix64F(input);
+            layerInfo.mInput = new DenseMatrix64F(input);
 
-            constructInducedLocalField(layorInfo);
-            constructImpulseFunction(layorInfo);
+            constructInducedLocalField(layerInfo);
+            constructImpulseFunction(layerInfo);
 
-            if (layer < aLayers.length - 1)
+            if (layer < numberLayers - 1)
             {
                 return output(example, layer+1, aLayers[layer].mImpulseFunction);
             }
@@ -345,25 +318,24 @@ public class ConvolutionalNetwork
             {
                 aExamples[example].mActual = new DenseMatrix64F(aLayers[layer].mImpulseFunction);
             }
-            return layorInfo.mImpulseFunction;
+            return layerInfo.mImpulseFunction;
         }
 
-        protected void constructInducedLocalField(LayorInfo layorInfo)
+        protected void constructInducedLocalField(LayerInfo layerInfo)
         {
-            FeatureMap featureMap = ((FeatureMap)layorInfo.layer);
+            FeatureMap featureMap = ((FeatureMap) layerInfo.layer);
             //calculate v_k's
-            for(int i=0; i<layorInfo.mInducedLocalField.numRows; i++)
-                for(int j=0; j<layorInfo.mInducedLocalField.numCols; j++)
+            for(int i=0; i< layerInfo.mInducedLocalField.numRows; i++)
+                for(int j=0; j< layerInfo.mInducedLocalField.numCols; j++)
                 {
-                    double inducedLocalField = featureMap.rawoutput(layorInfo.mInput, i, j);
-                    layorInfo.mInducedLocalField.unsafe_set(i, j, inducedLocalField);
+                    double inducedLocalField = featureMap.rawoutput(layerInfo.mInput, i, j);
+                    layerInfo.mInducedLocalField.unsafe_set(i, j, inducedLocalField);
                 }
         }
 
-        protected void constructImpulseFunction(LayorInfo layorInfo)
+        protected void constructImpulseFunction(LayerInfo layorInfo)
         {
             MNeuron sharedNeuron = layorInfo.layer.getNeuron(0);
-            FeatureMap featureMap = ((FeatureMap)layorInfo.layer);
             //calculate y_k's aka output
             for(int i=0; i<layorInfo.mImpulseFunction.numRows; i++)
                 for(int j=0; j<layorInfo.mImpulseFunction.numCols; j++)
@@ -373,75 +345,157 @@ public class ConvolutionalNetwork
                 }
         }
     }
-/*
-    protected void constructGradients(int example)
-    {
-       constructGradients(example, aLayers.length - 1);
-    }
 
-    protected void constructGradients(int example, int layer)
+    protected class BackPropagation
     {
-        if (layer >= 0)
+        int[] aWeightConnections;
+
+        protected BackPropagation(int weight1Dlength)
         {
-            LayorInfo layorInfo = aLayers[layer];
+            aWeightConnections = new int[weight1Dlength * weight1Dlength];
+        }
 
-            for(int neuronPos=0; neuronPos<layorInfo.layer.getNumberOfNeurons(); neuronPos++)
+        /**
+         * Trains the network using pairs of inputs/expected values
+         *
+         * @return sum of the total differnce squared (error)
+         */
+        protected double backpropagationOneIteration()
+        {
+            resetWeightAdjustments();
+
+            for(int i=0; i< numberExamples; i++)
             {
-                layorInfo.vGradients.set(neuronPos, gradient(example, layer, neuronPos));
+                forwardPropagation.calculateForwardPropOnePass(i);
+                constructGradients(i);
+                //saveWeightAdjustments();
+            }
+            return -1;
+            /*
+            adjustWeights();
+
+            for(int i=0; i< numberExamples; i++)
+            {
+                constructErrorFunction(i);
             }
 
-            constructGradients(example, layer - 1);
+            return mTotalDifferenceSquared.sumOfCoords();     */
         }
-    }
 
-    *//**
-     * Gradient for the given example, layer, and neuron
-     *
-     * @param example example
-     * @param layerLevel layer level
-     * @param neuron neuron
-     * @return gradient value for the given example, layer, and neuron
-     *//*
-    protected double gradient(int example, int layerLevel, int neuron)
-    {
-        if (layerLevel == aLayers.length-1)
+        protected void resetWeightAdjustments()
         {
-            // (oj - tj) * phi'_j(v^L_j)
-            final double inducedLocalField = aLayers[layerLevel].vInducedLocalField.get(neuron);
-            final double impulseFunction = aLayers[layerLevel].vImpulseFunction.get(neuron);
-            return (aExamples[example].mExpected.get(neuron) - impulseFunction)
-                    * phi.derivative(inducedLocalField);
+            for(LayerInfo layerInfo :aLayers)
+            {
+                for(int i=0; i< layerInfo.aWeightAdjustments.length; i++)
+                    for(int j=0; j< layerInfo.aWeightAdjustments.length; j++)
+                    {
+                        MNeuron neuron = layerInfo.aWeightAdjustments[i][j];
+                        //iterate thru the neuron's weights
+                        for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
+                        {
+                            neuron.setWeight(weight, 0);
+                        }
+                    }
+            }
         }
-        else
-        {
-             return phi.derivative( aLayers[layerLevel].vInducedLocalField.get(neuron))
-                     * sumGradients(example, layerLevel + 1, neuron);
-        }
-    }
 
-    *//**
-     * Find the sum of the gradients times the weights of the next layer
-     * for the current neuron
-     *
-     *
-     *
-     * @param example
-     * @param layerLevel layer level
-     * @param currentNeuron current neuron
-     * @return
-     *//*
-    protected double sumGradients(int example, int layerLevel, int currentNeuron)
-    {
-        LayorInfo layorInfo = aLayers[layerLevel];
-        double rslt = 0f;
-
-        int neuronPos = 0;
-        for(Neuron neuron:layorInfo.layer)
+        protected void constructGradients(int example)
         {
-            rslt += neuron.getWeight(currentNeuron) * gradient(example, layerLevel, neuronPos++);
+            constructGradients(example, aLayers.length - 1);
         }
-        return rslt;
+
+        protected void constructGradients(int example, int layer)
+        {
+            if (layer >= 0)
+            {
+                LayerInfo layerInfo = aLayers[layer];
+
+                for(int i=0; i< layerInfo.mGradients.numRows; i++)
+                    for(int j=0; j< layerInfo.mGradients.numCols; j++)
+                    {
+                        layerInfo.mGradients.unsafe_set(i, j, gradient(example, layer, i, j));
+                    }
+
+                constructGradients(example, layer - 1);
+            }
+        }
+
+        /**
+         * Gradient for the given example, layer, and neuron
+         *
+         * @param example example
+         * @param layerLevel layer level
+         * @param i neuron's row position
+         * @param j neuron's col position
+         * @return gradient value for the given example, layer, and neuron
+         */
+        protected double gradient(int example, int layerLevel, int i, int j)
+        {
+            if (layerLevel == numberLayers-1)
+            {
+                // (oj - tj) * phi'_j(v^L_j)
+                final double inducedLocalField = aLayers[layerLevel].mInducedLocalField.get(i,j);
+                final double impulseFunction = aLayers[layerLevel].mImpulseFunction.get(i,j);
+                return (aExamples[example].mExpected.get(i,j) - impulseFunction)
+                        * phi.derivative(inducedLocalField);
+            }
+            else
+            {
+                return phi.derivative( aLayers[layerLevel].mInducedLocalField.get(i,j))
+                        * sumGradients(example, layerLevel + 1, i, j);
+            }
+        }
+
+        /**
+         * Find the sum of the gradients times the weights
+         * for the current neuron
+         *
+         * @param example dah example
+         * @param layerLevel layer level
+         * @param i neuron's row position in *previous* layer
+         * @param j neuron's col position in *previous* layer
+         * @return sum of gradients
+         */
+        protected double sumGradients(int example, int layerLevel, int i, int j)
+        {
+            final LayerInfo previousLayerInfo = aLayers[layerLevel-1];
+            final LayerInfo layerInfo = aLayers[layerLevel];
+
+            Arrays.fill(aWeightConnections, 1);
+
+            final FeatureMap featureMap = (FeatureMap) previousLayerInfo.layer;
+            final MNeuron neuron = layerInfo.layer.getNeuron(0);
+            final int iNextLayer = featureMap.mapColFromInput(i);
+            final int jNextLayer = featureMap.mapRowFromInput(j);
+
+            featureMap.calculateWeightConnections(aWeightConnections, i, j);
+
+            double rslt = 0.0;
+
+            for(int neuronPos =0; neuronPos <aWeightConnections.length; neuronPos++)
+            {
+                //if its enabled for this neuron
+                if (aWeightConnections[neuronPos] > 0)
+                {
+                    rslt += neuron.getWeight(neuronPos)
+                            * gradient(example, layerLevel, iNextLayer, jNextLayer);
+                }
+            }
+            return rslt;
+        }
+
+        /*protected void constructErrorFunction(int example)
+        {
+            NVector vActual = forwardPropagation(example);
+            NVector vExpected = aExamples[example].mExpected;
+            aExamples[example].differenceSquared = vExpected.subtract(vActual).dotProduct();
+            mTotalDifferenceSquared.set(example, aExamples[example].differenceSquared);
+        }*/
+
+
     }
+/*
+
 
     protected void saveWeightAdjustments()
     {
@@ -498,24 +552,6 @@ public class ConvolutionalNetwork
                                      + momentum
                                      + layorInfo.aWeightAdjustments[neuronPos].get(weight) // total delta weights
                     );
-                }
-                neuronPos++;
-            }
-        }
-    }
-
-    protected void resetWeightAdjustments()
-    {
-        for(LayorInfo layorInfo:aLayers)
-        {
-            //iterate thru the neurons in the layer
-            int neuronPos = 0;
-            for(Neuron neuron:layorInfo.layer)
-            {
-                //iterate thru the neuron's weights
-                for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
-                {
-                    layorInfo.aWeightAdjustments[neuronPos].set(weight, 0);
                 }
                 neuronPos++;
             }
