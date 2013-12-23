@@ -112,7 +112,7 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
      * @param i pixel's row position in input
      * @param j pixel's col position in input
      */
-    public abstract void calculateWeightConnections(int[] aWeightConnections, int i, int j);
+    protected abstract void calculateWeightConnections(int[] aWeightConnections, int i, int j);
 
 
     /**
@@ -214,7 +214,7 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
      */
     public int featureMapColPosition(int weight, int j)
     {
-        return featureMapColPosition(weight, j);
+        return 0;
     }
 
     /**
@@ -226,77 +226,7 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
      */
     public int featureMapRowPosition(int weight, int i)
     {
-        return featureMapRowPosition(weight, i);
-    }
-
-    static public class ConvolutionMap extends FeatureMap
-    {
-
-        public ConvolutionMap(Builder builder)
-        {
-            super(builder);
-
-            outputClass.setMapInput(new DenseMatrix64F(1, receptiveFieldSize));
-        }
-
-
-        @Override
-        protected DenseMatrix64F createFeatureMap(int inputSize)
-        {
-            final int n = inputSize - sqrtReceptiveFieldSize + 1;
-            return new DenseMatrix64F(n,n);
-
-        }
-
-        @Override
-        public double output(DenseMatrix64F input, int x, int y)
-        {
-            double inducedLocalField = rawoutput(input, x, y);
-            return sharedNeuron.phi().apply(inducedLocalField);
-        }
-
-        @Override
-        public double rawoutput(final DenseMatrix64F input, final int x, final int y)
-        {
-            outputClass.copy(input, sqrtReceptiveFieldSize, x, y);
-            return sharedNeuron.rawoutput(outputClass.mapInput);
-        }
-
-        @Override
-        public void output(DenseMatrix64F input, DenseMatrix64F aFeatureMap)
-        {
-            for(int i=0; i<=input.numRows - sqrtReceptiveFieldSize; i++)
-                for(int j=0; j<=input.numCols - sqrtReceptiveFieldSize; j++)
-                {
-                    //copy over input into data struct
-                    outputClass.copy(input, sqrtReceptiveFieldSize, i, j);
-                    //do it
-                    aFeatureMap.unsafe_set(i, j, sharedNeuron.output(outputClass.mapInput));
-                }
-        }
-
-        @Override
-        public void calculateWeightConnections(int[] aWeightConnections, int i, int j)
-        {
-            //find distance to borders
-            final int distanceToL = j;
-            final int distanceToT = i;
-            final int distanceToR = oneDimInputSize - j;
-            final int idstanceToB = oneDimInputSize - i;
-
-            //reset weights
-            for(int w=0; w<aWeightConnections.length; w++)
-                aWeightConnections[w] = 1;
-
-            //disable from left border
-            for(int col=distanceToL+1; col<sqrtReceptiveFieldSize; col++)
-                disableCol(aWeightConnections, col);
-            //disable from right border
-            for(int col=distanceToR+1; col<sqrtReceptiveFieldSize; col++ )
-                disableCol(aWeightConnections, col);
-            //disable left border
-            for(int row=distanceToT; row<)
-        }
+        return 0;
     }
 
     /**
