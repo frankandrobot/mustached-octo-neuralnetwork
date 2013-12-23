@@ -465,8 +465,6 @@ public class ConvolutionalNetwork
 
             final FeatureMap featureMap = (FeatureMap) previousLayerInfo.layer;
             final MNeuron neuron = layerInfo.layer.getNeuron(0);
-            final int iNextLayer = featureMap.mapColFromInput(i);
-            final int jNextLayer = featureMap.mapRowFromInput(j);
 
             featureMap.calculateWeightConnections(aWeightConnections, i, j);
 
@@ -477,6 +475,9 @@ public class ConvolutionalNetwork
                 //if its enabled for this neuron
                 if (aWeightConnections[neuronPos] > 0)
                 {
+                    final int iNextLayer = featureMap.featureMapRowPosition(neuronPos, i);
+                    final int jNextLayer = featureMap.featureMapColPosition(neuronPos, j);
+
                     rslt += neuron.getWeight(neuronPos)
                             * gradient(example, layerLevel, iNextLayer, jNextLayer);
                 }

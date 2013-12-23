@@ -9,6 +9,9 @@ import static org.junit.Assert.assertThat;
 
 public class ConvolutionalNetworkTest
 {
+
+    private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
+
     @Test
     public void testOutputSingleConvolutionLayer()
     {
@@ -20,16 +23,12 @@ public class ConvolutionalNetworkTest
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
-
-        MNeuron neuron = new MNeuron(phi, weights);
-        FeatureMap.MapFunction mapFunction = new FeatureMap.ConvolutionFunction(neuron);
-        mapFunction.setReceptiveFieldSize(2*2);
-
         FeatureMap.Builder builder = new FeatureMap.Builder();
-        builder.set1DInputSize(3)
-               .setMapFunction(mapFunction);
-        FeatureMap featureMap = new FeatureMap(builder);
+        builder.setNeuron(new MNeuron(phi, weights));
+        builder.setReceptiveFieldSize(2 * 2);
+        builder.set1DInputSize(3);
+
+        FeatureMap featureMap = new FeatureMap.ConvolutionMap(builder);
 
         ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
@@ -80,16 +79,12 @@ public class ConvolutionalNetworkTest
 
         final double[] weights = {0.3, 0.4};
 
-        final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
-
-        MNeuron neuron = new MNeuron(phi, weights);
-        FeatureMap.MapFunction mapFunction = new FeatureMap.SubSamplingFunction(neuron);
-        mapFunction.setReceptiveFieldSize(2*2);
-
         FeatureMap.Builder builder = new FeatureMap.Builder();
-        builder.set1DInputSize(4)
-               .setMapFunction(mapFunction);
-        FeatureMap featureMap = new FeatureMap(builder);
+        builder.setNeuron(new MNeuron(phi, weights));
+        builder.setReceptiveFieldSize(2*2);
+        builder.set1DInputSize(4);
+
+        FeatureMap featureMap = new FeatureMap.SubSamplingMap(builder);
 
         ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
@@ -135,17 +130,13 @@ public class ConvolutionalNetworkTest
 
         final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
 
-        final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
-
         //build first layer
-        MNeuron neuron = new MNeuron(phi, weights);
-        FeatureMap.MapFunction convolutionFunc = new FeatureMap.ConvolutionFunction(neuron);
-        convolutionFunc.setReceptiveFieldSize(3*3);
-
         FeatureMap.Builder builder = new FeatureMap.Builder();
-        builder.set1DInputSize(4)
-               .setMapFunction(convolutionFunc);
-        FeatureMap convolutionMap = new FeatureMap(builder);
+        builder.setNeuron(new MNeuron(phi, weights));
+        builder.setReceptiveFieldSize(3*3);
+        builder.set1DInputSize(4);
+
+        FeatureMap convolutionMap = new FeatureMap.ConvolutionMap(builder);
 
         assertThat(convolutionMap.getFeatureMap().numCols, is(2));
         assertThat(convolutionMap.getFeatureMap().numRows, is(2));
@@ -153,13 +144,11 @@ public class ConvolutionalNetworkTest
         //build second layer
         final double[] weights2 = {0.3, 0.4};
         builder = new FeatureMap.Builder();
-        MNeuron neuron2 = new MNeuron(phi, weights2);
-        FeatureMap.MapFunction subsampFunc = new FeatureMap.SubSamplingFunction(neuron2);
-        subsampFunc.setReceptiveFieldSize(2*2);
+        builder.setNeuron(new MNeuron(phi, weights2));
+        builder.setReceptiveFieldSize(2*2);
+        builder.set1DInputSize(2);
 
-        builder.set1DInputSize(2)
-               .setMapFunction(subsampFunc);
-        FeatureMap subsamplingMap = new FeatureMap(builder);
+        FeatureMap subsamplingMap = new FeatureMap.SubSamplingMap(builder);
 
         assertThat(subsamplingMap.getFeatureMap().numCols, is(1));
         assertThat(subsamplingMap.getFeatureMap().numRows, is(1));
