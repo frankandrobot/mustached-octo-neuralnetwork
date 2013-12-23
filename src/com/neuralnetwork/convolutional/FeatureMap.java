@@ -286,9 +286,16 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
 
             //reset weights
             for(int w=0; w<aWeightConnections.length; w++)
-                aWeightConnections[w] = 0;
+                aWeightConnections[w] = 1;
 
-            //
+            //disable from left border
+            for(int col=distanceToL+1; col<sqrtReceptiveFieldSize; col++)
+                disableCol(aWeightConnections, col);
+            //disable from right border
+            for(int col=distanceToR+1; col<sqrtReceptiveFieldSize; col++ )
+                disableCol(aWeightConnections, col);
+            //disable left border
+            for(int row=distanceToT; row<)
         }
     }
 
