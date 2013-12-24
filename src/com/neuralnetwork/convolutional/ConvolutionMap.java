@@ -58,8 +58,8 @@ public class ConvolutionMap extends FeatureMap
         final int distanceToB = sqrtReceptiveFieldSize - (oneDimInputSize - i);
 
         //reset weights
-        for(int w=0; w<aWeightConnections.length; w++)
-            aWeightConnections[w] = 1;
+        //for(int w=0; w<aWeightConnections.length; w++)
+        //    aWeightConnections[w] = 1;
 
         //disable from left border
         for(int col=distanceToL+1; col<sqrtReceptiveFieldSize; col++)

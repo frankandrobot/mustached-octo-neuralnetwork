@@ -152,6 +152,14 @@ public class ConvolutionalNetwork
          */
         public MNeuron[][] aWeightAdjustments;
 
+        /**
+         * the matrix (in 1D form) of the receptive field of a pixel in feature map.
+         * Used to help calculate the gradients.
+         * A position in the matrix represents a weight. Its value is 1 iff that weight is connected to the
+         * input pixel.
+         */
+        public int[] aWeightConnections;
+
         public LayerInfo(IMatrixNeuralNetwork layer)
         {
             this.layer = layer;
@@ -162,6 +170,7 @@ public class ConvolutionalNetwork
             this.mGradients = new DenseMatrix64F(n,n);
             this.aPrevWeights = new MNeuron[n][n];
             this.aWeightAdjustments = new MNeuron[n][n];
+            this.aWeightConnections = new int[((FeatureMap)this.layer).receptiveFieldSize];
 
             /*for(int i=0; i<n; i++)
                 for(int j=0; j<n; j++)
@@ -348,12 +357,8 @@ public class ConvolutionalNetwork
 
     protected class BackPropagation
     {
-        int[] aWeightConnections;
 
-        protected BackPropagation(int weight1Dlength)
-        {
-            aWeightConnections = new int[weight1Dlength * weight1Dlength];
-        }
+        protected BackPropagation() {}
 
         /**
          * Trains the network using pairs of inputs/expected values
@@ -452,21 +457,22 @@ public class ConvolutionalNetwork
          *
          * @param example dah example
          * @param layerLevel layer level
-         * @param i neuron's row position in *previous* layer
-         * @param j neuron's col position in *previous* layer
+         * @param iPrevLayer neuron's row position in *previous* layer
+         * @param jPrevLayer neuron's col position in *previous* layer
          * @return sum of gradients
          */
-        protected double sumGradients(int example, int layerLevel, int i, int j)
+        protected double sumGradients(int example, int layerLevel, int iPrevLayer, int jPrevLayer)
         {
-            final LayerInfo previousLayerInfo = aLayers[layerLevel-1];
             final LayerInfo layerInfo = aLayers[layerLevel];
+
+            final int[] aWeightConnections = layerInfo.aWeightConnections;
 
             Arrays.fill(aWeightConnections, 1);
 
-            final FeatureMap featureMap = (FeatureMap) previousLayerInfo.layer;
+            final FeatureMap featureMap = (FeatureMap) layerInfo.layer;
             final MNeuron neuron = layerInfo.layer.getNeuron(0);
 
-            featureMap.disableWeightConnections(aWeightConnections, i, j);
+            featureMap.disableWeightConnections(aWeightConnections, iPrevLayer, jPrevLayer);
 
             double rslt = 0.0;
 
@@ -475,11 +481,11 @@ public class ConvolutionalNetwork
                 //if its enabled for this neuron
                 if (aWeightConnections[neuronPos] > 0)
                 {
-                    final int iNextLayer = featureMap.featureMapRowPosition(neuronPos, i);
-                    final int jNextLayer = featureMap.featureMapColPosition(neuronPos, j);
+                    final int iCurLayer = featureMap.featureMapRowPosition(neuronPos, iPrevLayer);
+                    final int jCurLayer = featureMap.featureMapColPosition(neuronPos, jPrevLayer);
 
                     rslt += neuron.getWeight(neuronPos)
-                            * gradient(example, layerLevel, iNextLayer, jNextLayer);
+                            * gradient(example, layerLevel, iCurLayer, jCurLayer);
                 }
             }
             return rslt;
