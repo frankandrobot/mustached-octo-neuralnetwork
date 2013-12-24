@@ -115,48 +115,6 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
     protected abstract void calculateWeightConnections(int[] aWeightConnections, int i, int j);
 
 
-    /**
-     * Convenience class
-     */
-    static protected class OutputClass
-    {
-        /**
-         * Used for computations.
-         * - passed directly to the neuron for #ConvolutionMap
-         */
-        DenseMatrix64F mapInput;
-
-        protected OutputClass() {}
-
-        public void setMapInput(DenseMatrix64F mapInput)
-        {
-            this.mapInput = mapInput;
-        }
-
-        /**
-         * Copies a chunk of size x size from the input starting at location i,j
-         */
-        public void copy(DenseMatrix64F input, final int size, final int i, final int j)
-        {
-            int len=0;
-            for(int a=i; a < i+size; a++)
-                for(int b=j; b < j+size; b++)
-                    mapInput.unsafe_set(0, len++, input.unsafe_get(a,b));
-        }
-
-        /**
-         * Sums over the elements in a chunk of size x size from the input starting at location i,j
-         */
-        public double elementSum(DenseMatrix64F input, final int size, final int i, final int j)
-        {
-            double len=0;
-            for(int a=i; a < i+size; a++)
-                for(int b=j; b < j+size; b++)
-                    len += input.unsafe_get(a,b);
-            return len;
-        }
-    }
-
     public DenseMatrix64F calculateFeatureMap(DenseMatrix64F input)
     {
         output(input, mFeatureMap);
@@ -206,28 +164,24 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
     }
 
     /**
-     * Gets the input pixels col position in the feature map for the given weight
+     * Given the weight in the receptive field and the pixel's col position in the input,
+     * returns the pixel's col position in the feature map
      *
      * @param weight weight position in aWeightConnections
      * @param j pixel's col position in input
-     * @return
+     * @return col position in feature map
      */
-    public int featureMapColPosition(int weight, int j)
-    {
-        return 0;
-    }
+    abstract public int featureMapColPosition(int weight, int j);
 
     /**
-     * Gets the input pixel's row position in the feature map for the given weight
+     * Given the weight in the receptive field and the pixel's row position in the input,
+     * returns the pixel's row position in the feature map
      *
      * @param weight weight position in aWeightConnections
      * @param i pixel's row position in input
-     * @return
+     * @return row position in feature map
      */
-    public int featureMapRowPosition(int weight, int i)
-    {
-        return 0;
-    }
+    abstract public int featureMapRowPosition(int weight, int i);
 
     /**
      * Takes the average of the input of size #sqrtReceptiveFieldSize x #sqrtReceptiveFieldSize
@@ -289,6 +243,16 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
         public void calculateWeightConnections(int[] aWeightConnections, int i, int j) {
             //To change body of implemented methods use File | Settings | File Templates.
         }
+
+        @Override
+        public int featureMapColPosition(int weight, int j) {
+            return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public int featureMapRowPosition(int weight, int i) {
+            return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        }
     }
 
     @Override
@@ -315,5 +279,47 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
                 throw new NotImplementedException();
             }
         };
+    }
+
+    /**
+     * Convenience class
+     */
+    static protected class OutputClass
+    {
+        /**
+         * Used for computations.
+         * - passed directly to the neuron for #ConvolutionMap
+         */
+        DenseMatrix64F mapInput;
+
+        protected OutputClass() {}
+
+        public void setMapInput(DenseMatrix64F mapInput)
+        {
+            this.mapInput = mapInput;
+        }
+
+        /**
+         * Copies a chunk of size x size from the input starting at location i,j
+         */
+        public void copy(DenseMatrix64F input, final int size, final int i, final int j)
+        {
+            int len=0;
+            for(int a=i; a < i+size; a++)
+                for(int b=j; b < j+size; b++)
+                    mapInput.unsafe_set(0, len++, input.unsafe_get(a,b));
+        }
+
+        /**
+         * Sums over the elements in a chunk of size x size from the input starting at location i,j
+         */
+        public double elementSum(DenseMatrix64F input, final int size, final int i, final int j)
+        {
+            double len=0;
+            for(int a=i; a < i+size; a++)
+                for(int b=j; b < j+size; b++)
+                    len += input.unsafe_get(a,b);
+            return len;
+        }
     }
 }

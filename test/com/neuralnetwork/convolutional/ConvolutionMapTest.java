@@ -116,8 +116,6 @@ public class ConvolutionMapTest
 
         int[] aWeights = new int[featureMap.receptiveFieldSize];
 
-        DenseMatrix64F mWeights;
-
         //test in the middle
         featureMap.calculateWeightConnections(aWeights, 4, 4);
         for(int i=0; i<aWeights.length; i++)
@@ -219,6 +217,10 @@ public class ConvolutionMapTest
 
         //test bottom border
         featureMap.calculateWeightConnections(aWeights, 7, 2);
+        for(int i=0; i<6; i++)
+            assertThat(aWeights[i], is(0));
+        for(int i=6; i<9; i++)
+            assertThat(aWeights[i], is(1));
     }
 
     private double[] getWeights(int [] weights)
@@ -227,5 +229,103 @@ public class ConvolutionMapTest
         for(int i=0; i<weights.length; i++)
             rslt[i] = weights[i];
         return rslt;
+    }
+
+    @Test
+    public void testMapToFeatureMapRow()
+    {
+        final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
+
+        FeatureMap.Builder builder = new FeatureMap.Builder();
+        builder.setNeuron(new MNeuron(phi, weights));
+        builder.set1DInputSize(8);
+        builder.setReceptiveFieldSize(3 * 3);
+
+        //0 1 2
+        //3 4 5
+        //6 7 8
+
+        FeatureMap featureMap = new ConvolutionMap(builder);
+
+        for(int inputRow = 1; inputRow<10; inputRow++)
+        {
+            int row;
+
+            row = featureMap.featureMapRowPosition(0, inputRow);
+            assertThat(row, is(inputRow));
+
+            row = featureMap.featureMapRowPosition(1, inputRow);
+            assertThat(row, is(inputRow));
+
+            row = featureMap.featureMapRowPosition(2, inputRow);
+            assertThat(row, is(inputRow));
+
+            row = featureMap.featureMapRowPosition(3, inputRow);
+            assertThat(row, is(inputRow-1));
+
+            row = featureMap.featureMapRowPosition(4, inputRow);
+            assertThat(row, is(inputRow-1));
+
+            row = featureMap.featureMapRowPosition(5, inputRow);
+            assertThat(row, is(inputRow-1));
+
+            row = featureMap.featureMapRowPosition(6, inputRow);
+            assertThat(row, is(inputRow-2));
+
+            row = featureMap.featureMapRowPosition(7, inputRow);
+            assertThat(row, is(inputRow-2));
+
+            row = featureMap.featureMapRowPosition(8, inputRow);
+            assertThat(row, is(inputRow-2));
+        }
+    }
+
+    @Test
+    public void testMapToFeatureMapCol()
+    {
+        final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
+
+        FeatureMap.Builder builder = new FeatureMap.Builder();
+        builder.setNeuron(new MNeuron(phi, weights));
+        builder.set1DInputSize(8);
+        builder.setReceptiveFieldSize(3 * 3);
+
+        //0 1 2
+        //3 4 5
+        //6 7 8
+
+        FeatureMap featureMap = new ConvolutionMap(builder);
+
+        for(int inputCol = 1; inputCol<10; inputCol++)
+        {
+            int col;
+
+            col = featureMap.featureMapColPosition(0, inputCol);
+            assertThat(col, is(inputCol));
+
+            col = featureMap.featureMapColPosition(1, inputCol);
+            assertThat(col, is(inputCol-1));
+
+            col = featureMap.featureMapColPosition(2, inputCol);
+            assertThat(col, is(inputCol-2));
+
+            col = featureMap.featureMapColPosition(3, inputCol);
+            assertThat(col, is(inputCol));
+
+            col = featureMap.featureMapColPosition(4, inputCol);
+            assertThat(col, is(inputCol-1));
+
+            col = featureMap.featureMapColPosition(5, inputCol);
+            assertThat(col, is(inputCol-2));
+
+            col = featureMap.featureMapColPosition(6, inputCol);
+            assertThat(col, is(inputCol));
+
+            col = featureMap.featureMapColPosition(7, inputCol);
+            assertThat(col, is(inputCol-1));
+
+            col = featureMap.featureMapColPosition(8, inputCol);
+            assertThat(col, is(inputCol-2));
+        }
     }
 }

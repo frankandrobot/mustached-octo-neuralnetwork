@@ -2,13 +2,6 @@ package com.neuralnetwork.convolutional;
 
 import org.ejml.data.DenseMatrix64F;
 
-/**
-* Created with IntelliJ IDEA.
-* User: Uriel.Avalos
-* Date: 12/23/13
-* Time: 2:52 PM
-* To change this template use File | Settings | File Templates.
-*/
 public class ConvolutionMap extends FeatureMap
 {
 
@@ -91,5 +84,17 @@ public class ConvolutionMap extends FeatureMap
     {
         for(int i=0; i<sqrtReceptiveFieldSize; i++)
             aWeightConnections[row*sqrtReceptiveFieldSize + i] = 0;
+    }
+
+    @Override
+    public int featureMapColPosition(int weight, int j)
+    {
+        return j - weight % sqrtReceptiveFieldSize;
+    }
+
+    @Override
+    public int featureMapRowPosition(int weight, int i)
+    {
+        return i - weight / sqrtReceptiveFieldSize;
     }
 }
