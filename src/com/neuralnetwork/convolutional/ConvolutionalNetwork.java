@@ -434,14 +434,14 @@ public class ConvolutionalNetwork
             if (layerLevel == numberLayers-1)
             {
                 // (oj - tj) * phi'_j(v^L_j)
-                final double inducedLocalField = aLayers[layerLevel].mInducedLocalField.get(i,j);
-                final double impulseFunction = aLayers[layerLevel].mImpulseFunction.get(i,j);
-                return (aExamples[example].mExpected.get(i,j) - impulseFunction)
+                final double inducedLocalField = aLayers[layerLevel].mInducedLocalField.unsafe_get(i,j);
+                final double impulseFunction = aLayers[layerLevel].mImpulseFunction.unsafe_get(i,j);
+                return (aExamples[example].mExpected.unsafe_get(i,j) - impulseFunction)
                         * phi.derivative(inducedLocalField);
             }
             else
             {
-                return phi.derivative( aLayers[layerLevel].mInducedLocalField.get(i,j))
+                return phi.derivative( aLayers[layerLevel].mInducedLocalField.unsafe_get(i,j))
                         * sumGradients(example, layerLevel + 1, i, j);
             }
         }
