@@ -117,63 +117,63 @@ public class ConvolutionMapTest
         int[] aWeights = new int[featureMap.receptiveFieldSize];
 
         //test in the middle
-        featureMap.calculateWeightConnections(aWeights, 4, 4);
+        featureMap.disableWeightConnections(aWeights, 4, 4);
         for(int i=0; i<aWeights.length; i++)
             assertThat(aWeights[i], is(1));
 
         //test top border starting in top left
-        featureMap.calculateWeightConnections(aWeights, 0, 0);
+        featureMap.disableWeightConnections(aWeights, 0, 0);
         assertThat(aWeights[0], is(1));
         for(int i=1; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 0, 1);
+        featureMap.disableWeightConnections(aWeights, 0, 1);
         assertThat(aWeights[0], is(1));
         assertThat(aWeights[1], is(1));
         for(int i=2; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 0, 2);
+        featureMap.disableWeightConnections(aWeights, 0, 2);
         assertThat(aWeights[0], is(1));
         assertThat(aWeights[1], is(1));
         assertThat(aWeights[2], is(1));
         for(int i=3; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 0, 4);
+        featureMap.disableWeightConnections(aWeights, 0, 4);
         assertThat(aWeights[0], is(1));
         assertThat(aWeights[1], is(1));
         assertThat(aWeights[2], is(1));
         for(int i=3; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 0, 5);
+        featureMap.disableWeightConnections(aWeights, 0, 5);
         assertThat(aWeights[0], is(1));
         assertThat(aWeights[1], is(1));
         assertThat(aWeights[2], is(1));
         for(int i=3; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 0, 6);
+        featureMap.disableWeightConnections(aWeights, 0, 6);
         assertThat(aWeights[0], is(0));
         assertThat(aWeights[1], is(1));
         assertThat(aWeights[2], is(1));
         for(int i=3; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 0, 7);
+        featureMap.disableWeightConnections(aWeights, 0, 7);
         assertThat(aWeights[2], is(1));
         for(int i=0; i<aWeights.length; i++)
             if (i != 2) assertThat(aWeights[i], is(0));
 
         //next level
-        featureMap.calculateWeightConnections(aWeights, 1, 7);
+        featureMap.disableWeightConnections(aWeights, 1, 7);
         assertThat(aWeights[2], is(1));
         assertThat(aWeights[5], is(1));
         for(int i=0; i<aWeights.length; i++)
             if (i!=2 && i!= 5) assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 1, 6);
+        featureMap.disableWeightConnections(aWeights, 1, 6);
         assertThat(aWeights[0], is(0));
         assertThat(aWeights[1], is(1));
         assertThat(aWeights[2], is(1));
@@ -183,19 +183,19 @@ public class ConvolutionMapTest
         for(int i=6; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 1, 5);
+        featureMap.disableWeightConnections(aWeights, 1, 5);
         for(int i=0; i<6; i++)
             assertThat(aWeights[i], is(1));
         for(int i=6; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 1, 2);
+        featureMap.disableWeightConnections(aWeights, 1, 2);
         for(int i=0; i<6; i++)
             assertThat(aWeights[i], is(1));
         for(int i=6; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 1, 1);
+        featureMap.disableWeightConnections(aWeights, 1, 1);
         assertThat(aWeights[0], is(1));
         assertThat(aWeights[1], is(1));
         assertThat(aWeights[2], is(0));
@@ -205,7 +205,7 @@ public class ConvolutionMapTest
         for(int i=6; i<aWeights.length; i++)
             assertThat(aWeights[i], is(0));
 
-        featureMap.calculateWeightConnections(aWeights, 1, 0);
+        featureMap.disableWeightConnections(aWeights, 1, 0);
         assertThat(aWeights[0], is(1));
         assertThat(aWeights[1], is(0));
         assertThat(aWeights[2], is(0));
@@ -216,7 +216,7 @@ public class ConvolutionMapTest
             assertThat(aWeights[i], is(0));
 
         //test bottom border
-        featureMap.calculateWeightConnections(aWeights, 7, 2);
+        featureMap.disableWeightConnections(aWeights, 7, 2);
         for(int i=0; i<6; i++)
             assertThat(aWeights[i], is(0));
         for(int i=6; i<9; i++)

@@ -466,7 +466,7 @@ public class ConvolutionalNetwork
             final FeatureMap featureMap = (FeatureMap) previousLayerInfo.layer;
             final MNeuron neuron = layerInfo.layer.getNeuron(0);
 
-            featureMap.calculateWeightConnections(aWeightConnections, i, j);
+            featureMap.disableWeightConnections(aWeightConnections, i, j);
 
             double rslt = 0.0;
 

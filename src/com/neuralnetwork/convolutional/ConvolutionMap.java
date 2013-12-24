@@ -49,7 +49,7 @@ public class ConvolutionMap extends FeatureMap
     }
 
     @Override
-    protected void calculateWeightConnections(int[] aWeightConnections, int i, int j)
+    protected void disableWeightConnections(int[] aWeightConnections, int i, int j)
     {
         //find distance to borders
         final int distanceToL = j;

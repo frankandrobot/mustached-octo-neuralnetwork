@@ -84,7 +84,7 @@ public class ConvolutionalNetworkTest
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(4);
 
-        FeatureMap featureMap = new FeatureMap.SubSamplingMap(builder);
+        FeatureMap featureMap = new SubSamplingMap(builder);
 
         ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
@@ -148,7 +148,7 @@ public class ConvolutionalNetworkTest
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(2);
 
-        FeatureMap subsamplingMap = new FeatureMap.SubSamplingMap(builder);
+        FeatureMap subsamplingMap = new SubSamplingMap(builder);
 
         assertThat(subsamplingMap.getFeatureMap().numCols, is(1));
         assertThat(subsamplingMap.getFeatureMap().numRows, is(1));

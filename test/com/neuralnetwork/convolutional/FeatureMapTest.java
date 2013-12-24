@@ -44,7 +44,7 @@ public class FeatureMapTest
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(2);
 
-        FeatureMap subsamplingMap = new FeatureMap.SubSamplingMap(builder);
+        FeatureMap subsamplingMap = new SubSamplingMap(builder);
 
         final DenseMatrix64F rslt = subsamplingMap.output(output);
         assertThat(rslt.numCols, is(1));
