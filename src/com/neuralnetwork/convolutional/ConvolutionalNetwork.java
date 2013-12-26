@@ -476,15 +476,15 @@ public class ConvolutionalNetwork
 
             double rslt = 0.0;
 
-            for(int neuronPos =0; neuronPos <aWeightConnections.length; neuronPos++)
+            for(int weight =0; weight <aWeightConnections.length; weight++)
             {
                 //if its enabled for this neuron
-                if (aWeightConnections[neuronPos] > 0)
+                if (aWeightConnections[weight] > 0)
                 {
-                    final int iCurLayer = featureMap.featureMapRowPosition(neuronPos, iPrevLayer);
-                    final int jCurLayer = featureMap.featureMapColPosition(neuronPos, jPrevLayer);
+                    final int iCurLayer = featureMap.featureMapRowPosition(weight, iPrevLayer);
+                    final int jCurLayer = featureMap.featureMapColPosition(weight, jPrevLayer);
 
-                    rslt += neuron.getWeight(neuronPos)
+                    rslt += neuron.getWeight(weight)
                             * gradient(example, layerLevel, iCurLayer, jCurLayer);
                 }
             }

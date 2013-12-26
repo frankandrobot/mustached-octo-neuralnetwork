@@ -2,6 +2,8 @@ package com.neuralnetwork.convolutional;
 
 import org.ejml.data.DenseMatrix64F;
 
+import java.util.Arrays;
+
 /**
  * Takes the average of the input of size #sqrtReceptiveFieldSize x #sqrtReceptiveFieldSize
  * then multiplies it by a scale factor, adds a bias, then applies an activation function
@@ -61,7 +63,8 @@ public class SubSamplingMap extends FeatureMap
     @Override
     public void disableWeightConnections(int[] aWeightConnections, int i, int j)
     {
-        //this does nothing since there are no weights to disable
+        Arrays.fill(aWeightConnections, 0);
+        aWeightConnections[0] = 1;
     }
 
     @Override

@@ -122,7 +122,7 @@ public class ConvolutionalNetworkBackPropTest
     }
 
     @Test
-    public void testTwoLayer()
+    public void testTwoLayerA()
     {
         //construct convolution layer
         final DenseMatrix64F trainingInput = new DenseMatrix64F(4,4,true, new double[] {
@@ -180,6 +180,68 @@ public class ConvolutionalNetworkBackPropTest
 
         final double d00 = phi.derivative(mInducedField0.get(0,0)) * mGradients1.get(0,0) * weights2[0];
 
-        assertThat(d00, is(mGradients0.get(0,0)));
+        assertThat(d00, is(mGradients0.get(0, 0)));
+    }
+
+    @Test
+    public void testTwoLayerB()
+    {
+        final DenseMatrix64F trainingInput = new DenseMatrix64F(4,4,true, new double[] {
+                1, 2, 3, 4
+                ,5, 6, 7, 8
+                ,9, 10, 11, 12
+                ,13, 14, 15, 16
+        });
+
+        final DenseMatrix64F expected = new DenseMatrix64F(1,1,true, new double[] {0.4});
+
+
+        FeatureMap.Builder builder = new FeatureMap.Builder();
+
+        //build first layer
+        final double[] weights2 = {0.3, 0.4};
+        builder.setNeuron(new MNeuron(phi, weights2));
+        builder.setReceptiveFieldSize(2 * 2);
+        builder.set1DInputSize(4);
+
+        FeatureMap subsamplingMap = new SubSamplingMap(builder);
+
+        assertThat(subsamplingMap.getFeatureMap().numCols, is(2));
+        assertThat(subsamplingMap.getFeatureMap().numRows, is(2));
+
+        //build second layer
+        final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05};
+        builder = new FeatureMap.Builder();
+        builder.setNeuron(new MNeuron(phi, weights));
+        builder.setReceptiveFieldSize(2 * 2);
+        builder.set1DInputSize(2);
+
+        FeatureMap convolutionMap = new ConvolutionMap(builder);
+
+        assertThat(convolutionMap.getFeatureMap().numCols, is(1));
+        assertThat(convolutionMap.getFeatureMap().numRows, is(1));
+
+        //build network
+        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        netBuilder.setGlobalActivationFunction(phi)
+                  .setLayers(subsamplingMap, convolutionMap)
+                  .setLearningParam(0.0)
+                  .setMomentumParam(0.0);
+
+        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
+        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+
+        network.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
+        network.forwardPropagation.calculateForwardPropOnePass(0);
+        backPropagation.constructGradients(0);
+
+        //calculate gradient at (0,0) in first layer (0)
+        final DenseMatrix64F mInducedField0 = network.getLayer(0).mInducedLocalField;
+        final DenseMatrix64F mGradients0 = network.getLayer(0).mGradients;
+        final DenseMatrix64F mGradients1 = network.getLayer(1).mGradients;
+
+        final double d00 = phi.derivative(mInducedField0.get(0,0)) * mGradients1.get(0,0) * weights2[0];
+
+        assertThat(d00, is(mGradients0.get(0, 0)));
     }
 }
