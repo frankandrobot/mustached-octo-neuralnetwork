@@ -200,9 +200,9 @@ public class ConvolutionalNetworkBackPropTest
 
         //build first layer
         final double[] weights2 = {0.3, 0.4};
-        builder.setNeuron(new MNeuron(phi, weights2));
-        builder.setReceptiveFieldSize(2 * 2);
-        builder.set1DInputSize(4);
+        builder.setNeuron(new MNeuron(phi, weights2))
+                .setReceptiveFieldSize(2 * 2)
+                .set1DInputSize(4);
 
         FeatureMap subsamplingMap = new SubSamplingMap(builder);
 
@@ -212,9 +212,9 @@ public class ConvolutionalNetworkBackPropTest
         //build second layer
         final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05};
         builder = new FeatureMap.Builder();
-        builder.setNeuron(new MNeuron(phi, weights));
-        builder.setReceptiveFieldSize(2 * 2);
-        builder.set1DInputSize(2);
+        builder.setNeuron(new MNeuron(phi, weights))
+                .setReceptiveFieldSize(2 * 2)
+                .set1DInputSize(2);
 
         FeatureMap convolutionMap = new ConvolutionMap(builder);
 
@@ -235,13 +235,27 @@ public class ConvolutionalNetworkBackPropTest
         network.forwardPropagation.calculateForwardPropOnePass(0);
         backPropagation.constructGradients(0);
 
-        //calculate gradient at (0,0) in first layer (0)
         final DenseMatrix64F mInducedField0 = network.getLayer(0).mInducedLocalField;
+        final DenseMatrix64F mInducedField1 = network.getLayer(1).mInducedLocalField;
+        final DenseMatrix64F mImpulseFunc1 = network.getLayer(1).mImpulseFunction;
         final DenseMatrix64F mGradients0 = network.getLayer(0).mGradients;
         final DenseMatrix64F mGradients1 = network.getLayer(1).mGradients;
 
-        final double d00 = phi.derivative(mInducedField0.get(0,0)) * mGradients1.get(0,0) * weights2[0];
+        //calculate gradient at (0,0) in second layer (1)
+        //final double d00 = (expected.get(0,0) - mImpulseFunction.get(0,0)) * phi.derivative( mInducedField.get(0,0) );
+        final double d001 = (expected.get(0,0) - mImpulseFunc1.get(0,0)) * phi.derivative( mInducedField1.get(0,0));
+        assertThat(d001, is(mGradients1.get(0,0)));
 
-        assertThat(d00, is(mGradients0.get(0, 0)));
+        //calculate gradient at (0,0) in first layer (0)
+
+        final double d00 = phi.derivative(mInducedField0.get(0,0)) * mGradients1.get(0,0) * weights[0];
+
+        System.out.println(toString(d00));
+        assertThat(toString(d00), is(toString(mGradients0.get(0, 0))));
+    }
+
+    private String toString(double m)
+    {
+        return String.format("%8.8g", m);
     }
 }
