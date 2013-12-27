@@ -172,14 +172,15 @@ public class ConvolutionalNetwork
             this.aWeightAdjustments = new MNeuron[n][n];
             this.aWeightConnections = new int[((FeatureMap)this.layer).receptiveFieldSize];
 
-            /*for(int i=0; i<n; i++)
+            double[] dummyWeights = new double[this.layer.getNumberOfNeurons()];
+
+            for(int i=0; i<n; i++)
                 for(int j=0; j<n; j++)
                 {
-                    this.aPrevWeights[i][j] =
-                this.aPrevWeights[len] = new NVector().setSize(neuron.getNumberOfWeights());
-                this.aWeightAdjustments[len] = new NVector().setSize(neuron.getNumberOfWeights());
-                ++len;
-            }*/
+                    //this.aPrevWeights[i][j] =
+                    //this.aPrevWeights[len] = new NVector().setSize(neuron.getNumberOfWeights());
+                    this.aWeightAdjustments[i][j] = new MNeuron(phi, dummyWeights);
+                }
         }
     }
 
@@ -373,7 +374,7 @@ public class ConvolutionalNetwork
             {
                 forwardPropagation.calculateForwardPropOnePass(i);
                 constructGradients(i);
-                //saveWeightAdjustments();
+                saveWeightAdjustments();
             }
             return -1;
             /*
@@ -491,6 +492,55 @@ public class ConvolutionalNetwork
             return rslt;
         }
 
+        protected void saveWeightAdjustments()
+        {
+            saveWeightAdjustments(aLayers.length - 1);
+        }
+
+        protected void saveWeightAdjustments(int layer)
+        {
+            if (layer >= 0)
+            {
+                LayerInfo layerInfo = aLayers[layer];
+
+                final FeatureMap featureMap = (FeatureMap) layerInfo.layer;
+
+                final int[] aWeightConnections = layerInfo.aWeightConnections;
+
+                //for the given pixel in the previous (input) layer
+                //figure out which weights are used by this pixel
+                //for the weights used by the pixel,
+                //figure out the pixel (in this layer) the given pixel maps to
+                //figure out the weight adjustment and store it
+                for(int iPrevLayer =0; iPrevLayer <layerInfo.mInput.numRows; iPrevLayer++)
+                    for(int jPrevLayer =0; jPrevLayer <layerInfo.mInput.numCols; jPrevLayer++)
+                    {
+                        Arrays.fill(aWeightConnections, 1);
+
+                        featureMap.disableWeightConnections(aWeightConnections, iPrevLayer, jPrevLayer);
+
+                        //iterate thru the neuron's weights
+                        for(int weight=0; weight<aWeightConnections.length; weight++)
+                        {
+                            if (aWeightConnections[weight] > 0)
+                            {
+                                final int i = featureMap.featureMapRowPosition(weight, iPrevLayer);
+                                final int j = featureMap.featureMapColPosition(weight, jPrevLayer);
+
+                                double weightAdjustment = //delta correction
+                                    eta * layerInfo.mGradients.unsafe_get(i,j) * layerInfo.mInput.unsafe_get(iPrevLayer, jPrevLayer);
+
+                                //save weight adjustment
+                                double curWeightAdjustment = layerInfo.aWeightAdjustments[i][j].getWeight(weight);
+                                layerInfo.aWeightAdjustments[i][j].setWeight(weight, curWeightAdjustment + weightAdjustment);
+                            }
+                        }
+                    }
+
+                saveWeightAdjustments(layer - 1);
+            }
+        }
+
         /*protected void constructErrorFunction(int example)
         {
             NVector vActual = forwardPropagation(example);
@@ -502,39 +552,6 @@ public class ConvolutionalNetwork
 
     }
 /*
-
-
-    protected void saveWeightAdjustments()
-    {
-        saveWeightAdjustments(aLayers.length - 1);
-    }
-
-    protected void saveWeightAdjustments(int layer)
-    {
-        if (layer >= 0)
-        {
-            LayorInfo layorInfo = aLayers[layer];
-
-            int neuronPos = 0;
-            for(Neuron neuron:layorInfo.layer)
-            {
-                //iterate thru the neuron's weights
-                for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
-                {
-                    double weightAdjustment =
-                            eta * layorInfo.vGradients.get(neuronPos) * layorInfo.vInput.get(weight); //delta correction
-
-                    //save weight adjustment
-                    double curWeightAdjustment = layorInfo.aWeightAdjustments[neuronPos].get(weight);
-                    layorInfo.aWeightAdjustments[neuronPos].set(weight, curWeightAdjustment + weightAdjustment);
-                }
-
-                neuronPos++;
-            }
-
-            saveWeightAdjustments(layer - 1);
-        }
-    }
 
     protected void adjustWeights()
     {
