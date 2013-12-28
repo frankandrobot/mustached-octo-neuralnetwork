@@ -147,10 +147,10 @@ public class ConvolutionalNetwork
         public MNeuron[][] aPrevWeights;
         /**
          * For neuron k's jth weight in the layer,
-         * aWeightAdjustments[k].get(j) is the quantity to add to its jth weight
+         * nWeightAdjustments[k].get(j) is the quantity to add to its jth weight
          * when adjusting the weight with the backprop algorithm
          */
-        public MNeuron[][] aWeightAdjustments;
+        public MNeuron nWeightAdjustments;
 
         /**
          * the matrix (in 1D form) of the receptive field of a pixel in feature map.
@@ -169,17 +169,15 @@ public class ConvolutionalNetwork
             this.mImpulseFunction = new DenseMatrix64F(n,n);
             this.mGradients = new DenseMatrix64F(n,n);
             this.aPrevWeights = new MNeuron[n][n];
-            this.aWeightAdjustments = new MNeuron[n][n];
+            this.nWeightAdjustments = new MNeuron(phi, new double[this.layer.getNumberOfNeurons()]);
             this.aWeightConnections = new int[((FeatureMap)this.layer).receptiveFieldSize];
-
-            double[] dummyWeights = new double[this.layer.getNumberOfNeurons()];
 
             for(int i=0; i<n; i++)
                 for(int j=0; j<n; j++)
                 {
                     //this.aPrevWeights[i][j] =
                     //this.aPrevWeights[len] = new NVector().setSize(neuron.getNumberOfWeights());
-                    this.aWeightAdjustments[i][j] = new MNeuron(phi, dummyWeights);
+//                    this.nWeightAdjustments[i][j] = new MNeuron(phi, dummyWeights);
                 }
         }
     }
@@ -392,16 +390,8 @@ public class ConvolutionalNetwork
         {
             for(LayerInfo layerInfo :aLayers)
             {
-                for(int i=0; i< layerInfo.aWeightAdjustments.length; i++)
-                    for(int j=0; j< layerInfo.aWeightAdjustments.length; j++)
-                    {
-                        MNeuron neuron = layerInfo.aWeightAdjustments[i][j];
-                        //iterate thru the neuron's weights
-                        for(int weight=0; weight<neuron.getNumberOfWeights(); weight++)
-                        {
-                            neuron.setWeight(weight, 0);
-                        }
-                    }
+                for(int w=0; w<layerInfo.nWeightAdjustments.getNumberOfWeights(); w++)
+                    layerInfo.nWeightAdjustments.setWeight(w, 0);
             }
         }
 
@@ -531,8 +521,8 @@ public class ConvolutionalNetwork
                                     eta * layerInfo.mGradients.unsafe_get(i,j) * layerInfo.mInput.unsafe_get(iPrevLayer, jPrevLayer);
 
                                 //save weight adjustment
-                                double curWeightAdjustment = layerInfo.aWeightAdjustments[i][j].getWeight(weight);
-                                layerInfo.aWeightAdjustments[i][j].setWeight(weight, curWeightAdjustment + weightAdjustment);
+                                double curWeightAdjustment = layerInfo.nWeightAdjustments.getWeight(weight);
+                                layerInfo.nWeightAdjustments.setWeight(weight, curWeightAdjustment + weightAdjustment);
                             }
                         }
                     }
@@ -574,7 +564,7 @@ public class ConvolutionalNetwork
                     neuron.setWeight(weight,
                                      curWeight
                                      + momentum
-                                     + layorInfo.aWeightAdjustments[neuronPos].get(weight) // total delta weights
+                                     + layorInfo.nWeightAdjustments[neuronPos].get(weight) // total delta weights
                     );
                 }
                 neuronPos++;
