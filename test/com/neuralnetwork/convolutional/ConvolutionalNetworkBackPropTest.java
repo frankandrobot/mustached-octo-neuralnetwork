@@ -183,6 +183,9 @@ public class ConvolutionalNetworkBackPropTest
         assertThat(d00, is(mGradients0.get(0, 0)));
     }
 
+    /**
+     * first layer is subsampling, second layer is convolution
+     */
     @Test
     public void testTwoLayerB()
     {
@@ -260,7 +263,7 @@ public class ConvolutionalNetworkBackPropTest
     }
 
     @Test
-    public void testSaveWeightAdjustments()
+    public void testSaveWeightAdjustmentsA()
     {
         final DenseMatrix64F trainingInput = new DenseMatrix64F(3,3,true, new double[] {
                 1, 2, 3
@@ -299,7 +302,7 @@ public class ConvolutionalNetworkBackPropTest
         final DenseMatrix64F mImpulseFunction = network.getLayer(0).mImpulseFunction;
         final DenseMatrix64F mInducedField = network.getLayer(0).mInducedLocalField;
         final DenseMatrix64F mGradient = network.getLayer(0).mGradients;
-        final MNeuron mAdjustments = network.getLayer(0).nWeightAdjustments;
+        final double[] aAdjustments = network.getLayer(0).aWeightAdjustments;
 
         final double w0 = 0.05 *
                 (mGradient.get(0,0) * trainingInput.get(0,0)
@@ -307,7 +310,7 @@ public class ConvolutionalNetworkBackPropTest
                 + mGradient.get(1,0) * trainingInput.get(1,0)
                 + mGradient.get(1,1) * trainingInput.get(1,1));
 
-        assertThat(w0, is(mAdjustments.getWeight(0)));
+        assertThat(w0, is(aAdjustments[0]));
 
         final double w1 = 0.05 *
                 (mGradient.get(0,0) * trainingInput.get(0,1)
@@ -315,6 +318,64 @@ public class ConvolutionalNetworkBackPropTest
                         + mGradient.get(1,0) * trainingInput.get(1,1)
                         + mGradient.get(1,1) * trainingInput.get(1,2));
 
-        assertThat(w1, is(mAdjustments.getWeight(1)));
+        assertThat(w1, is(aAdjustments[1]));
+    }
+
+    @Test
+    public void testSaveWeightAdjustmentsB()
+    {
+        final DenseMatrix64F input = new DenseMatrix64F(4,4,true, new double[] {
+                1, 2, 3, 4
+                ,5, 6, 7, 8
+                ,9, 10, 11, 12
+                ,13, 14, 15, 16
+        });
+
+        final DenseMatrix64F expected = new DenseMatrix64F(2,2,true, new double[] {
+                0.4, 0.6
+                ,0.1, 0.8
+        });
+
+        final double[] weights = {0.3, 0.4};
+
+        FeatureMap.Builder builder = new FeatureMap.Builder();
+        builder.setNeuron(new MNeuron(phi, weights));
+        builder.setReceptiveFieldSize(2*2);
+        builder.set1DInputSize(4);
+
+        FeatureMap featureMap = new SubSamplingMap(builder);
+
+        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        netBuilder.setGlobalActivationFunction(phi)
+                .setLayers(featureMap)
+                .setLearningParam(0.05)
+                .setMomentumParam(0.0);
+
+        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
+        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+
+        network.setupExampleInfo(new DenseMatrix64F[]{input, expected});
+        network.forwardPropagation.calculateForwardPropOnePass(0);
+        backPropagation.constructGradients(0);
+        backPropagation.saveWeightAdjustments();
+
+        final DenseMatrix64F mGradient = network.getLayer(0).mGradients;
+        final double[] aAdjustments = network.getLayer(0).aWeightAdjustments;
+
+        final double w0 = 0.05 *
+                         (mGradient.get(0,0) * (input.get(0,0) + input.get(0,1) + input.get(1,0) + input.get(1,1))
+                        + mGradient.get(0,1) * (input.get(0,2) + input.get(0,3) + input.get(1,2) + input.get(1,3))
+                        + mGradient.get(1,0) * (input.get(2,0) + input.get(2,1) + input.get(3,0) + input.get(3,1))
+                        + mGradient.get(1,1) * (input.get(2,2) + input.get(2,3) + input.get(3,2) + input.get(3,3)));
+
+        assertThat(toString(w0), is(toString(aAdjustments[0])));
+
+        final double w1 = 0.05 *
+                         (mGradient.get(0,0)
+                        + mGradient.get(0,1)
+                        + mGradient.get(1,0)
+                        + mGradient.get(1,1));
+
+        assertThat(toString(w1), is(toString(aAdjustments[1])));
     }
 }
