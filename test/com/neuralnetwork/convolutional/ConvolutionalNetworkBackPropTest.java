@@ -4,6 +4,8 @@ import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -473,36 +475,50 @@ public class ConvolutionalNetworkBackPropTest
     }
 
     @Test
-    public void testBackPropSingleLayer()
+    public void testBackPropDoubleLayer()
     {
+        Random random = new Random(10001);
+
         final DenseMatrix64F trainingInput = new DenseMatrix64F(3,3,true, new double[] {
                 1, 2, 3
                 ,4, 5, 6
                 ,7, 8, 9
         });
 
-        final DenseMatrix64F expected = new DenseMatrix64F(2,2,true, new double[] {
-                0.4, 0.6
-                ,0.1, 0.8
+        final DenseMatrix64F expected = new DenseMatrix64F(1,1,true, new double[] {
+                0.4
         });
 
-        final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
+        final double[] weights = {
+                random.nextGaussian(),//0.1
+                random.nextGaussian(),//0.2
+                random.nextGaussian(),//0.3
+                random.nextGaussian(),//0.4
+                random.nextGaussian()//0.5
+        };
 
         FeatureMap.Builder builder = new FeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
 
-        FeatureMap featureMap = new ConvolutionMap(builder);
+        FeatureMap firstLayer = new ConvolutionMap(builder);
+
+        builder = new FeatureMap.Builder();
+        builder.setNeuron(new MNeuron(phi, new double[]{random.nextGaussian(), random.nextGaussian()}))
+                .setReceptiveFieldSize(2 * 2)
+                .set1DInputSize(2);
+        FeatureMap secondLayer = new SubSamplingMap(builder);
 
         ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
-                  .setLayers(featureMap)
-                  .setLearningParam(0.05)
-                  .setMomentumParam(0.01);
+                  .setLayers(firstLayer, secondLayer)
+                  .setLearningParam(0.001)
+                  .setMomentumParam(0.0000001)
+                  .setIterations(10000);
 
         ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
-        network.backpropagation(0.1, new DenseMatrix64F[]{trainingInput, expected});
+        network.backpropagation(0.001, new DenseMatrix64F[]{trainingInput, expected});
 
     }
 }
