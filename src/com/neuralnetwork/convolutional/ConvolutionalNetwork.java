@@ -186,24 +186,17 @@ public class ConvolutionalNetwork
     {
         String weights()
         {
-            String rslt = "";
-            for(int neuron=0; neuron< aLayers[0].layer.getNumberOfNeurons(); neuron++)
-            {
-                rslt += String.format("%20s | %20s %n",
-                        getNeuron(aLayers[0].layer, neuron),
-                        getNeuron(aLayers[1] != null ? aLayers[1].layer : null, neuron));
-            }
-            return rslt;
-        }
+            String format = "%20s";
 
-        private String getNeuron(INeuralNetwork network,
-                                 int neuron)
-        {
-            if (network != null)
-                return neuron < network.getNumberOfNeurons()
-                        ? network.getNeuron(neuron).toString()
-                        : "";
-            return "";
+            String rslt = "";
+
+            for(int layer=0; layer<numberLayers; layer++)
+            {
+                rslt += layer > 1 ? " | " : "";
+                rslt += String.format(format,
+                                      aLayers[layer].layer.getNeuron(0).toString());
+            }
+            return rslt + "%n";
         }
 
         /**
@@ -216,7 +209,7 @@ public class ConvolutionalNetwork
             System.out.println("====================================================================");
             System.out.println("Iteration = "+ iteration);
             System.out.format("Weights =%n%s", weights());
-            //System.out.format("Error = %s %n", mTotalDifferenceSquared.sumOfCoords());
+            System.out.format("Error = %s %n", CommonOps.elementSum(mTotalDifferenceSquared));
             System.out.format("%5s %20s %20s%n", "i", "Expected", "Actual");
             for(int i=0; i< numberExamples; ++i)
                 System.out.format("%5s %20s %20s%n",
