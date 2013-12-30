@@ -471,4 +471,38 @@ public class ConvolutionalNetworkBackPropTest
 
         assertThat(neuron.getWeight(0), is(w0p + weights[0]*0.01 + w02));
     }
+
+    @Test
+    public void testBackPropSingleLayer()
+    {
+        final DenseMatrix64F trainingInput = new DenseMatrix64F(3,3,true, new double[] {
+                1, 2, 3
+                ,4, 5, 6
+                ,7, 8, 9
+        });
+
+        final DenseMatrix64F expected = new DenseMatrix64F(2,2,true, new double[] {
+                0.4, 0.6
+                ,0.1, 0.8
+        });
+
+        final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
+
+        FeatureMap.Builder builder = new FeatureMap.Builder();
+        builder.setNeuron(new MNeuron(phi, weights));
+        builder.setReceptiveFieldSize(2 * 2);
+        builder.set1DInputSize(3);
+
+        FeatureMap featureMap = new ConvolutionMap(builder);
+
+        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        netBuilder.setGlobalActivationFunction(phi)
+                  .setLayers(featureMap)
+                  .setLearningParam(0.05)
+                  .setMomentumParam(0.01);
+
+        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
+        network.backpropagation(0.1, new DenseMatrix64F[]{trainingInput, expected});
+
+    }
 }

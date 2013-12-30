@@ -196,7 +196,7 @@ public class ConvolutionalNetwork
                 rslt += String.format(format,
                                       aLayers[layer].layer.getNeuron(0).toString());
             }
-            return rslt + "%n";
+            return rslt + "\n";
         }
 
         /**
@@ -568,7 +568,8 @@ public class ConvolutionalNetwork
         {
             DenseMatrix64F mActual = forwardPropagation.calculateForwardPropOnePass(example);
             DenseMatrix64F mExpected = aExamples[example].mExpected;
-            CommonOps.sub(aExamples[example].mExpectedCache, mExpected, mActual);
+            //in 2D, calculate (vExpected - vActual).(vExpected - vActual)
+            CommonOps.sub(mExpected, mActual, aExamples[example].mExpectedCache);
             CommonOps.elementMult(aExamples[example].mExpectedCache, aExamples[example].mExpectedCache);
             aExamples[example].differenceSquared = CommonOps.elementSum(aExamples[example].mExpectedCache);
             mTotalDifferenceSquared.set(example, aExamples[example].differenceSquared);
