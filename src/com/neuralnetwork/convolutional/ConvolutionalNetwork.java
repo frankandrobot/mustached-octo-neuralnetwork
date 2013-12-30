@@ -3,6 +3,7 @@ package com.neuralnetwork.convolutional;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 import java.util.Arrays;
 
@@ -29,6 +30,7 @@ public class ConvolutionalNetwork
     protected IActivationFunction.IDifferentiableFunction phi;
 
     final protected ForwardPropagation forwardPropagation = new ForwardPropagation();
+    final protected BackPropagation backPropagation = new BackPropagation();
 
     public ConvolutionalNetwork(Builder builder)
     {
@@ -99,6 +101,10 @@ public class ConvolutionalNetwork
          * Used to store the actual output for the given example input
          */
         protected DenseMatrix64F mActual;
+        /**
+         * Used as a cache (memory speed up)
+         */
+        protected DenseMatrix64F mExpectedCache;
         /**
          * If mActual and mExpected where vectors,
          * it stores:
@@ -173,13 +179,6 @@ public class ConvolutionalNetwork
             this.aWeightAdjustments = new double[featureMap.sharedNeuron.getNumberOfWeights()];
             this.aWeightConnections = new int[featureMap.sharedNeuron.getNumberOfWeights()-1];
 
-//            for(int i=0; i<n; i++)
-//                for(int j=0; j<n; j++)
-//                {
-//                    //this.aPrevWeights[i][j] =
-//                    //this.aPrevWeights[len] = new NVector().setSize(neuron.getNumberOfWeights());
-////                    this.nWeightAdjustments[i][j] = new MNeuron(phi, dummyWeights);
-//                }
         }
     }
 
@@ -252,13 +251,15 @@ public class ConvolutionalNetwork
             aExamples[i] = new ExampleInfo();
             aExamples[i].mExampleInput = aInputExpected[2*i];
             aExamples[i].mExpected = aInputExpected[2*i+1];
+            aExamples[i].mExpectedCache = new DenseMatrix64F(aExamples[i].mExpected.numRows,
+                                                             aExamples[i].mExpected.numCols);
         }
 
         //setup error
         mTotalDifferenceSquared = new DenseMatrix64F(1, numberExamples);
     }
 
-    /*public void backpropagation(double errorBound, NVector... aInputExpected)
+    public void backpropagation(double errorBound, DenseMatrix64F... aInputExpected)
     {
         if (aInputExpected.length % 2 != 0)
             throw new IllegalArgumentException();
@@ -269,13 +270,14 @@ public class ConvolutionalNetwork
         DebugOutput debugOutput = new DebugOutput();
         int iteration = 1;
 
-        while( backpropagationOneIteration() > errorBound && iteration <= numberIterations)
+        while( backPropagation.backpropagationOneIteration() > errorBound
+                && iteration <= numberIterations)
         {
             debugOutput.backpropDump(iteration);
             iteration++;
         }
         debugOutput.backpropDump(iteration);
-    }*/
+    }
 
     public DenseMatrix64F output(DenseMatrix64F input)
     {
@@ -377,15 +379,13 @@ public class ConvolutionalNetwork
             }
 
             adjustWeights();
-            return -1;
-            /*
 
             for(int i=0; i< numberExamples; i++)
             {
                 constructErrorFunction(i);
             }
 
-            return mTotalDifferenceSquared.sumOfCoords();     */
+            return CommonOps.elementSum(mTotalDifferenceSquared);
         }
 
         protected void resetWeightAdjustments()
@@ -570,23 +570,16 @@ public class ConvolutionalNetwork
                 }
             }
         }
-        /*protected void constructErrorFunction(int example)
-        {
-            NVector vActual = forwardPropagation(example);
-            NVector vExpected = aExamples[example].mExpected;
-            aExamples[example].differenceSquared = vExpected.subtract(vActual).dotProduct();
-            mTotalDifferenceSquared.set(example, aExamples[example].differenceSquared);
-        }*/
 
+        protected void constructErrorFunction(int example)
+        {
+            DenseMatrix64F mActual = forwardPropagation.calculateForwardPropOnePass(example);
+            DenseMatrix64F mExpected = aExamples[example].mExpected;
+            CommonOps.sub(aExamples[example].mExpectedCache, mExpected, mActual);
+            CommonOps.elementMult(aExamples[example].mExpectedCache, aExamples[example].mExpectedCache);
+            aExamples[example].differenceSquared = CommonOps.elementSum(aExamples[example].mExpectedCache);
+            mTotalDifferenceSquared.set(example, aExamples[example].differenceSquared);
+        }
 
     }
-/*
-
-
-
-    public NVector rawoutput(NVector input)
-    {
-        throw new NotImplementedException();
-    }*/
-
 }
