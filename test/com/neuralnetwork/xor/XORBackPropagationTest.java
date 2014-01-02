@@ -36,7 +36,7 @@ public class XORBackPropagationTest
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
                 .setMomentumParam(0.00001)
-                .setLearningParam(0.1)
+                .setLearningParam(0.3)
                 .setGlobalActivationFunction(phi)
                 .setFirstLayer(firstLayer)
                 .setSecondLayer(secondLayer)
