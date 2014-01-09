@@ -4,7 +4,6 @@ import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.NVector;
 import com.neuralnetwork.core.Neuron;
 import com.neuralnetwork.core.SingleLayerNeuralNetwork;
-import com.sun.javaws.exceptions.NativeLibViolationException;
 
 import java.util.Random;
 
