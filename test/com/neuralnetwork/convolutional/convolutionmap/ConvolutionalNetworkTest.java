@@ -1,5 +1,6 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.convolutional.convolutionmap;
 
+import com.neuralnetwork.convolutional.MNeuron;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class ConvolutionalNetworkTest
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
 
-        FeatureMap featureMap = new ConvolutionMap(builder);
+        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
 
         ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
@@ -84,7 +85,7 @@ public class ConvolutionalNetworkTest
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(4);
 
-        FeatureMap featureMap = new SubSamplingMap(builder);
+        FeatureMap featureMap = new SubSamplingMapOld(builder);
 
         ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
@@ -136,7 +137,7 @@ public class ConvolutionalNetworkTest
         builder.setReceptiveFieldSize(3*3);
         builder.set1DInputSize(4);
 
-        FeatureMap convolutionMap = new ConvolutionMap(builder);
+        FeatureMap convolutionMap = new ConvolutionMapLayerOld(builder);
 
         assertThat(convolutionMap.getFeatureMap().numCols, is(2));
         assertThat(convolutionMap.getFeatureMap().numRows, is(2));
@@ -148,7 +149,7 @@ public class ConvolutionalNetworkTest
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(2);
 
-        FeatureMap subsamplingMap = new SubSamplingMap(builder);
+        FeatureMap subsamplingMap = new SubSamplingMapOld(builder);
 
         assertThat(subsamplingMap.getFeatureMap().numCols, is(1));
         assertThat(subsamplingMap.getFeatureMap().numRows, is(1));

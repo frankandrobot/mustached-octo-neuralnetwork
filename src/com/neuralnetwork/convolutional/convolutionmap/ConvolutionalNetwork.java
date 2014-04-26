@@ -1,7 +1,8 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.convolutional.convolutionmap;
 
+import com.neuralnetwork.convolutional.MNeuron;
+import com.neuralnetwork.convolutional.convolutionmap.FeatureMap;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
-import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 

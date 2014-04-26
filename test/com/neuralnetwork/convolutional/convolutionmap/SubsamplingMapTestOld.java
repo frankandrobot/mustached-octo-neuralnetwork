@@ -1,5 +1,6 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.convolutional.convolutionmap;
 
+import com.neuralnetwork.convolutional.MNeuron;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -7,7 +8,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class SubsamplingMapTest
+public class SubsamplingMapTestOld
 {
 
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
@@ -29,9 +30,9 @@ public class SubsamplingMapTest
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(4);
 
-        FeatureMap featureMap = new SubSamplingMap(builder);
+        FeatureMap featureMap = new SubSamplingMapOld(builder);
 
-        featureMap.output(input);
+        featureMap.constructOutput(input);
 
         //1 2 3 4 5 ... 24 25 26 27 28
         assertThat(featureMap.mFeatureMap.numCols, is(2) );
@@ -74,7 +75,7 @@ public class SubsamplingMapTest
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(4);
 
-        FeatureMap featureMap = new SubSamplingMap(builder);
+        FeatureMap featureMap = new SubSamplingMapOld(builder);
 
         DenseMatrix64F output = featureMap.calculateFeatureMap(input);
 
@@ -106,7 +107,7 @@ public class SubsamplingMapTest
         builder.setReceptiveFieldSize(4 * 4);
         builder.set1DInputSize(8);
 
-        FeatureMap featureMap = new SubSamplingMap(builder);
+        FeatureMap featureMap = new SubSamplingMapOld(builder);
 
         for(int inputRow=0; inputRow<4; inputRow++)
         {
@@ -138,7 +139,7 @@ public class SubsamplingMapTest
         builder.setReceptiveFieldSize(4 * 4);
         builder.set1DInputSize(8);
 
-        FeatureMap featureMap = new SubSamplingMap(builder);
+        FeatureMap featureMap = new SubSamplingMapOld(builder);
 
         for(int inputCol =0; inputCol <4; inputCol++)
         {

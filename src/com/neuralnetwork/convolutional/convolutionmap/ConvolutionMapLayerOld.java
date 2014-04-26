@@ -1,11 +1,11 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.convolutional.convolutionmap;
 
 import org.ejml.data.DenseMatrix64F;
 
-public class ConvolutionMap extends FeatureMap
+public class ConvolutionMapLayerOld extends FeatureMap
 {
 
-    public ConvolutionMap(Builder builder)
+    public ConvolutionMapLayerOld(Builder builder)
     {
         super(builder);
 
@@ -96,5 +96,10 @@ public class ConvolutionMap extends FeatureMap
     public int featureMapRowPosition(int weight, int i)
     {
         return i - weight / sqrtReceptiveFieldSize;
+    }
+
+    @Override
+    public DenseMatrix64F getOutput() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

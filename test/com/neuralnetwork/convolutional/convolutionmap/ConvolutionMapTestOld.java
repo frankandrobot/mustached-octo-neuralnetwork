@@ -1,5 +1,6 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.convolutional.convolutionmap;
 
+import com.neuralnetwork.convolutional.MNeuron;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -7,7 +8,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ConvolutionMapTest
+public class ConvolutionMapTestOld
 {
 
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
@@ -28,9 +29,9 @@ public class ConvolutionMapTest
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
-        FeatureMap featureMap = new ConvolutionMap(builder);
+        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
 
-        featureMap.output(input);
+        featureMap.constructOutput(input);
 
         //1 2 3 4 5 ... 24 25 26 27 28
         assertThat(featureMap.mFeatureMap.numRows, is(2) );
@@ -74,7 +75,7 @@ public class ConvolutionMapTest
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
 
-        FeatureMap featureMap = new ConvolutionMap(builder);
+        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
 
         DenseMatrix64F output = featureMap.calculateFeatureMap(input);
 
@@ -112,7 +113,7 @@ public class ConvolutionMapTest
         builder.set1DInputSize(8);
         builder.setReceptiveFieldSize(3 * 3);
 
-        FeatureMap featureMap = new ConvolutionMap(builder);
+        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
 
         int[] aWeights = new int[featureMap.receptiveFieldSize];
 
@@ -245,7 +246,7 @@ public class ConvolutionMapTest
         //3 4 5
         //6 7 8
 
-        FeatureMap featureMap = new ConvolutionMap(builder);
+        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
 
         for(int inputRow = 1; inputRow<10; inputRow++)
         {
@@ -294,7 +295,7 @@ public class ConvolutionMapTest
         //3 4 5
         //6 7 8
 
-        FeatureMap featureMap = new ConvolutionMap(builder);
+        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
 
         for(int inputCol = 1; inputCol<10; inputCol++)
         {

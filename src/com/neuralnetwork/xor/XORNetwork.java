@@ -35,13 +35,13 @@ public class XORNetwork implements INeuralNetwork<NVector,NVector,Neuron>
     }
 
     @Override
-    public NVector output(NVector input)
+    public NVector constructOutput(NVector input)
     {
         return output(0, input);
     }
 
     @Override
-    public NVector inducedLocalField(NVector input)
+    public NVector constructInducedLocalField(NVector input)
     {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -55,7 +55,7 @@ public class XORNetwork implements INeuralNetwork<NVector,NVector,Neuron>
     protected NVector output(int layer, NVector input)
     {
         //add bias to the end
-        NVector output = aLayers[layer].output(new NVector(input, 1f));
+        NVector output = aLayers[layer].constructOutput(new NVector(input, 1f));
         if (layer < aLayers.length - 1)
         {
             return output(layer+1, output);

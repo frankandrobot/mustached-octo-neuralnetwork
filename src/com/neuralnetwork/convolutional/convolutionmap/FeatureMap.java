@@ -1,5 +1,6 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.convolutional.convolutionmap;
 
+import com.neuralnetwork.convolutional.MNeuron;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -17,8 +18,8 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
      */
     protected DenseMatrix64F mFeatureMap;
     final protected int numberNeurons;
-
     final protected MNeuron sharedNeuron;
+
     /**
      * Receptive field size is the size of the input of the neuron.
      * It should be a square.
@@ -26,12 +27,13 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
     final protected int receptiveFieldSize;
     final protected int sqrtReceptiveFieldSize;
 
-    protected OutputClass outputClass = new OutputClass();
+    public OutputClass outputClass = new OutputClass();
 
-    public FeatureMap(Builder builder) {
+    public FeatureMap(Builder builder)
+    {
         if (builder.inputSize - builder.sqrtReceptiveFieldSize + 1 <= 0)
             throw new IllegalArgumentException("Receptive field size can't be larger than the input size");
-        else if (builder.sqrtReceptiveFieldSize * builder.sqrtReceptiveFieldSize != builder.receptiveFieldSize)
+        if (builder.sqrtReceptiveFieldSize * builder.sqrtReceptiveFieldSize != builder.receptiveFieldSize)
             throw new IllegalArgumentException();
 
         oneDimInputSize = builder.inputSize;
@@ -127,14 +129,14 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
      * @return output
      */
     @Override
-    public DenseMatrix64F output(DenseMatrix64F input)
+    public DenseMatrix64F constructOutput(DenseMatrix64F input)
     {
         calculateFeatureMap(input);
         return mFeatureMap;
     }
 
     @Override
-    public DenseMatrix64F inducedLocalField(DenseMatrix64F input)
+    public DenseMatrix64F constructInducedLocalField(DenseMatrix64F input)
     {
         throw new NotImplementedException();
     }
@@ -216,9 +218,9 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
     {
         /**
          * Used for computations.
-         * - passed directly to the neuron for #ConvolutionMap
+         * - passed directly to the neuron for #ConvolutionMapLayerOld
          */
-        DenseMatrix64F mapInput;
+        public DenseMatrix64F mapInput;
 
         protected OutputClass() {}
 

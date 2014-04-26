@@ -14,7 +14,7 @@ public class XORNetworkTest
         XORNetwork network = new XORNetwork();
         NVector output;
 
-        output = network.output(new NVector(0f, 0f));
+        output = network.constructOutput(new NVector(0f, 0f));
 
         assertThat(output.size(), is(1));
         assertThat(output.first(), is(0.0));
@@ -26,7 +26,7 @@ public class XORNetworkTest
         XORNetwork network = new XORNetwork();
         NVector output;
 
-        output = network.output(new NVector(0f, 1f));
+        output = network.constructOutput(new NVector(0f, 1f));
 
         assertThat(output.size(), is(1));
         assertThat(output.first(), is(1.0));
@@ -38,7 +38,7 @@ public class XORNetworkTest
         XORNetwork network = new XORNetwork();
         NVector output;
 
-        output = network.output(new NVector(1f, 1f));
+        output = network.constructOutput(new NVector(1f, 1f));
 
         assertThat(output.size(), is(1));
         assertThat(output.first(), is(0.0));
@@ -50,7 +50,7 @@ public class XORNetworkTest
         XORNetwork network = new XORNetwork();
         NVector output;
 
-        output = network.output(new NVector(1f, 0f));
+        output = network.constructOutput(new NVector(1f, 0f));
 
         assertThat(output.size(), is(1));
         assertThat(output.first(), is(1.0));

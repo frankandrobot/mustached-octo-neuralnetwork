@@ -1,5 +1,6 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.convolutional.convolutionmap;
 
+import com.neuralnetwork.convolutional.MNeuron;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -31,9 +32,9 @@ public class FeatureMapTest
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(3*3);
 
-        FeatureMap convolutionMap = new ConvolutionMap(builder);
+        FeatureMap convolutionMap = new ConvolutionMapLayerOld(builder);
 
-        final DenseMatrix64F output = convolutionMap.output(input);
+        final DenseMatrix64F output = convolutionMap.constructOutput(input);
         assertThat(output.numCols, is(2));
         assertThat(output.numRows, is(2));
 
@@ -44,9 +45,9 @@ public class FeatureMapTest
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(2);
 
-        FeatureMap subsamplingMap = new SubSamplingMap(builder);
+        FeatureMap subsamplingMap = new SubSamplingMapOld(builder);
 
-        final DenseMatrix64F rslt = subsamplingMap.output(output);
+        final DenseMatrix64F rslt = subsamplingMap.constructOutput(output);
         assertThat(rslt.numCols, is(1));
         assertThat(rslt.numRows, is(1));
 

@@ -67,6 +67,11 @@ public class MNeuron implements INeuron<DenseMatrix64F>
                 : bias;
     }
 
+    public double getBias()
+    {
+        return bias;
+    }
+
     public int getNumberOfWeights()
     {
         return mWeights.numRows + 1;
