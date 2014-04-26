@@ -27,7 +27,7 @@ public class SubsamplingMapTest
                 ,13, 14, 15, 16
         });
 
-        weights = new double[]{0.3, 0.4};
+        weights = new double[]{0.3, 0.3, 0.3, 0.3, 0.4};
 
         builder = new FeatureMapBuilder()
                 .set1DInputSize(4)
@@ -53,15 +53,15 @@ public class SubsamplingMapTest
         SubSamplingLayer layer = new SubSamplingLayer(builder);
 
         double o11 = (1 + 2 + 5 + 6);
-        o11 = o11 * weights[0] + weights[1];
+        o11 = o11 * weights[0] + weights[4];
         o11 = phi.apply(o11);
 
         double o12 = (3 + 4 + 7 + 8);
-        o12 = o12 * weights[0] + weights[1];
+        o12 = o12 * weights[0] + weights[4];
         o12 = phi.apply(o12);
 
         double o21 = (9 + 10 + 13 + 14);
-        o21 = o21 * weights[0] + weights[1];
+        o21 = o21 * weights[0] + weights[4];
         o21 = phi.apply(o21);
 
         layer.constructOutput(input);

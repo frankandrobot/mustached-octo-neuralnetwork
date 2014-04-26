@@ -35,6 +35,11 @@ public class SubSamplingLayer implements INeuralNetwork.IMatrixNeuralNetwork
             throw new IllegalArgumentException("Input size must be a multiple of the kernel size");
 
         double[] weights = sharedNeuron.getWeights().getData();
+        double weight = weights[0];
+        for(int i=1; i<weights.length; i++)
+            if (weights[i] != weight)
+                throw new IllegalArgumentException("Kernel weights must all be equal");
+
         //weights = Arrays.copyOf(weights, weights.length-1); //drop bias
         kernel = new DenseMatrix64F(kernelDim, kernelDim, true, weights);
         samplingFilter.setKernel(kernel);
