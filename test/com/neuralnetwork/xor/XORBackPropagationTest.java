@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat;
 public class XORBackPropagationTest
 {
     @org.junit.Test
-    public void testAllErrorsDecrease() throws Exception
+    public void testLearning() throws Exception
     {
         ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
@@ -35,32 +35,35 @@ public class XORBackPropagationTest
 
         TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
                 .setMomentumParam(0.00001)
-                .setLearningParam(0.1)
+                .setLearningParam(0.3)
                 .setGlobalActivationFunction(phi)
                 .setFirstLayer(firstLayer)
                 .setSecondLayer(secondLayer)
-                .setIterations(15000);
+                .setIterations(6000);
 
         TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
         final double tolerance = 0.0001;
 
         final NVector input1 = new NVector(0, 0);
-        final NVector expected1 = new NVector(0.2);
+        final NVector expected1 = new NVector(0.8);
+        final NVector input2 = new NVector(1, 1);
+        final NVector expected2 = new NVector(0.8);
+
+        final NVector input3 = new NVector(1, 0);
+        final NVector expected3 = new NVector(0.2);
         final NVector input4 = new NVector(0, 1);
-        final NVector expected4 = new NVector(0.8);
+        final NVector expected4 = new NVector(0.2);
 
         network.backpropagation(tolerance,
                 input1, expected1,
-                new NVector(1, 0), new NVector(0.8),
-                new NVector(1, 1), new NVector(0.2),
+                input2, expected2,
+                input3, expected3,
                 input4, expected4);
 
-        NVector rslt4 = network.output(0,0,input4);
-        NVector diff4 = rslt4.subtract(expected4);
-
-        System.out.format("%nrslt - expected = %s - %s = %s%n", rslt4, expected4, diff4);
-        System.out.println("error: "+diff4.dotProduct());
-        assertThat(diff4.dotProduct() < tolerance, is(true));
+        assertThat(network.output(0,0,input1).subtract(expected1).dotProduct() < tolerance, is(true));
+        assertThat(network.output(0,0,input2).subtract(expected2).dotProduct() < tolerance, is(true));
+        assertThat(network.output(0,0,input3).subtract(expected3).dotProduct() < tolerance, is(true));
+        assertThat(network.output(0,0,input3).subtract(expected4).dotProduct() < tolerance, is(true));
     }
 }
