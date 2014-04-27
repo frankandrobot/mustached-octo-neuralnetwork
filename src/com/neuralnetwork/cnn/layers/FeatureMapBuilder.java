@@ -1,7 +1,7 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.layers;
 
-import com.neuralnetwork.convolutional.MNeuron;
-import com.neuralnetwork.convolutional.filter.IConvolutionFilter;
+import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.filter.IConvolutionFilter;
 
 public class FeatureMapBuilder
 {
@@ -30,5 +30,17 @@ public class FeatureMapBuilder
     {
         this.convolutionFilter = filter;
         return this;
+    }
+
+    public int getInputDim() {
+        return inputDim;
+    }
+
+    public MNeuron getSharedNeuron() {
+        return sharedNeuron;
+    }
+
+    public IConvolutionFilter getConvolutionFilter() {
+        return convolutionFilter;
     }
 }

@@ -1,10 +1,10 @@
-package com.neuralnetwork.convolutional.filter;
+package com.neuralnetwork.cnn.filter;
 
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-public class SimpleConvolutionFilter implements IConvolutionFilter
+public class SimpleSamplingFilter implements IConvolutionFilter
 {
     protected DenseMatrix64F kernel;
     protected DenseMatrix64F temp;
@@ -17,14 +17,13 @@ public class SimpleConvolutionFilter implements IConvolutionFilter
 
         this.kernel = kernel;
         this.temp = new DenseMatrix64F(kernel.numRows, kernel.numCols);
-
         return this;
     }
 
     /**
      * In order for this to work,
-     * output.width = input.width - kernel.width + 1
-     * output.length = input.length - kernel.length + 1
+     * output.width = input.width / kernel.width
+     * output.length = input.length / kernel.length
      *
      * @param input
      * @param output
@@ -32,14 +31,18 @@ public class SimpleConvolutionFilter implements IConvolutionFilter
     @Override
     public void convolve(DenseMatrix64F input, DenseMatrix64F output)
     {
-        int kernelDim = kernel.numRows;
+        int kernelDim = kernel.numRows; //this works because the kernel is square man
+        int inputDim = input.numRows;   //and so must the input
+        int len = inputDim / kernelDim;
 
-        for(int col=0; col <= input.numCols-kernelDim; ++col)
-            for (int row = 0; row <= input.numRows - kernelDim; ++row)
+        for(int col=0; col < len; ++col)
+            for (int row = 0; row < len; ++row)
             {
+                int icol = col * kernelDim;
+                int irow = row * kernelDim;
                 CommonOps.extract(input,
-                        row, row+kernel.numRows,
-                        col, col+kernel.numCols,
+                        irow, irow+kernelDim,
+                        icol, icol+kernelDim,
                         temp,
                         0,
                         0);

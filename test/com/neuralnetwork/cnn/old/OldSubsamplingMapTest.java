@@ -1,6 +1,8 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.old;
 
-import com.neuralnetwork.convolutional.MNeuron;
+import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.old.OldFeatureMap;
+import com.neuralnetwork.cnn.old.OldSubSamplingMap;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -8,7 +10,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class SubsamplingMapTestOld
+public class OldSubsamplingMapTest
 {
 
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
@@ -25,14 +27,14 @@ public class SubsamplingMapTestOld
 
         final double[] weights = {0.3, 0.4};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(4);
 
-        FeatureMap featureMap = new SubSamplingMapOld(builder);
+        OldFeatureMap featureMap = new OldSubSamplingMap(builder);
 
-        featureMap.constructOutput(input);
+        featureMap.generateOutput(input);
 
         //1 2 3 4 5 ... 24 25 26 27 28
         assertThat(featureMap.mFeatureMap.numCols, is(2) );
@@ -70,12 +72,12 @@ public class SubsamplingMapTestOld
 
         final double[] weights = {0.3, 0.4};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(4);
 
-        FeatureMap featureMap = new SubSamplingMapOld(builder);
+        OldFeatureMap featureMap = new OldSubSamplingMap(builder);
 
         DenseMatrix64F output = featureMap.calculateFeatureMap(input);
 
@@ -102,12 +104,12 @@ public class SubsamplingMapTestOld
     {
         final double[] weights = {0.3, 0.4};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(4 * 4);
         builder.set1DInputSize(8);
 
-        FeatureMap featureMap = new SubSamplingMapOld(builder);
+        OldFeatureMap featureMap = new OldSubSamplingMap(builder);
 
         for(int inputRow=0; inputRow<4; inputRow++)
         {
@@ -134,12 +136,12 @@ public class SubsamplingMapTestOld
     {
         final double[] weights = {0.3, 0.4};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(4 * 4);
         builder.set1DInputSize(8);
 
-        FeatureMap featureMap = new SubSamplingMapOld(builder);
+        OldFeatureMap featureMap = new OldSubSamplingMap(builder);
 
         for(int inputCol =0; inputCol <4; inputCol++)
         {

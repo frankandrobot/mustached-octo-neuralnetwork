@@ -1,7 +1,7 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.layers;
 
-import com.neuralnetwork.convolutional.MNeuron;
-import com.neuralnetwork.convolutional.filter.SimpleConvolutionFilter;
+import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class ConvolutionLayerTest
     {
         ConvolutionLayer layer = new ConvolutionLayer(builder);
 
-        layer.constructOutput(input);
+        layer.generateOutput(input);
 
         //1 2 3 4 5 ... 24 25 26 27 28
         assertThat(layer.getOutput().numRows, is(2) );
@@ -67,7 +67,7 @@ public class ConvolutionLayerTest
                 + weights[4];
         o21 = phi.apply(o21);
 
-        layer.constructOutput(input);
+        layer.generateOutput(input);
 
         assertThat(layer.getOutput().get(0, 0), is(o11));
         assertThat(layer.getOutput().get(0, 1), is(o12));

@@ -1,11 +1,11 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.old;
 
 import org.ejml.data.DenseMatrix64F;
 
-public class ConvolutionMapLayerOld extends FeatureMap
+public class OldConvolutionMapLayer extends OldFeatureMap
 {
 
-    public ConvolutionMapLayerOld(Builder builder)
+    public OldConvolutionMapLayer(Builder builder)
     {
         super(builder);
 

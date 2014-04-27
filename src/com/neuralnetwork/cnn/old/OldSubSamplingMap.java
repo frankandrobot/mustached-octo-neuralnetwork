@@ -1,4 +1,4 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.old;
 
 import org.ejml.data.DenseMatrix64F;
 
@@ -8,16 +8,16 @@ import java.util.Arrays;
  * Takes the average of the input of size #sqrtReceptiveFieldSize x #sqrtReceptiveFieldSize
  * then multiplies it by a scale factor, adds a bias, then applies an activation function
  */
-public class SubSamplingMapOld extends FeatureMap
+public class OldSubSamplingMap extends OldFeatureMap
 {
     DenseMatrix64F neuronInput = new DenseMatrix64F(1,1);
 
-    public SubSamplingMapOld(Builder builder)
+    public OldSubSamplingMap(Builder builder)
     {
         super(builder);
 
         if (sharedNeuron.getNumberOfWeights() != 2)
-            throw new IllegalArgumentException(SubSamplingMapOld.class.getSimpleName()+" needs exactly 2 weights");
+            throw new IllegalArgumentException(OldSubSamplingMap.class.getSimpleName()+" needs exactly 2 weights");
     }
 
     @Override

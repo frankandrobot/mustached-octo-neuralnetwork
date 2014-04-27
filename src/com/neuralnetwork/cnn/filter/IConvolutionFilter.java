@@ -1,4 +1,4 @@
-package com.neuralnetwork.convolutional.filter;
+package com.neuralnetwork.cnn.filter;
 
 import org.ejml.data.DenseMatrix64F;
 

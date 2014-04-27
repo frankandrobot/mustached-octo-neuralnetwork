@@ -1,6 +1,10 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.old;
 
-import com.neuralnetwork.convolutional.MNeuron;
+import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.old.OldConvolutionMapLayer;
+import com.neuralnetwork.cnn.old.OldConvolutionalNetwork;
+import com.neuralnetwork.cnn.old.OldFeatureMap;
+import com.neuralnetwork.cnn.old.OldSubSamplingMap;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -31,21 +35,21 @@ public class ConvolutionalNetworkBackPropTest
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
 
-        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
 
-        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
                   .setLayers(featureMap)
                   .setLearningParam(0.0)
                   .setMomentumParam(0.0);
 
-        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
-        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
+        OldConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
 
         network.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
         network.forwardPropagation.calculateForwardPropOnePass(0);
@@ -86,21 +90,21 @@ public class ConvolutionalNetworkBackPropTest
 
         final double[] weights = {0.3, 0.4};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(4);
 
-        FeatureMap featureMap = new SubSamplingMapOld(builder);
+        OldFeatureMap featureMap = new OldSubSamplingMap(builder);
 
-        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
                   .setLayers(featureMap)
                   .setLearningParam(0.0)
                   .setMomentumParam(0.0);
 
-        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
-        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
+        OldConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
 
         network.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
         network.forwardPropagation.calculateForwardPropOnePass(0);
@@ -140,37 +144,37 @@ public class ConvolutionalNetworkBackPropTest
         final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
 
         //build first layer
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(3 * 3);
         builder.set1DInputSize(4);
 
-        FeatureMap convolutionMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap convolutionMap = new OldConvolutionMapLayer(builder);
 
         assertThat(convolutionMap.getFeatureMap().numCols, is(2));
         assertThat(convolutionMap.getFeatureMap().numRows, is(2));
 
         //build second layer
         final double[] weights2 = {0.3, 0.4};
-        builder = new FeatureMap.Builder();
+        builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights2));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(2);
 
-        FeatureMap subsamplingMap = new SubSamplingMapOld(builder);
+        OldFeatureMap subsamplingMap = new OldSubSamplingMap(builder);
 
         assertThat(subsamplingMap.getFeatureMap().numCols, is(1));
         assertThat(subsamplingMap.getFeatureMap().numRows, is(1));
 
         //build network
-        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
                   .setLayers(convolutionMap, subsamplingMap)
                   .setLearningParam(0.0)
                   .setMomentumParam(0.0);
 
-        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
-        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
+        OldConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
 
         network.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
         network.forwardPropagation.calculateForwardPropOnePass(0);
@@ -202,7 +206,7 @@ public class ConvolutionalNetworkBackPropTest
         final DenseMatrix64F expected = new DenseMatrix64F(1,1,true, new double[] {0.4});
 
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
 
         //build first layer
         final double[] weights2 = {0.3, 0.4};
@@ -210,32 +214,32 @@ public class ConvolutionalNetworkBackPropTest
                 .setReceptiveFieldSize(2 * 2)
                 .set1DInputSize(4);
 
-        FeatureMap subsamplingMap = new SubSamplingMapOld(builder);
+        OldFeatureMap subsamplingMap = new OldSubSamplingMap(builder);
 
         assertThat(subsamplingMap.getFeatureMap().numCols, is(2));
         assertThat(subsamplingMap.getFeatureMap().numRows, is(2));
 
         //build second layer
         final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05};
-        builder = new FeatureMap.Builder();
+        builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights))
                 .setReceptiveFieldSize(2 * 2)
                 .set1DInputSize(2);
 
-        FeatureMap convolutionMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap convolutionMap = new OldConvolutionMapLayer(builder);
 
         assertThat(convolutionMap.getFeatureMap().numCols, is(1));
         assertThat(convolutionMap.getFeatureMap().numRows, is(1));
 
         //build network
-        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
                   .setLayers(subsamplingMap, convolutionMap)
                   .setLearningParam(0.0)
                   .setMomentumParam(0.0);
 
-        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
-        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
+        OldConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
 
         network.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
         network.forwardPropagation.calculateForwardPropOnePass(0);
@@ -281,21 +285,21 @@ public class ConvolutionalNetworkBackPropTest
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
 
-        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
 
-        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
                 .setLayers(featureMap)
                 .setLearningParam(0.05)
                 .setMomentumParam(0.01);
 
-        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
-        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
+        OldConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
 
         network.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
         network.forwardPropagation.calculateForwardPropOnePass(0);
@@ -348,21 +352,21 @@ public class ConvolutionalNetworkBackPropTest
 
         final double[] weights = {0.3, 0.4};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(4);
 
-        FeatureMap featureMap = new SubSamplingMapOld(builder);
+        OldFeatureMap featureMap = new OldSubSamplingMap(builder);
 
-        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
                 .setLayers(featureMap)
                 .setLearningParam(0.05)
                 .setMomentumParam(0.0);
 
-        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
-        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
+        OldConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
 
         network.setupExampleInfo(new DenseMatrix64F[]{input, expected});
         network.forwardPropagation.calculateForwardPropOnePass(0);
@@ -405,21 +409,21 @@ public class ConvolutionalNetworkBackPropTest
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
 
-        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
 
-        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
                   .setLayers(featureMap)
                   .setLearningParam(0.05)
                   .setMomentumParam(0.01);
 
-        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
-        ConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
+        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
+        OldConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
 
         network.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
         network.forwardPropagation.calculateForwardPropOnePass(0);
@@ -498,27 +502,27 @@ public class ConvolutionalNetworkBackPropTest
                 random.nextGaussian()//0.5
         };
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
 
-        FeatureMap firstLayer = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap firstLayer = new OldConvolutionMapLayer(builder);
 
-        builder = new FeatureMap.Builder();
+        builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, new double[]{random.nextGaussian(), random.nextGaussian()}))
                 .setReceptiveFieldSize(2 * 2)
                 .set1DInputSize(2);
-        FeatureMap secondLayer = new SubSamplingMapOld(builder);
+        OldFeatureMap secondLayer = new OldSubSamplingMap(builder);
 
-        ConvolutionalNetwork.Builder netBuilder = new ConvolutionalNetwork.Builder();
+        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
         netBuilder.setGlobalActivationFunction(phi)
                   .setLayers(firstLayer, secondLayer)
                   .setLearningParam(0.001)
                   .setMomentumParam(0.0000001)
                   .setIterations(10000);
 
-        ConvolutionalNetwork network = new ConvolutionalNetwork(netBuilder);
+        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
         network.backpropagation(0.001, new DenseMatrix64F[]{trainingInput, expected});
 
     }

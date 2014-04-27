@@ -1,13 +1,12 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.layers;
 
-import com.neuralnetwork.convolutional.MNeuron;
-import com.neuralnetwork.convolutional.filter.IConvolutionFilter;
+import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.filter.IConvolutionFilter;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 public class ConvolutionLayer implements INeuralNetwork.IMatrixNeuralNetwork
@@ -21,9 +20,9 @@ public class ConvolutionLayer implements INeuralNetwork.IMatrixNeuralNetwork
     public ConvolutionLayer(FeatureMapBuilder builder) throws IllegalArgumentException
     {
         //the neuron aka kernel contains most of the info necessary to build the layer
-        sharedNeuron = builder.sharedNeuron;
-        inputDim = builder.inputDim;
-        convolutionFilter = builder.convolutionFilter;
+        sharedNeuron = builder.getSharedNeuron();
+        inputDim = builder.getInputDim();
+        convolutionFilter = builder.getConvolutionFilter();
 
         int kernelDim = (int) Math.sqrt(sharedNeuron.getNumberOfWeights()-1);
 
@@ -44,9 +43,9 @@ public class ConvolutionLayer implements INeuralNetwork.IMatrixNeuralNetwork
     }
 
     @Override
-    public DenseMatrix64F constructOutput(DenseMatrix64F input)
+    public DenseMatrix64F generateOutput(DenseMatrix64F input)
     {
-        output = constructInducedLocalField(input);
+        output = generateInducedLocalField(input);
 
         //apply activation function to output
         double[] _output = output.getData();
@@ -59,7 +58,7 @@ public class ConvolutionLayer implements INeuralNetwork.IMatrixNeuralNetwork
     }
 
     @Override
-    public DenseMatrix64F constructInducedLocalField(DenseMatrix64F input)
+    public DenseMatrix64F generateInducedLocalField(DenseMatrix64F input)
     {
         //first the weights
         convolutionFilter.convolve(input, output);
@@ -96,4 +95,6 @@ public class ConvolutionLayer implements INeuralNetwork.IMatrixNeuralNetwork
     {
         throw new NotImplementedException();
     }
+
+    public int getInputDim() { return inputDim; }
 }

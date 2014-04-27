@@ -1,6 +1,8 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.old;
 
-import com.neuralnetwork.convolutional.MNeuron;
+import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.old.OldConvolutionMapLayer;
+import com.neuralnetwork.cnn.old.OldFeatureMap;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -8,7 +10,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ConvolutionMapTestOld
+public class OldConvolutionMapTest
 {
 
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
@@ -24,14 +26,14 @@ public class ConvolutionMapTestOld
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
 
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
-        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
 
-        featureMap.constructOutput(input);
+        featureMap.generateOutput(input);
 
         //1 2 3 4 5 ... 24 25 26 27 28
         assertThat(featureMap.mFeatureMap.numRows, is(2) );
@@ -70,12 +72,12 @@ public class ConvolutionMapTestOld
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(2 * 2);
         builder.set1DInputSize(3);
 
-        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
 
         DenseMatrix64F output = featureMap.calculateFeatureMap(input);
 
@@ -108,12 +110,12 @@ public class ConvolutionMapTestOld
     {
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.set1DInputSize(8);
         builder.setReceptiveFieldSize(3 * 3);
 
-        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
 
         int[] aWeights = new int[featureMap.receptiveFieldSize];
 
@@ -237,7 +239,7 @@ public class ConvolutionMapTestOld
     {
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.set1DInputSize(8);
         builder.setReceptiveFieldSize(3 * 3);
@@ -246,7 +248,7 @@ public class ConvolutionMapTestOld
         //3 4 5
         //6 7 8
 
-        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
 
         for(int inputRow = 1; inputRow<10; inputRow++)
         {
@@ -286,7 +288,7 @@ public class ConvolutionMapTestOld
     {
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights));
         builder.set1DInputSize(8);
         builder.setReceptiveFieldSize(3 * 3);
@@ -295,7 +297,7 @@ public class ConvolutionMapTestOld
         //3 4 5
         //6 7 8
 
-        FeatureMap featureMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
 
         for(int inputCol = 1; inputCol<10; inputCol++)
         {

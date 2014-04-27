@@ -1,7 +1,6 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.old;
 
-import com.neuralnetwork.convolutional.MNeuron;
-import com.neuralnetwork.convolutional.convolutionmap.FeatureMap;
+import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
@@ -10,7 +9,7 @@ import java.util.Arrays;
 
 import static com.neuralnetwork.core.interfaces.INeuralNetwork.IMatrixNeuralNetwork;
 
-public class ConvolutionalNetwork
+public class OldConvolutionalNetwork
 {
     protected LayerInfo[] aLayers;
     protected int numberLayers;
@@ -33,7 +32,7 @@ public class ConvolutionalNetwork
     final protected ForwardPropagation forwardPropagation = new ForwardPropagation();
     final protected BackPropagation backPropagation = new BackPropagation();
 
-    public ConvolutionalNetwork(Builder builder)
+    public OldConvolutionalNetwork(Builder builder)
     {
         this.eta = builder.eta;
         this.alpha = builder.alpha;
@@ -171,7 +170,7 @@ public class ConvolutionalNetwork
         {
             this.layer = layer;
             //these are all created to be the size of the feature map
-            final FeatureMap featureMap = (FeatureMap) this.layer;
+            final OldFeatureMap featureMap = (OldFeatureMap) this.layer;
             final int n = featureMap.getFeatureMap().numRows;
             this.mInducedLocalField = new DenseMatrix64F(n,n);
             this.mImpulseFunction = new DenseMatrix64F(n,n);
@@ -328,7 +327,7 @@ public class ConvolutionalNetwork
 
         protected void constructInducedLocalField(LayerInfo layerInfo)
         {
-            FeatureMap featureMap = ((FeatureMap) layerInfo.layer);
+            OldFeatureMap featureMap = ((OldFeatureMap) layerInfo.layer);
             //calculate v_k's
             for(int i=0; i< layerInfo.mInducedLocalField.numRows; i++)
                 for(int j=0; j< layerInfo.mInducedLocalField.numCols; j++)
@@ -456,7 +455,7 @@ public class ConvolutionalNetwork
 
             Arrays.fill(aWeightConnections, 1);
 
-            final FeatureMap featureMap = (FeatureMap) layerInfo.layer;
+            final OldFeatureMap featureMap = (OldFeatureMap) layerInfo.layer;
             final MNeuron neuron = layerInfo.layer.getNeuron(0);
 
             featureMap.disableWeightConnections(aWeightConnections, iPrevLayer, jPrevLayer);
@@ -489,7 +488,7 @@ public class ConvolutionalNetwork
             {
                 LayerInfo layerInfo = aLayers[layer];
 
-                final FeatureMap featureMap = (FeatureMap) layerInfo.layer;
+                final OldFeatureMap featureMap = (OldFeatureMap) layerInfo.layer;
 
                 final int[] aWeightConnections = layerInfo.aWeightConnections;
 

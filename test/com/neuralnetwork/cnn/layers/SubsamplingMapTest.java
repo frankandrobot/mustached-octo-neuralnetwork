@@ -1,7 +1,7 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.layers;
 
-import com.neuralnetwork.convolutional.MNeuron;
-import com.neuralnetwork.convolutional.filter.SimpleSamplingFilter;
+import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class SubsamplingMapTest
     {
         SubSamplingLayer layer = new SubSamplingLayer(builder);
 
-        layer.constructOutput(input);
+        layer.generateOutput(input);
 
         //1 2 3 4 5 ... 24 25 26 27 28
         assertThat(layer.getOutput().numCols, is(2) );
@@ -64,7 +64,7 @@ public class SubsamplingMapTest
         o21 = o21 * weights[0] + weights[4];
         o21 = phi.apply(o21);
 
-        layer.constructOutput(input);
+        layer.generateOutput(input);
 
         assertThat(layer.getOutput().get(0,0), is(o11));
         assertThat(layer.getOutput().get(0,1), is(o12));
@@ -76,7 +76,7 @@ public class SubsamplingMapTest
 //    {
 //        SubSamplingLayer layer = new SubSamplingLayer(builder);
 //
-//        DenseMatrix64F output = layer.constructOutput(input);
+//        DenseMatrix64F output = layer.generateOutput(input);
 //
 //        assertThat(output.get(0,0), is(featureMap.output(input, 0, 0)));
 //        assertThat(output.get(1,0), is(featureMap.output(input, 1, 0)));

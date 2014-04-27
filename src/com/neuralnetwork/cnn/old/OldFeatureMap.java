@@ -1,13 +1,13 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.old;
 
-import com.neuralnetwork.convolutional.MNeuron;
+import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
-abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
+abstract public class OldFeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
 {
     /**
      * The input array has dimensions #inputSize x #inputSize
@@ -29,7 +29,7 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
 
     public OutputClass outputClass = new OutputClass();
 
-    public FeatureMap(Builder builder)
+    public OldFeatureMap(Builder builder)
     {
         if (builder.inputSize - builder.sqrtReceptiveFieldSize + 1 <= 0)
             throw new IllegalArgumentException("Receptive field size can't be larger than the input size");
@@ -129,14 +129,14 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
      * @return output
      */
     @Override
-    public DenseMatrix64F constructOutput(DenseMatrix64F input)
+    public DenseMatrix64F generateOutput(DenseMatrix64F input)
     {
         calculateFeatureMap(input);
         return mFeatureMap;
     }
 
     @Override
-    public DenseMatrix64F constructInducedLocalField(DenseMatrix64F input)
+    public DenseMatrix64F generateInducedLocalField(DenseMatrix64F input)
     {
         throw new NotImplementedException();
     }
@@ -158,6 +158,10 @@ abstract public class FeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
         return mFeatureMap;
     }
 
+    public int getInputDim()
+    {
+        throw new NotImplementedException();
+    }
 
     @Override
     public String toString()

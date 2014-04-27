@@ -26,7 +26,7 @@ public class SingleLayerNeuralNetwork implements INeuralNetwork<NVector,NVector,
      * @return
      */
     @Override
-    public NVector constructInducedLocalField(NVector input)
+    public NVector generateInducedLocalField(NVector input)
     {
         int len=0;
 
@@ -49,7 +49,7 @@ public class SingleLayerNeuralNetwork implements INeuralNetwork<NVector,NVector,
      * @param input
      * @return
      */
-    public NVector constructOutput(NVector input)
+    public NVector generateOutput(NVector input)
     {
         int len=0;
 

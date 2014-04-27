@@ -1,4 +1,4 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.cnn;
 
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;

@@ -1,4 +1,4 @@
-package com.neuralnetwork.convolutional;
+package com.neuralnetwork.cnn;
 
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuron;

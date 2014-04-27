@@ -1,6 +1,9 @@
-package com.neuralnetwork.convolutional.convolutionmap;
+package com.neuralnetwork.cnn.old;
 
-import com.neuralnetwork.convolutional.MNeuron;
+import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.old.OldConvolutionMapLayer;
+import com.neuralnetwork.cnn.old.OldFeatureMap;
+import com.neuralnetwork.cnn.old.OldSubSamplingMap;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -27,27 +30,27 @@ public class FeatureMapTest
 
         //build first layer
         final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
-        FeatureMap.Builder builder = new FeatureMap.Builder();
+        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
         builder.set1DInputSize(4);
         builder.setNeuron(new MNeuron(phi, weights));
         builder.setReceptiveFieldSize(3*3);
 
-        FeatureMap convolutionMap = new ConvolutionMapLayerOld(builder);
+        OldFeatureMap convolutionMap = new OldConvolutionMapLayer(builder);
 
-        final DenseMatrix64F output = convolutionMap.constructOutput(input);
+        final DenseMatrix64F output = convolutionMap.generateOutput(input);
         assertThat(output.numCols, is(2));
         assertThat(output.numRows, is(2));
 
         //build second layer
         final double[] weights2 = {0.3, 0.4};
-        builder = new FeatureMap.Builder();
+        builder = new OldFeatureMap.Builder();
         builder.setNeuron(new MNeuron(phi, weights2));
         builder.setReceptiveFieldSize(2*2);
         builder.set1DInputSize(2);
 
-        FeatureMap subsamplingMap = new SubSamplingMapOld(builder);
+        OldFeatureMap subsamplingMap = new OldSubSamplingMap(builder);
 
-        final DenseMatrix64F rslt = subsamplingMap.constructOutput(output);
+        final DenseMatrix64F rslt = subsamplingMap.generateOutput(output);
         assertThat(rslt.numCols, is(1));
         assertThat(rslt.numRows, is(1));
 
