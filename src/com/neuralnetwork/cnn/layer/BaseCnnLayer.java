@@ -1,7 +1,7 @@
-package com.neuralnetwork.cnn.layers;
+package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.MNeuron;
-import com.neuralnetwork.cnn.filter.IConvolutionFilter;
+import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
@@ -9,38 +9,29 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
-public class ConvolutionLayer implements INeuralNetwork.IMatrixNeuralNetwork
+public abstract class BaseCnnLayer implements INeuralNetwork.IMatrixNeuralNetwork
 {
+    /**
+     * the kernel is made of weights from this neuron.
+     * the shared neuron contains most of the info necessary to build the layer
+     */
     protected MNeuron sharedNeuron;
     protected DenseMatrix64F kernel;
+
+    /**
+     * one dimension of the input. assumes input is square
+     */
     protected int inputDim;
+
+    /**
+     * matrix used to store latest output
+     */
     protected DenseMatrix64F output;
-    protected IConvolutionFilter convolutionFilter;
 
-    public ConvolutionLayer(FeatureMapBuilder builder) throws IllegalArgumentException
-    {
-        //the neuron aka kernel contains most of the info necessary to build the layer
-        sharedNeuron = builder.getSharedNeuron();
-        inputDim = builder.getInputDim();
-        convolutionFilter = builder.getConvolutionFilter();
-
-        int kernelDim = (int) Math.sqrt(sharedNeuron.getNumberOfWeights()-1);
-
-        if (kernelDim*kernelDim != sharedNeuron.getNumberOfWeights()-1)
-            throw new IllegalArgumentException("Kernel must be square");
-        if (inputDim < kernelDim)
-            throw new IllegalArgumentException("Input can't be smaller than kernel");
-
-        double[] weights = sharedNeuron.getWeights().getData();
-        //weights = Arrays.copyOf(weights, weights.length-1); //drop bias
-        kernel = new DenseMatrix64F(kernelDim, kernelDim, true, weights);
-
-        convolutionFilter.setKernel(kernel);
-
-        output = new DenseMatrix64F(
-                inputDim-kernelDim+1,
-                inputDim-kernelDim+1);
-    }
+    /**
+     * the filter used to convolve
+     */
+    protected IFilter filter;
 
     @Override
     public DenseMatrix64F generateOutput(DenseMatrix64F input)
@@ -48,12 +39,14 @@ public class ConvolutionLayer implements INeuralNetwork.IMatrixNeuralNetwork
         output = generateInducedLocalField(input);
 
         //apply activation function to output
-        double[] _output = output.getData();
         IActivationFunction phi = sharedNeuron.phi();
+        double[] _output = output.getData();
+
         for(int i=0; i<_output.length; i++)
         {
             _output[i] = phi.apply(_output[i]);
         }
+
         return output;
     }
 
@@ -61,7 +54,8 @@ public class ConvolutionLayer implements INeuralNetwork.IMatrixNeuralNetwork
     public DenseMatrix64F generateInducedLocalField(DenseMatrix64F input)
     {
         //first the weights
-        convolutionFilter.convolve(input, output);
+        filter.convolve(input, output);
+
         //now the biases
         double bias = sharedNeuron.getBias();
         double[] o = output.getData();

@@ -4,13 +4,13 @@ package com.neuralnetwork.cnn.filter;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-public class SimpleConvolutionFilter implements IConvolutionFilter
+public class SimpleConvolutionFilter implements IFilter
 {
     protected DenseMatrix64F kernel;
     protected DenseMatrix64F temp;
 
     @Override
-    public IConvolutionFilter setKernel(DenseMatrix64F kernel)
+    public IFilter setKernel(DenseMatrix64F kernel)
     {
         if (kernel.numCols != kernel.numRows)
             throw new IllegalArgumentException("Kernel must be square");
@@ -34,16 +34,21 @@ public class SimpleConvolutionFilter implements IConvolutionFilter
     {
         int kernelDim = kernel.numRows;
 
-        for(int col=0; col <= input.numCols-kernelDim; ++col)
+        for(int col=0; col <= input.numCols - kernelDim; ++col)
             for (int row = 0; row <= input.numRows - kernelDim; ++row)
             {
+                //copy over a kernel-sized copy of the input into $tmp starting at (row,col)
                 CommonOps.extract(input,
                         row, row+kernel.numRows,
                         col, col+kernel.numCols,
                         temp,
                         0,
                         0);
+
+                //multiply by the kernel
                 CommonOps.elementMult(temp, kernel);
+
+                //save result in output
                 output.unsafe_set(row,col,CommonOps.elementSum(temp));
             }
     }

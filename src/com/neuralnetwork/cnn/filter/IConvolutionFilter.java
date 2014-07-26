@@ -1,10 +1,4 @@
 package com.neuralnetwork.cnn.filter;
 
-import org.ejml.data.DenseMatrix64F;
+public interface IConvolutionFilter extends IFilter {}
 
-public interface IConvolutionFilter
-{
-    void convolve(DenseMatrix64F input, DenseMatrix64F output);
-
-    IConvolutionFilter setKernel(DenseMatrix64F kernel);
-}
