@@ -1,7 +1,8 @@
-package com.neuralnetwork.cnn.layers;
+package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
+import com.neuralnetwork.cnn.layer.builder.FeatureMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -239,7 +240,7 @@ public class ConvolutionLayerTest
 //            assertThat(aWeights[i], is(1));
 //    }
 //
-//    private double[] getWeights(int [] weights)
+//    private double[] getWeightsWithoutBias(int [] weights)
 //    {
 //        double[] rslt = new double[weights.length];
 //        for(int i=0; i<weights.length; i++)

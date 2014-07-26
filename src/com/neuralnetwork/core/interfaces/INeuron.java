@@ -12,7 +12,7 @@ public interface INeuron<I>
 
     IActivationFunction phi();
 
-    I getWeights();
+    I getWeightsWithoutBias();
 
     void setWeight(int weight, double newWeight);
 

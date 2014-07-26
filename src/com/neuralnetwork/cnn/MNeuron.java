@@ -8,6 +8,9 @@ import org.ejml.ops.CommonOps;
 import java.util.Arrays;
 
 /**
+ * Internally, we pull out the weights from the bias for easy computations
+ * but externally the bias is part of the weights
+ *
  * By convention, the bias is at the _end_ of the weights list
  *
  */
@@ -82,7 +85,7 @@ public class MNeuron implements INeuron<DenseMatrix64F>
         return phi;
     }
 
-    public DenseMatrix64F getWeights()
+    public DenseMatrix64F getWeightsWithoutBias()
     {
         return mWeights;
     }

@@ -3,15 +3,9 @@ package com.neuralnetwork.cnn.filter;
 import com.neuralnetwork.cnn.Cnn;
 import com.neuralnetwork.cnn.CnnBuilder;
 import com.neuralnetwork.cnn.MNeuron;
-import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
-import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
-import com.neuralnetwork.cnn.layers.ConvolutionLayer;
-import com.neuralnetwork.cnn.layers.FeatureMapBuilder;
-import com.neuralnetwork.cnn.layers.SubSamplingLayer;
-import com.neuralnetwork.cnn.old.OldConvolutionMapLayer;
-import com.neuralnetwork.cnn.old.OldConvolutionalNetwork;
-import com.neuralnetwork.cnn.old.OldFeatureMap;
-import com.neuralnetwork.cnn.old.OldSubSamplingMap;
+import com.neuralnetwork.cnn.layer.ConvolutionLayer;
+import com.neuralnetwork.cnn.layer.SamplingLayer;
+import com.neuralnetwork.cnn.layer.builder.FeatureMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -93,7 +87,7 @@ public class CnnTest
                 .setNeuron(new MNeuron(phi, weights))
                 .setConvolutionFilter(new SimpleSamplingFilter())
                 .set1DInputSize(4);
-        SubSamplingLayer layer = new SubSamplingLayer(builder);
+        SamplingLayer layer = new SamplingLayer(builder);
 
         CnnBuilder netBuilder = new CnnBuilder()
                 .setGlobalActivationFunction(phi)
@@ -153,7 +147,7 @@ public class CnnTest
                 .setNeuron(new MNeuron(phi, weights2))
                 .setConvolutionFilter(new SimpleSamplingFilter())
                 .set1DInputSize(2);
-        SubSamplingLayer subSamplingLayer = new SubSamplingLayer(builder);
+        SamplingLayer subSamplingLayer = new SamplingLayer(builder);
 
         assertThat(subSamplingLayer.getOutput().numCols, is(1));
         assertThat(subSamplingLayer.getOutput().numRows, is(1));

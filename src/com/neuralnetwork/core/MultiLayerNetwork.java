@@ -1,8 +1,5 @@
 package com.neuralnetwork.core;
 
-import com.neuralnetwork.core.NVector;
-import com.neuralnetwork.core.Neuron;
-import com.neuralnetwork.core.SingleLayerNeuralNetwork;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;

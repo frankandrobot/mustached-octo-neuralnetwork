@@ -1,7 +1,8 @@
-package com.neuralnetwork.cnn.layers;
+package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
+import com.neuralnetwork.cnn.layer.builder.FeatureMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class SubsamplingMapTest
     @Test
     public void testSubsampling1()
     {
-        SubSamplingLayer layer = new SubSamplingLayer(builder);
+        SamplingLayer layer = new SamplingLayer(builder);
 
         layer.generateOutput(input);
 
@@ -50,7 +51,7 @@ public class SubsamplingMapTest
     @Test
     public void testSubsampling2()
     {
-        SubSamplingLayer layer = new SubSamplingLayer(builder);
+        SamplingLayer layer = new SamplingLayer(builder);
 
         double o11 = (1 + 2 + 5 + 6);
         o11 = o11 * weights[0] + weights[4];

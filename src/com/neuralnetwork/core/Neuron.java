@@ -55,7 +55,7 @@ public class Neuron implements INeuron<NVector>
     }
 
     @Override
-    public NVector getWeights()
+    public NVector getWeightsWithoutBias()
     {
         return vWeights;
     }

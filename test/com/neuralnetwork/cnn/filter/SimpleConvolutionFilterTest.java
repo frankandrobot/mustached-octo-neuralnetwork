@@ -15,7 +15,7 @@ public class SimpleConvolutionFilterTest {
         DenseMatrix64F kernel = createMatrix(2);
         DenseMatrix64F output = createMatrix(5-2+1);
 
-        IConvolutionFilter filter = new SimpleConvolutionFilter();
+        IFilter filter = new SimpleConvolutionFilter();
         filter.setKernel(kernel);
         filter.convolve(input, output);
 
