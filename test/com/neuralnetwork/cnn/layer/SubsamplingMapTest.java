@@ -2,7 +2,7 @@ package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
-import com.neuralnetwork.cnn.layer.builder.FeatureMapBuilder;
+import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class SubsamplingMapTest
 
     private final DenseMatrix64F input;
     private final double[] weights;
-    private FeatureMapBuilder builder;
+    private SamplingLayerBuilder builder;
 
     public SubsamplingMapTest()
     {
@@ -30,10 +30,10 @@ public class SubsamplingMapTest
 
         weights = new double[]{0.3, 0.3, 0.3, 0.3, 0.4};
 
-        builder = new FeatureMapBuilder()
+        builder = new SamplingLayerBuilder()
                 .set1DInputSize(4)
                 .setNeuron(new MNeuron(phi, weights))
-                .setConvolutionFilter(new SimpleSamplingFilter());
+                .setFilter(new SimpleSamplingFilter());
     }
 
     @Test

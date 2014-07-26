@@ -4,7 +4,7 @@ package com.neuralnetwork.cnn.filter;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-public class SimpleConvolutionFilter implements IFilter
+public class SimpleConvolutionFilter implements IConvolutionFilter
 {
     protected DenseMatrix64F kernel;
     protected DenseMatrix64F temp;

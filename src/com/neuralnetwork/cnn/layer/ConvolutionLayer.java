@@ -1,7 +1,6 @@
 package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
-import com.neuralnetwork.cnn.layer.builder.FeatureMapBuilder;
 import org.ejml.data.DenseMatrix64F;
 
 public class ConvolutionLayer extends BaseCnnLayer

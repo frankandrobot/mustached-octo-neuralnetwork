@@ -1,16 +1,16 @@
 package com.neuralnetwork.cnn.layer;
 
-import com.neuralnetwork.cnn.layer.builder.FeatureMapBuilder;
+import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
 import org.ejml.data.DenseMatrix64F;
 
 public class SamplingLayer extends BaseCnnLayer
 {
-    public SamplingLayer(FeatureMapBuilder builder) throws IllegalArgumentException
+    public SamplingLayer(SamplingLayerBuilder builder) throws IllegalArgumentException
     {
         //extract from the builder
-        sharedNeuron = builder.sharedNeuron;
-        inputDim = builder.inputDim;
-        filter = builder.filter;
+        sharedNeuron = builder.getSharedNeuron();
+        inputDim = builder.getInputDim();
+        filter = builder.getFilter();
 
         int kernelDim = (int) Math.sqrt(sharedNeuron.getNumberOfWeights()-1);
 
