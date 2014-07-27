@@ -1,4 +1,4 @@
-package com.neuralnetwork.cnn.old;
+package com.neuralnetwork.cnn.backprop;
 
 import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.core.interfaces.IActivationFunction;

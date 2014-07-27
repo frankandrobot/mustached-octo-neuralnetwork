@@ -10,7 +10,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class SubsamplingMapTest
+public class SamplingLayerTest
 {
 
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
@@ -19,7 +19,7 @@ public class SubsamplingMapTest
     private final double[] weights;
     private SamplingLayerBuilder builder;
 
-    public SubsamplingMapTest()
+    public SamplingLayerTest()
     {
        input = new DenseMatrix64F(4,4,true, new double[] {
                 1, 2, 3, 4

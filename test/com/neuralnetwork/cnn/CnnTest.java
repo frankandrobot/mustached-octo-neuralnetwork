@@ -1,8 +1,10 @@
-package com.neuralnetwork.cnn.filter;
+package com.neuralnetwork.cnn;
 
 import com.neuralnetwork.cnn.Cnn;
 import com.neuralnetwork.cnn.CnnBuilder;
 import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
+import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
 import com.neuralnetwork.cnn.layer.ConvolutionLayer;
 import com.neuralnetwork.cnn.layer.SamplingLayer;
 import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;

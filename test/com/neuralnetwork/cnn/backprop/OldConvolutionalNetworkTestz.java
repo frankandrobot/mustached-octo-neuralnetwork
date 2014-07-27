@@ -1,10 +1,6 @@
-package com.neuralnetwork.cnn.old;
+package com.neuralnetwork.cnn.backprop;
 
 import com.neuralnetwork.cnn.MNeuron;
-import com.neuralnetwork.cnn.old.OldConvolutionMapLayer;
-import com.neuralnetwork.cnn.old.OldConvolutionalNetwork;
-import com.neuralnetwork.cnn.old.OldFeatureMap;
-import com.neuralnetwork.cnn.old.OldSubSamplingMap;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;

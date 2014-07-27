@@ -1,4 +1,4 @@
-package com.neuralnetwork.cnn.old;
+package com.neuralnetwork.cnn.backprop;
 
 import org.ejml.data.DenseMatrix64F;
 

@@ -1,10 +1,10 @@
-package com.neuralnetwork.cnn.old;
+package com.neuralnetwork.cnn.backprop;
 
+import com.neuralnetwork.cnn.CnnBuilder;
 import com.neuralnetwork.cnn.MNeuron;
-import com.neuralnetwork.cnn.old.OldConvolutionMapLayer;
-import com.neuralnetwork.cnn.old.OldConvolutionalNetwork;
-import com.neuralnetwork.cnn.old.OldFeatureMap;
-import com.neuralnetwork.cnn.old.OldSubSamplingMap;
+import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
+import com.neuralnetwork.cnn.layers.ConvolutionLayer;
+import com.neuralnetwork.cnn.layers.FeatureMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.Random;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ConvolutionalNetworkBackPropTest
+public class CnnBackPropTest
 {
 
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
@@ -35,25 +35,23 @@ public class ConvolutionalNetworkBackPropTest
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        OldFeatureMap.Builder builder = new OldFeatureMap.Builder();
-        builder.setNeuron(new MNeuron(phi, weights));
-        builder.setReceptiveFieldSize(2 * 2);
-        builder.set1DInputSize(3);
+        FeatureMapBuilder builder = new FeatureMapBuilder()
+                .setNeuron(new MNeuron(phi, weights))
+                .setConvolutionFilter(new SimpleConvolutionFilter())
+                .set1DInputSize(3);
+        ConvolutionLayer layer = new ConvolutionLayer(builder);
 
-        OldFeatureMap featureMap = new OldConvolutionMapLayer(builder);
+        CnnBuilder netBuilder = new CnnBuilder()
+                .setGlobalActivationFunction(phi)
+                .setLayers(layer)
+                .setLearningParam(0.0)
+                .setMomentumParam(0.0);
 
-        OldConvolutionalNetwork.Builder netBuilder = new OldConvolutionalNetwork.Builder();
-        netBuilder.setGlobalActivationFunction(phi)
-                  .setLayers(featureMap)
-                  .setLearningParam(0.0)
-                  .setMomentumParam(0.0);
+        BackProp backProp = new BackProp(netBuilder);
 
-        OldConvolutionalNetwork network = new OldConvolutionalNetwork(netBuilder);
-        OldConvolutionalNetwork.BackPropagation backPropagation = network.new BackPropagation();
-
-        network.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
-        network.forwardPropagation.calculateForwardPropOnePass(0);
-        backPropagation.constructGradients(0);
+        backProp.setupExampleInfo(new DenseMatrix64F[]{trainingInput, expected});
+        backProp.calculateForwardPropOnePass(0);
+        backProp.constructGradients(0);
 
         final DenseMatrix64F mImpulseFunction = network.getLayer(0).mImpulseFunction;
         final DenseMatrix64F mInducedField = network.getLayer(0).mInducedLocalField;
