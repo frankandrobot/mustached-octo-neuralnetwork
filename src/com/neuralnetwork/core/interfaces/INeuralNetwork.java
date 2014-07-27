@@ -5,6 +5,7 @@ import com.neuralnetwork.core.NVector;
 import com.neuralnetwork.core.Neuron;
 import org.ejml.data.DenseMatrix64F;
 
+@Deprecated
 public interface INeuralNetwork<I,O,N extends INeuron<?>> extends Iterable<N>
 {
     public O generateOutput(I input);

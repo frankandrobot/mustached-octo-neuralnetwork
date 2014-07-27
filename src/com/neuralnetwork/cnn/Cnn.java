@@ -18,7 +18,6 @@ public class Cnn
         this.momemtumParam = netBuilder.getMomentumParam();
         this.learningParam = netBuilder.getLearningParam();
         this.aLayers = netBuilder.getLayers();
-        this.globalPhi = netBuilder.getGlobalActivationFunction();
         this.output = aLayers[aLayers.length-1].getOutput();
 
         //check layers output---inputs must match

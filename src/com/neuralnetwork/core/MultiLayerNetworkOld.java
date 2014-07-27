@@ -1,15 +1,10 @@
-package com.neuralnetwork.xor;
+package com.neuralnetwork.core;
 
-import com.neuralnetwork.core.NVector;
-import com.neuralnetwork.core.Neuron;
-import com.neuralnetwork.core.SingleLayerNeuralNetwork;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
+import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-/**
- * @deprecated use {@link com.neuralnetwork.core.MultiLayerNetworkOld}
- */
-public class TwoLayerNetwork
+public class MultiLayerNetworkOld
 {
     protected LayorInfo[] aLayers;
     protected int numberLayers;
@@ -28,7 +23,7 @@ public class TwoLayerNetwork
 
     protected IActivationFunction.IDifferentiableFunction phi;
 
-    public TwoLayerNetwork(Builder builder)
+    public MultiLayerNetworkOld(Builder builder)
     {
         this.eta = builder.eta;
         this.alpha = builder.alpha;
@@ -46,8 +41,7 @@ public class TwoLayerNetwork
     static public class Builder
     {
         private IActivationFunction.IDifferentiableFunction phi;
-        protected SingleLayerNeuralNetwork firstLayer;
-        protected SingleLayerNeuralNetwork secondLayer;
+        protected INeuralNetwork[] aLayers;
         protected Double alpha;
         protected Double eta;
         protected int numberIterations;
@@ -58,15 +52,9 @@ public class TwoLayerNetwork
             return this;
         }
 
-        public Builder setFirstLayer(SingleLayerNeuralNetwork firstLayer)
+        public Builder setLayers(INeuralNetwork... aLayers)
         {
-            this.firstLayer = firstLayer;
-            return this;
-        }
-
-        public Builder setSecondLayer(SingleLayerNeuralNetwork secondLayer)
-        {
-            this.secondLayer = secondLayer;
+            this.aLayers = aLayers;
             return this;
         }
 
@@ -120,7 +108,7 @@ public class TwoLayerNetwork
      */
     protected class LayorInfo
     {
-        final public SingleLayerNeuralNetwork layer;
+        final public INeuralNetwork<NVector,NVector,Neuron> layer;
         /**
          * For each neuron k in the layer,
          * store v_k (induced local field).
@@ -155,7 +143,7 @@ public class TwoLayerNetwork
          */
         public NVector[] aWeightAdjustments;
 
-        public LayorInfo(SingleLayerNeuralNetwork layer)
+        public LayorInfo(INeuralNetwork layer)
         {
             this.layer = layer;
             this.vInducedLocalField = new NVector().setSize(this.layer.getNumberOfNeurons());
@@ -187,7 +175,7 @@ public class TwoLayerNetwork
             return rslt;
         }
 
-        private String getNeuron(SingleLayerNeuralNetwork network,
+        private String getNeuron(INeuralNetwork network,
                                  int neuron)
         {
             if (network != null)
@@ -219,12 +207,12 @@ public class TwoLayerNetwork
 
     protected void initializeLayers(Builder builder)
     {
-        numberLayers = (builder.secondLayer != null) ? 2 : 1;
+        numberLayers = builder.aLayers.length;
 
         aLayers = new LayorInfo[numberLayers];
 
-        aLayers[0] = new LayorInfo(builder.firstLayer);
-        if (numberLayers > 1) aLayers[1] = new LayorInfo(builder.secondLayer);
+        for(int i=0; i<numberLayers; i++)
+            aLayers[i] = new LayorInfo(builder.aLayers[i]);
     }
 
     public void setupExampleInfo(NVector... aInputExpected)

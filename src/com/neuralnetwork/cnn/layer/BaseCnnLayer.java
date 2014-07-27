@@ -3,13 +3,16 @@ package com.neuralnetwork.cnn.layer;
 import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
+import com.neuralnetwork.core.interfaces.INeuralLayer;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
-public abstract class BaseCnnLayer implements INeuralNetwork.IMatrixNeuralNetwork
+public abstract class BaseCnnLayer
+        implements INeuralNetwork.IMatrixNeuralNetwork,
+        INeuralLayer<DenseMatrix64F,DenseMatrix64F>
 {
     /**
      * the kernel is made of weights from this neuron.
