@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 public abstract class BaseCnnLayer
         implements INeuralNetwork.IMatrixNeuralNetwork,
-        INeuralLayer<DenseMatrix64F,DenseMatrix64F>
+        INeuralLayer<DenseMatrix64F>
 {
     /**
      * the kernel is made of weights from this neuron.
@@ -94,4 +94,6 @@ public abstract class BaseCnnLayer
     }
 
     public int getInputDim() { return inputDim; }
+
+    public int getOutputDim() { return output.numRows; }
 }

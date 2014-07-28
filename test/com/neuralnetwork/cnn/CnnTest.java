@@ -1,8 +1,5 @@
 package com.neuralnetwork.cnn;
 
-import com.neuralnetwork.cnn.Cnn;
-import com.neuralnetwork.cnn.CnnBuilder;
-import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
 import com.neuralnetwork.cnn.layer.ConvolutionLayer;
@@ -32,25 +29,15 @@ public class CnnTest
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        ConvolutionLayerBuilder builder = new ConvolutionLayerBuilder()
+        ConvolutionLayer layer = new ConvolutionLayerBuilder()
                 .setNeuron(new MNeuron(phi, weights))
                 .setFilter(new SimpleConvolutionFilter())
-                .set1DInputSize(3);
+                .set1DInputSize(3)
+                .build();
 
-        ConvolutionLayer layer = builder.build();
-
-        CnnBuilder netBuilder = new CnnBuilder()
-                .setGlobalActivationFunction(phi)
+        Cnn<DenseMatrix64F> net = new CnnBuilder()
                 .setLayers(layer)
-                .setLearningParam(0.0)
-                .setMomentumParam(0.0);
-
-        Cnn net = new Cnn(netBuilder);
-
-//        assertThat(output.get(0,0), is(featureMap.output(input, 0, 0)));
-//        assertThat(output.get(1,0), is(featureMap.output(input, 1, 0)));
-//        assertThat(output.get(0,1), is(featureMap.output(input, 0, 1)));
-//        assertThat(output.get(1,1), is(featureMap.output(input, 1, 1)));
+                .build();
 
         final double o11 = input.get(0,0)*weights[0] + input.get(0,1)*weights[1]
                 + input.get(1,0)*weights[2] + input.get(1,1)*weights[3]
@@ -93,17 +80,9 @@ public class CnnTest
         SamplingLayer layer = new SamplingLayer(builder);
 
         CnnBuilder netBuilder = new CnnBuilder()
-                .setGlobalActivationFunction(phi)
-                .setLayers(layer)
-                .setLearningParam(0.0)
-                .setMomentumParam(0.0);
+                .setLayers(layer);
 
-        Cnn net = new Cnn(netBuilder);
-
-//        assertThat(output.get(0,0), is(featureMap.output(input, 0, 0)));
-//        assertThat(output.get(1,0), is(featureMap.output(input, 1, 0)));
-//        assertThat(output.get(0,1), is(featureMap.output(input, 0, 1)));
-//        assertThat(output.get(1,1), is(featureMap.output(input, 1, 1)));
+        Cnn<DenseMatrix64F> net = new Cnn(netBuilder);
 
         final double o11 = (1 + 2 + 5 + 6) * weights[0] + weights[4];
 
@@ -157,12 +136,9 @@ public class CnnTest
 
         //build network
         CnnBuilder netBuilder = new CnnBuilder()
-                .setGlobalActivationFunction(phi)
-                .setLayers(convolvLayer, subSamplingLayer)
-                .setLearningParam(0.0)
-                .setMomentumParam(0.0);
+                .setLayers(convolvLayer, subSamplingLayer);
 
-        Cnn net = new Cnn(netBuilder);
+        Cnn<DenseMatrix64F> net = new Cnn(netBuilder);
 
         final double o11 = phi.apply(
                 1*0.01 + 2*0.02 + 3*0.03

@@ -1,38 +1,29 @@
 package com.neuralnetwork.cnn;
 
-import com.neuralnetwork.core.interfaces.IActivationFunction;
+import com.neuralnetwork.core.interfaces.INeuralLayer;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 
-public class CnnBuilder
+public class CnnBuilder<T>
 {
-    private IActivationFunction globalActivationFunction;
-    private INeuralNetwork.IMatrixNeuralNetwork[] aLayers;
-    private double learningParam;
-    private double momentumParam;
+    private INeuralLayer<T>[] aLayers;
 
-    public CnnBuilder setGlobalActivationFunction(IActivationFunction globalActivationFunction)
-    {
-        this.globalActivationFunction = globalActivationFunction;
-        return this;
-    }
+    /*private double learningParam;
+    private double momentumParam;*/
 
-    public IActivationFunction getGlobalActivationFunction()
-    {
-        return globalActivationFunction;
-    }
-
-    public CnnBuilder setLayers(INeuralNetwork.IMatrixNeuralNetwork... aLayers)
+    public CnnBuilder setLayers(INeuralLayer... aLayers)
     {
         this.aLayers = aLayers;
         return this;
     }
 
-    public INeuralNetwork.IMatrixNeuralNetwork[] getLayers()
+    public INeuralLayer[] getLayers()
     {
         return aLayers;
     }
 
-    public CnnBuilder setLearningParam(double learningParam) {
+/*
+    public CnnBuilder setLearningParam(double learningParam)
+    {
         this.learningParam = learningParam;
         return this;
     }
@@ -42,12 +33,20 @@ public class CnnBuilder
         return learningParam;
     }
 
-    public CnnBuilder setMomentumParam(double momentumParam) {
+    public CnnBuilder setMomentumParam(double momentumParam)
+    {
         this.momentumParam = momentumParam;
         return this;
     }
 
-    public double getMomentumParam() {
+    public double getMomentumParam()
+    {
         return momentumParam;
+    }
+*/
+
+    public Cnn build() {
+
+        return new Cnn(this);
     }
 }

@@ -1,8 +1,12 @@
 package com.neuralnetwork.core.interfaces;
 
-public interface INeuralLayer<Input, Output>
+public interface INeuralLayer<T>
 {
-    public Output generateOutput(Input input);
+    public T generateOutput(T input);
 
-    public Output generateInducedLocalField(Input input);
+    public T generateInducedLocalField(T input);
+
+    public int getInputDim();
+
+    public int getOutputDim();
 }
