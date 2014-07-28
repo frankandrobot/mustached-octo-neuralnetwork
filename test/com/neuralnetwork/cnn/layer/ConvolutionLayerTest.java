@@ -1,6 +1,6 @@
 package com.neuralnetwork.cnn.layer;
 
-import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.core.neuron.MNeuron;
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
 import com.neuralnetwork.core.ActivationFunctions;

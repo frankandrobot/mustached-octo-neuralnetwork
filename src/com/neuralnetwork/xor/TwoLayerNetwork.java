@@ -1,13 +1,13 @@
 package com.neuralnetwork.xor;
 
-import com.neuralnetwork.core.NVector;
-import com.neuralnetwork.core.Neuron;
-import com.neuralnetwork.core.SingleLayerNeuralNetwork;
+import com.neuralnetwork.core.neuron.NVector;
+import com.neuralnetwork.core.neuron.Neuron;
+import com.neuralnetwork.core.deprecated.SingleLayerNeuralNetwork;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- * @deprecated use {@link com.neuralnetwork.core.MultiLayerNetworkOld}
+ * @deprecated use {@link com.neuralnetwork.core.deprecated.MultiLayerNetworkOld}
  */
 public class TwoLayerNetwork
 {

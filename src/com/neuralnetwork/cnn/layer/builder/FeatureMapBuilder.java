@@ -1,6 +1,6 @@
 package com.neuralnetwork.cnn.layer.builder;
 
-import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.core.neuron.MNeuron;
 import com.neuralnetwork.cnn.filter.IFilter;
 
 abstract class FeatureMapBuilder<Layer extends FeatureMapBuilder>

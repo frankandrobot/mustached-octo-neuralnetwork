@@ -1,4 +1,4 @@
-package com.neuralnetwork.core;
+package com.neuralnetwork.core.neuron;
 
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuron;

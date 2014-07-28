@@ -1,5 +1,7 @@
-package com.neuralnetwork.core;
+package com.neuralnetwork.core.deprecated;
 
+import com.neuralnetwork.core.neuron.NVector;
+import com.neuralnetwork.core.neuron.Neuron;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

@@ -7,6 +7,9 @@ import com.neuralnetwork.cnn.layer.SamplingLayer;
 import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
 import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
+import com.neuralnetwork.core.MultiLayerNetworkBuilder;
+import com.neuralnetwork.core.MultiLayerNetwork;
+import com.neuralnetwork.core.neuron.MNeuron;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 
@@ -35,7 +38,7 @@ public class CnnTest
                 .set1DInputSize(3)
                 .build();
 
-        Cnn<DenseMatrix64F> net = new CnnBuilder()
+        MultiLayerNetwork<DenseMatrix64F> net = new MultiLayerNetworkBuilder()
                 .setLayers(layer)
                 .build();
 
@@ -44,7 +47,7 @@ public class CnnTest
                 + weights[4];
 
         final double o12 = input.get(0,1)*weights[0] + input.get(0,2)*weights[1]
-                + input.get(1,1)*weights[2] + input.get(1,2)*weights[3]
+                + input.get(1, 1)*weights[2] + input.get(1,2)*weights[3]
                 + weights[4];
 
         final double o21 = input.get(1,0)*weights[0] + input.get(1,1)*weights[1]
@@ -79,10 +82,10 @@ public class CnnTest
                 .set1DInputSize(4);
         SamplingLayer layer = new SamplingLayer(builder);
 
-        CnnBuilder netBuilder = new CnnBuilder()
+        MultiLayerNetworkBuilder netBuilder = new MultiLayerNetworkBuilder()
                 .setLayers(layer);
 
-        Cnn<DenseMatrix64F> net = new Cnn(netBuilder);
+        MultiLayerNetwork<DenseMatrix64F> net = new MultiLayerNetwork(netBuilder);
 
         final double o11 = (1 + 2 + 5 + 6) * weights[0] + weights[4];
 
@@ -135,10 +138,10 @@ public class CnnTest
         assertThat(subSamplingLayer.getOutput().numRows, is(1));
 
         //build network
-        CnnBuilder netBuilder = new CnnBuilder()
+        MultiLayerNetworkBuilder netBuilder = new MultiLayerNetworkBuilder()
                 .setLayers(convolvLayer, subSamplingLayer);
 
-        Cnn<DenseMatrix64F> net = new Cnn(netBuilder);
+        MultiLayerNetwork<DenseMatrix64F> net = new MultiLayerNetwork(netBuilder);
 
         final double o11 = phi.apply(
                 1*0.01 + 2*0.02 + 3*0.03

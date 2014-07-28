@@ -1,6 +1,6 @@
 package com.neuralnetwork.cnn.backprop;
 
-import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.core.neuron.MNeuron;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -124,7 +124,7 @@ abstract public class OldFeatureMap implements INeuralNetwork.IMatrixNeuralNetwo
     }
 
     /**
-     * @param input unlike a {@link com.neuralnetwork.core.MultiLayerNetworkOld}, this is a square matrix.
+     * @param input unlike a {@link com.neuralnetwork.core.deprecated.MultiLayerNetworkOld}, this is a square matrix.
      *              The implementation transforms it to a 1 x n matrix suitable for passing into a neuron
      * @return output
      */

@@ -1,12 +1,12 @@
-package com.neuralnetwork.cnn;
+package com.neuralnetwork.core;
 
 import com.neuralnetwork.core.interfaces.INeuralLayer;
 
-public class Cnn<T>
+public class MultiLayerNetwork<T>
 {
     private final INeuralLayer<T>[] aLayers;
 
-    public Cnn(CnnBuilder netBuilder)
+    public MultiLayerNetwork(MultiLayerNetworkBuilder netBuilder)
     {
         this.aLayers = netBuilder.getLayers();
 

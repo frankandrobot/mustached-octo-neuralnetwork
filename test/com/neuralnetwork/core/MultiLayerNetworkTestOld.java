@@ -1,6 +1,10 @@
 package com.neuralnetwork.core;
 
+import com.neuralnetwork.core.deprecated.MultiLayerNetworkOld;
+import com.neuralnetwork.core.deprecated.SingleLayerNeuralNetwork;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
+import com.neuralnetwork.core.neuron.NVector;
+import com.neuralnetwork.core.neuron.Neuron;
 import org.junit.Test;
 
 import java.util.Random;
@@ -8,7 +12,7 @@ import java.util.Random;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class MultiLayerNetworkTest
+public class MultiLayerNetworkTestOld
 {
     /**
      * Test 1-layer network

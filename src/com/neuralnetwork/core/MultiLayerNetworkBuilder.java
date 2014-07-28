@@ -1,16 +1,15 @@
-package com.neuralnetwork.cnn;
+package com.neuralnetwork.core;
 
 import com.neuralnetwork.core.interfaces.INeuralLayer;
-import com.neuralnetwork.core.interfaces.INeuralNetwork;
 
-public class CnnBuilder<T>
+public class MultiLayerNetworkBuilder<T>
 {
     private INeuralLayer<T>[] aLayers;
 
     /*private double learningParam;
     private double momentumParam;*/
 
-    public CnnBuilder setLayers(INeuralLayer... aLayers)
+    public MultiLayerNetworkBuilder setLayers(INeuralLayer... aLayers)
     {
         this.aLayers = aLayers;
         return this;
@@ -45,8 +44,8 @@ public class CnnBuilder<T>
     }
 */
 
-    public Cnn build() {
+    public MultiLayerNetwork build() {
 
-        return new Cnn(this);
+        return new MultiLayerNetwork(this);
     }
 }

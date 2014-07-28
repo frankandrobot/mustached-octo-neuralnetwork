@@ -1,9 +1,9 @@
 package com.neuralnetwork.xor;
 
 import com.neuralnetwork.core.ActivationFunctions;
-import com.neuralnetwork.core.NVector;
-import com.neuralnetwork.core.Neuron;
-import com.neuralnetwork.core.SingleLayerNeuralNetwork;
+import com.neuralnetwork.core.neuron.NVector;
+import com.neuralnetwork.core.neuron.Neuron;
+import com.neuralnetwork.core.deprecated.SingleLayerNeuralNetwork;
 
 import java.util.Random;
 

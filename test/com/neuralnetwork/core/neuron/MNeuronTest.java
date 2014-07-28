@@ -1,6 +1,7 @@
-package com.neuralnetwork.cnn;
+package com.neuralnetwork.core.neuron;
 
 import com.neuralnetwork.core.ActivationFunctions;
+import com.neuralnetwork.core.neuron.MNeuron;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 

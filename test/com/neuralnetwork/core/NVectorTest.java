@@ -1,6 +1,6 @@
 package com.neuralnetwork.core;
 
-import com.neuralnetwork.core.NVector;
+import com.neuralnetwork.core.neuron.NVector;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.*;

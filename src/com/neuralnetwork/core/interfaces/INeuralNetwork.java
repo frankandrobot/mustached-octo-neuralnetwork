@@ -1,8 +1,8 @@
 package com.neuralnetwork.core.interfaces;
 
-import com.neuralnetwork.cnn.MNeuron;
-import com.neuralnetwork.core.NVector;
-import com.neuralnetwork.core.Neuron;
+import com.neuralnetwork.core.neuron.MNeuron;
+import com.neuralnetwork.core.neuron.NVector;
+import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 
 @Deprecated

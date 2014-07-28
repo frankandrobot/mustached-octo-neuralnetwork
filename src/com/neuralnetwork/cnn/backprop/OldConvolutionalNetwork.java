@@ -1,6 +1,6 @@
 package com.neuralnetwork.cnn.backprop;
 
-import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.core.neuron.MNeuron;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;

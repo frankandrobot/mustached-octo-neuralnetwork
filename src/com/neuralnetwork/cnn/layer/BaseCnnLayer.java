@@ -1,6 +1,6 @@
 package com.neuralnetwork.cnn.layer;
 
-import com.neuralnetwork.cnn.MNeuron;
+import com.neuralnetwork.core.neuron.MNeuron;
 import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
