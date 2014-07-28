@@ -1,13 +1,13 @@
 package com.neuralnetwork.cnn.backprop;
 
+import com.neuralnetwork.core.interfaces.OldINeuralNetwork;
 import com.neuralnetwork.core.neuron.MNeuron;
-import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
-abstract public class OldFeatureMap implements INeuralNetwork.IMatrixNeuralNetwork
+abstract public class OldFeatureMap implements OldINeuralNetwork.IMatrixNeuralNetwork
 {
     /**
      * The input array has dimensions #inputSize x #inputSize

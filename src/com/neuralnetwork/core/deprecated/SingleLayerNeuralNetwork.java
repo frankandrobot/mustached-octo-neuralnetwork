@@ -2,12 +2,12 @@ package com.neuralnetwork.core.deprecated;
 
 import com.neuralnetwork.core.neuron.NVector;
 import com.neuralnetwork.core.neuron.Neuron;
-import com.neuralnetwork.core.interfaces.INeuralNetwork;
+import com.neuralnetwork.core.interfaces.OldINeuralNetwork;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
-public class SingleLayerNeuralNetwork implements INeuralNetwork<NVector,NVector,Neuron>, Iterable<Neuron>
+public class SingleLayerNeuralNetwork implements OldINeuralNetwork<NVector,NVector,Neuron>, Iterable<Neuron>
 {
     protected Neuron[] aNeurons;
     /**

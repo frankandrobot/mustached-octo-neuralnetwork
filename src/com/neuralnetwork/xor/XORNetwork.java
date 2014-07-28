@@ -1,26 +1,26 @@
 package com.neuralnetwork.xor;
 
 import com.neuralnetwork.core.ActivationFunctions;
+import com.neuralnetwork.core.interfaces.OldINeuralNetwork;
 import com.neuralnetwork.core.neuron.NVector;
 import com.neuralnetwork.core.neuron.Neuron;
 import com.neuralnetwork.core.deprecated.SingleLayerNeuralNetwork;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
-import com.neuralnetwork.core.interfaces.INeuralNetwork;
 
 import java.util.Iterator;
 
 /**
  * This neural network solves the XOR problem
  */
-public class XORNetwork implements INeuralNetwork<NVector,NVector,Neuron>
+public class XORNetwork implements OldINeuralNetwork<NVector,NVector,Neuron>
 {
-    INeuralNetwork<NVector,NVector,Neuron>[] aLayers;
+    OldINeuralNetwork<NVector,NVector,Neuron>[] aLayers;
 
     public XORNetwork()
     {
         IActivationFunction phi = new ActivationFunctions.ThresholdFunction();
-        INeuralNetwork firstPass = new SingleLayerNeuralNetwork();
-        INeuralNetwork secondPass = new SingleLayerNeuralNetwork();
+        OldINeuralNetwork firstPass = new SingleLayerNeuralNetwork();
+        OldINeuralNetwork secondPass = new SingleLayerNeuralNetwork();
 
         ((SingleLayerNeuralNetwork)firstPass)
                 .setNeurons(new Neuron(phi, 1f,1f,-1.5f),
@@ -29,7 +29,7 @@ public class XORNetwork implements INeuralNetwork<NVector,NVector,Neuron>
         ((SingleLayerNeuralNetwork)secondPass)
                 .setNeurons(new Neuron(phi, -2f,1f,-0.5f));
 
-        aLayers = new INeuralNetwork[2];
+        aLayers = new OldINeuralNetwork[2];
         aLayers[0] = firstPass;
         aLayers[1] = secondPass;
     }

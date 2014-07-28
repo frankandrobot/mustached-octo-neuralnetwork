@@ -1,9 +1,9 @@
 package com.neuralnetwork.core.deprecated;
 
+import com.neuralnetwork.core.interfaces.OldINeuralNetwork;
 import com.neuralnetwork.core.neuron.NVector;
 import com.neuralnetwork.core.neuron.Neuron;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
-import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MultiLayerNetworkOld
@@ -43,7 +43,7 @@ public class MultiLayerNetworkOld
     static public class Builder
     {
         private IActivationFunction.IDifferentiableFunction phi;
-        protected INeuralNetwork[] aLayers;
+        protected OldINeuralNetwork[] aLayers;
         protected Double alpha;
         protected Double eta;
         protected int numberIterations;
@@ -54,7 +54,7 @@ public class MultiLayerNetworkOld
             return this;
         }
 
-        public Builder setLayers(INeuralNetwork... aLayers)
+        public Builder setLayers(OldINeuralNetwork... aLayers)
         {
             this.aLayers = aLayers;
             return this;
@@ -110,7 +110,7 @@ public class MultiLayerNetworkOld
      */
     protected class LayorInfo
     {
-        final public INeuralNetwork<NVector,NVector,Neuron> layer;
+        final public OldINeuralNetwork<NVector,NVector,Neuron> layer;
         /**
          * For each neuron k in the layer,
          * store v_k (induced local field).
@@ -145,7 +145,7 @@ public class MultiLayerNetworkOld
          */
         public NVector[] aWeightAdjustments;
 
-        public LayorInfo(INeuralNetwork layer)
+        public LayorInfo(OldINeuralNetwork layer)
         {
             this.layer = layer;
             this.vInducedLocalField = new NVector().setSize(this.layer.getNumberOfNeurons());
@@ -177,7 +177,7 @@ public class MultiLayerNetworkOld
             return rslt;
         }
 
-        private String getNeuron(INeuralNetwork network,
+        private String getNeuron(OldINeuralNetwork network,
                                  int neuron)
         {
             if (network != null)

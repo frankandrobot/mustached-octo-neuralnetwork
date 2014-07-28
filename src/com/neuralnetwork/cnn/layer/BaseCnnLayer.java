@@ -1,17 +1,17 @@
 package com.neuralnetwork.cnn.layer;
 
+import com.neuralnetwork.core.interfaces.OldINeuralNetwork;
 import com.neuralnetwork.core.neuron.MNeuron;
 import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
-import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
 public abstract class BaseCnnLayer
-        implements INeuralNetwork.IMatrixNeuralNetwork,
+        implements OldINeuralNetwork.IMatrixNeuralNetwork,
         INeuralLayer<DenseMatrix64F>
 {
     /**

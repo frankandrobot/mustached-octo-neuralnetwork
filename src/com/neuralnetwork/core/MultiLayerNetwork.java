@@ -1,8 +1,9 @@
 package com.neuralnetwork.core;
 
 import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.core.interfaces.INeuralNetwork;
 
-public class MultiLayerNetwork<T>
+public class MultiLayerNetwork<T> implements INeuralNetwork<T>
 {
     private final INeuralLayer<T>[] aLayers;
 

@@ -7,7 +7,7 @@ import org.ejml.ops.CommonOps;
 
 import java.util.Arrays;
 
-import static com.neuralnetwork.core.interfaces.INeuralNetwork.IMatrixNeuralNetwork;
+import static com.neuralnetwork.core.interfaces.OldINeuralNetwork.IMatrixNeuralNetwork;
 
 public class OldConvolutionalNetwork
 {
