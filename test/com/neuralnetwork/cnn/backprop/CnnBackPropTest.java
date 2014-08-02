@@ -3,8 +3,6 @@ package com.neuralnetwork.cnn.backprop;
 import com.neuralnetwork.cnn.CnnBuilder;
 import com.neuralnetwork.cnn.MNeuron;
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
-import com.neuralnetwork.cnn.layers.ConvolutionLayer;
-import com.neuralnetwork.cnn.layers.FeatureMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
