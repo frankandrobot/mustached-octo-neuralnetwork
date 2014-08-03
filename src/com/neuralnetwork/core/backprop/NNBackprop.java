@@ -50,12 +50,15 @@ class NNBackprop
     protected OutputInfo[] aOutputInfo;
     protected GradientInfo[] aGradientInfo;
 
+    protected DenseMatrix64F[] aCumulativeLearningTerms;
+
     NNBackprop(INeuralLayer... aLayers)
     {
         this.aLayers = aLayers;
 
         aOutputInfo = new OutputInfo[aLayers.length];
         aGradientInfo = new GradientInfo[aLayers.length];
+        aCumulativeLearningTerms = new DenseMatrix64F[aLayers.length];
 
         for(int i=0; i<aLayers.length; i++)
         {
@@ -63,6 +66,10 @@ class NNBackprop
 
             aOutputInfo[i] = new OutputInfo(size);
             aGradientInfo[i] = new GradientInfo(size);
+
+            DenseMatrix64F matrix = aLayers[i].getWeightMatrix();
+
+            aCumulativeLearningTerms[i] = new DenseMatrix64F(matrix.numRows, matrix.numCols);
         }
     }
 
@@ -73,16 +80,19 @@ class NNBackprop
      * 3. Calculate the learning term for each weight of each neuron
      * 4. Return a matrix containing the learning terms
      *
+     * WARNING: this is NOT thread-safe!!!
+     *
      * @param example
      * @return
      */
-    NNBackprop go(Example example)
+    DenseMatrix64F[] go(Example example)
     {
         this.example = example;
 
         forwardProp();
+        backprop();
 
-        return this;
+        return updateCumulativeLearningTerms();
     }
 
     protected void forwardProp()
@@ -97,8 +107,13 @@ class NNBackprop
 
     protected void setOutput(int index, double[] input)
     {
-        aOutputInfo[index].inducedLocalField = aLayers[index].generateInducedLocalField(input);
-        aOutputInfo[index].output = aLayers[index].generateOutput(input);
+        double[] inducedLocalField = aLayers[index].generateInducedLocalField(input);
+
+        aOutputInfo[index].inducedLocalField = inducedLocalField;
+
+        IActivationFunction.IDifferentiableFunction phi = aLayers[index].getImpulseFunction();
+        for(int i=0; i<inducedLocalField.length; i++)
+            aOutputInfo[index].output[i] = phi.apply(inducedLocalField[i]);
     }
 
     /**
@@ -117,8 +132,6 @@ class NNBackprop
     protected void constructGradients(int layerIndex)
     {
         INeuralLayer layer = aLayers[layerIndex];
-
-        DenseMatrix64F weightMatrix = layer.getWeightMatrix();
 
         for(int neuronPos=0; neuronPos<layer.getNumberOfNeurons(); neuronPos++)
         {
@@ -177,5 +190,36 @@ class NNBackprop
         }
 
         return rslt;
+    }
+
+    protected DenseMatrix64F[] updateCumulativeLearningTerms()
+    {
+        //Δw^l_kj=ηδ^l_k * y^(l−1)_j
+        for(int layer=0; layer<aLayers.length; ++layer) {
+
+            DenseMatrix64F learningMatrix = aCumulativeLearningTerms[layer];
+
+            for (int row = 0; row < learningMatrix.numRows; ++row)
+                for (int col = 0; col < learningMatrix.numCols; ++col)
+                {
+                    double curTerm = learningMatrix.unsafe_get(row,col);
+
+                    double gradient_k = aGradientInfo[layer].gradients[row];
+                    double prevOutput_j = getPreviousOutput(layer-1, col);
+
+                    learningMatrix.unsafe_set(row,col, curTerm + gradient_k * prevOutput_j);
+                }
+        }
+
+        return aCumulativeLearningTerms;
+    }
+
+    protected double getPreviousOutput(int prevLayer, int neuron)
+    {
+        if (prevLayer == -1)
+        {
+            return example.input[neuron];
+        }
+        return aOutputInfo[prevLayer].output[neuron];
     }
 }
