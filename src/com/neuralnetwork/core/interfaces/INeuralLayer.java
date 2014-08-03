@@ -24,8 +24,22 @@ import org.ejml.data.DenseMatrix64F;
  */
 public interface INeuralLayer
 {
+    /**
+     * We use the convention that the bias is at the beginning of the array i.e.,
+     * input[0] = +1
+     *
+     * @param input
+     * @return
+     */
     public double[] generateOutput(double[] input);
 
+    /**
+     * We use the convention that the bias is at the beginning of the array i.e.,
+     * input[0] = +1
+     *
+     * @param input
+     * @return
+     */
     public double[] generateInducedLocalField(double[] input);
 
     public int getInputDim();

@@ -50,7 +50,10 @@ class NNBackprop
     protected OutputInfo[] aOutputInfo;
     protected GradientInfo[] aGradientInfo;
 
-    protected DenseMatrix64F[] aCumulativeLearningTerms;
+    /**
+     * These values haven't been multiplied by the learning term yet
+     */
+    protected DenseMatrix64F[] aCumulativeLearningTermsMinusEta;
 
     NNBackprop(INeuralLayer... aLayers)
     {
@@ -58,7 +61,7 @@ class NNBackprop
 
         aOutputInfo = new OutputInfo[aLayers.length];
         aGradientInfo = new GradientInfo[aLayers.length];
-        aCumulativeLearningTerms = new DenseMatrix64F[aLayers.length];
+        aCumulativeLearningTermsMinusEta = new DenseMatrix64F[aLayers.length];
 
         for(int i=0; i<aLayers.length; i++)
         {
@@ -69,7 +72,7 @@ class NNBackprop
 
             DenseMatrix64F matrix = aLayers[i].getWeightMatrix();
 
-            aCumulativeLearningTerms[i] = new DenseMatrix64F(matrix.numRows, matrix.numCols);
+            aCumulativeLearningTermsMinusEta[i] = new DenseMatrix64F(matrix.numRows, matrix.numCols);
         }
     }
 
@@ -83,7 +86,7 @@ class NNBackprop
      * WARNING: this is NOT thread-safe!!!
      *
      * @param example
-     * @return
+     * @return the cumulative learning terms without eta
      */
     DenseMatrix64F[] go(Example example)
     {
@@ -109,6 +112,8 @@ class NNBackprop
     {
         double[] inducedLocalField = aLayers[index].generateInducedLocalField(input);
 
+        //yes, we overwrite this array even though we initialize it output constructor
+        //this is for consistencies sake (in the constructor)
         aOutputInfo[index].inducedLocalField = inducedLocalField;
 
         IActivationFunction.IDifferentiableFunction phi = aLayers[index].getImpulseFunction();
@@ -197,7 +202,7 @@ class NNBackprop
         //Δw^l_kj=ηδ^l_k * y^(l−1)_j
         for(int layer=0; layer<aLayers.length; ++layer) {
 
-            DenseMatrix64F learningMatrix = aCumulativeLearningTerms[layer];
+            DenseMatrix64F learningMatrix = aCumulativeLearningTermsMinusEta[layer];
 
             for (int row = 0; row < learningMatrix.numRows; ++row)
                 for (int col = 0; col < learningMatrix.numCols; ++col)
@@ -211,7 +216,7 @@ class NNBackprop
                 }
         }
 
-        return aCumulativeLearningTerms;
+        return aCumulativeLearningTermsMinusEta;
     }
 
     protected double getPreviousOutput(int prevLayer, int neuron)
