@@ -5,7 +5,7 @@ import com.neuralnetwork.core.interfaces.INeuralNetwork;
 
 public class MultiLayerNetwork<T> implements INeuralNetwork<T>
 {
-    private final INeuralLayer<T>[] aLayers;
+    private final INeuralLayer[] aLayers;
 
     public MultiLayerNetwork(MultiLayerNetworkBuilder netBuilder)
     {

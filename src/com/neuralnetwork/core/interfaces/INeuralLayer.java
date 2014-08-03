@@ -3,6 +3,8 @@ package com.neuralnetwork.core.interfaces;
 import org.ejml.data.DenseMatrix64F;
 
 /**
+ * Works in conjunction with {@link com.neuralnetwork.core.backprop.NNBackprop}
+ *
  * Assumes a specific relationship between input, output, neuron weights
  *
  * Example:
@@ -16,6 +18,9 @@ import org.ejml.data.DenseMatrix64F;
  * 2. weights are in specific order
  * 3. output (including induced local field) is in a 1-1 relationship
  *    with neurons. Input/output is in a 1D array but it doesn't have to be.
+ *
+ * For simplicity we also assume that each neuron has the same activation function
+ * (although it doesn't have to be).
  */
 public interface INeuralLayer
 {
@@ -26,6 +31,8 @@ public interface INeuralLayer
     public int getInputDim();
 
     public int getOutputDim();
+
+    public int getNumberOfNeurons();
 
     /**
      * Unfortunately, for this to work, the matrix needs to be in a specific format:
@@ -38,5 +45,12 @@ public interface INeuralLayer
      *
      * @return
      */
-    public DenseMatrix64F getNeuronWeights();
+    public DenseMatrix64F getWeightMatrix();
+
+    /**
+     * For simplicity, each neuron has the same impulse function.
+     *
+     * @return
+     */
+    public IActivationFunction.IDifferentiableFunction getImpulseFunction();
 }
