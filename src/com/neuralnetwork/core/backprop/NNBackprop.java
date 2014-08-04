@@ -229,8 +229,8 @@ class NNBackprop
 
                     //Δw^l_kj = η δ^l_k * y^(l−1)_j
 
-                    double gradient_k = aGradientInfo[layer].gradients[row];
-                    double prevOutput_j = getPreviousOutput(layer-1, col);
+                    double gradient_k = aGradientInfo[layer].gradients[row]; //recall that rows in matrix correspond to neurons
+                    double prevOutput_j = getInput(layer - 1, col);
 
                     learningMatrix.unsafe_set(row,col, curTerm + gradient_k * prevOutput_j);
                 }
@@ -239,12 +239,21 @@ class NNBackprop
         return aCumulativeLearningTermsMinusEta;
     }
 
-    protected double getPreviousOutput(int prevLayer, int neuron)
+    /**
+     * Necessary because {@link #aYInfo} doesn't keep track of actual NN input.
+     *
+     * @param prevLayer
+     * @param neuronIndex corresponds to a neuron index except when neuronIndex = 0
+     *                    (this is always +1 since it maps to the bias)
+     * @return
+     */
+    protected double getInput(int prevLayer, int neuronIndex)
     {
         if (prevLayer == -1)
         {
-            return example.input[neuron];
+            return example.input[neuronIndex];
         }
-        return aYInfo[prevLayer].y[neuron];
+
+        return aYInfo[prevLayer].y[neuronIndex];
     }
 }
