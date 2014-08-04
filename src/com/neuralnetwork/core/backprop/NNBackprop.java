@@ -8,32 +8,45 @@ import org.ejml.data.DenseMatrix64F;
 /**
  * On a single training example,
  * A single iteration of the backprop algorithm
- * on a single example
  */
 class NNBackprop
 {
-    protected class OutputInfo
+    /**
+     * This is the output of the current layer that's used as the input to the next layer
+     * The last YInfo is actually the output of the network.
+     *
+     * To make array indexes easier, we don't actually store the input as a YInfo
+     */
+    protected class YInfo
     {
         /**
-         * each neuron has one
+         * each value maps to a neuron
+         * but first value is always = +1 (maps to bias)
+         * so array length = numberOfNeurons + 1
          */
         public double[] inducedLocalField;
         /**
-         * each neuron has one
+         * each value maps to a neuron
+         * but first value is always = +1 (maps to bias)
+         * so array length = numberOfNeurons + 1
          */
-        public double[] output;
+        public double[] y;
 
-        public OutputInfo(int numberOfNeuronsInLayer)
+        public YInfo(int numberOfNeuronsInLayer)
         {
-            inducedLocalField = new double[numberOfNeuronsInLayer];
-            output = new double[numberOfNeuronsInLayer];
+            inducedLocalField = new double[numberOfNeuronsInLayer + 1];
+            y = new double[numberOfNeuronsInLayer + 1];
+
+            inducedLocalField[0] = 1;
+            y[0] = 1;
         }
     }
 
     protected class GradientInfo
     {
         /**
-         * each neuron has one
+         * each value maps to a neuron
+         * and only neurons have these
          */
         public double[] gradients;
 
@@ -47,11 +60,12 @@ class NNBackprop
 
     protected INeuralLayer[] aLayers;
 
-    protected OutputInfo[] aOutputInfo;
+    protected YInfo[] aYInfo;
     protected GradientInfo[] aGradientInfo;
 
     /**
-     * These values haven't been multiplied by the learning term yet
+     * These values haven't been multiplied by the learning term yet.
+     * Each value maps to a weight.
      */
     protected DenseMatrix64F[] aCumulativeLearningTermsMinusEta;
 
@@ -59,16 +73,16 @@ class NNBackprop
     {
         this.aLayers = aLayers;
 
-        aOutputInfo = new OutputInfo[aLayers.length];
+        aYInfo = new YInfo[aLayers.length];
         aGradientInfo = new GradientInfo[aLayers.length];
         aCumulativeLearningTermsMinusEta = new DenseMatrix64F[aLayers.length];
 
         for(int i=0; i<aLayers.length; i++)
         {
-            int size = aLayers[i].getNumberOfNeurons();
+            int numberOfNeurons = aLayers[i].getNumberOfNeurons();
 
-            aOutputInfo[i] = new OutputInfo(size);
-            aGradientInfo[i] = new GradientInfo(size);
+            aYInfo[i] = new YInfo(numberOfNeurons);
+            aGradientInfo[i] = new GradientInfo(numberOfNeurons);
 
             DenseMatrix64F matrix = aLayers[i].getWeightMatrix();
 
@@ -77,7 +91,8 @@ class NNBackprop
     }
 
     /**
-     * On a single training example,
+     * On a single training example:
+     *
      * 1. Perform the forward propagation. Store induced local fields and impulse function values.
      * 2. Perform the backpropagation. Store each neuron's gradient.
      * 3. Calculate the learning term for each weight of each neuron
@@ -104,7 +119,7 @@ class NNBackprop
 
         for(int i=1; i<aLayers.length; i++)
         {
-            setOutput(i, aOutputInfo[i - 1].output);
+            setOutput(i, aYInfo[i - 1].y);
         }
     }
 
@@ -112,20 +127,16 @@ class NNBackprop
     {
         double[] inducedLocalField = aLayers[index].generateInducedLocalField(input);
 
-        //yes, we overwrite this array even though we initialize it output constructor
-        //this is for consistencies sake (in the constructor)
-        aOutputInfo[index].inducedLocalField = inducedLocalField;
+        /**yes, we overwrite this array even though we initialize it in {@link YInfo} constructor
+         this is for consistencies sake (in the constructor) and is harmless**/
+        aYInfo[index].inducedLocalField = inducedLocalField;
 
         IActivationFunction.IDifferentiableFunction phi = aLayers[index].getImpulseFunction();
-        for(int i=0; i<inducedLocalField.length; i++)
-            aOutputInfo[index].output[i] = phi.apply(inducedLocalField[i]);
+
+        for(int i=1; i<inducedLocalField.length; i++) /** i=1 skips bias **/
+            aYInfo[index].y[i] = phi.apply(inducedLocalField[i]);
     }
 
-    /**
-     * Requires that you call forwardProp first
-     *
-     * @return
-     */
     protected void backprop()
     {
         for(int i=aLayers.length-1; i>=0 ;i--)
@@ -134,13 +145,15 @@ class NNBackprop
         }
     }
 
-    protected void constructGradients(int layerIndex)
+    protected void constructGradients(int layer)
     {
-        INeuralLayer layer = aLayers[layerIndex];
+        int numberOfNeurons = aLayers[layer].getNumberOfNeurons();
 
-        for(int neuronPos=0; neuronPos<layer.getNumberOfNeurons(); neuronPos++)
+        GradientInfo gradientInfo = aGradientInfo[layer];
+
+        for(int neuronIndex=0; neuronIndex<numberOfNeurons; neuronIndex++)
         {
-            aGradientInfo[layerIndex].gradients[neuronPos] = gradient(layerIndex, neuronPos);
+            gradientInfo.gradients[neuronIndex] = gradient(layer, neuronIndex + 1);
         }
     }
 
@@ -148,27 +161,28 @@ class NNBackprop
      * Gradient for the given example, layer, and neuron
      *
      * @param layer
-     * @param neuron
+     * @param neuronNum must be >= 1. neuronIndex != nueronNum... indexes start at 0, neuronNum at 1
      * @return gradient value for the given layer, and neuron
      */
-    protected double gradient(int layer, int neuron)
+    protected double gradient(int layer, int neuronNum)
     {
-        OutputInfo outputInfo = aOutputInfo[layer];
+        YInfo yInfo = aYInfo[layer];
+
         IActivationFunction.IDifferentiableFunction phi = aLayers[layer].getImpulseFunction();
 
         if (layer == aLayers.length-1)
         {
             // (oj - tj) * phi'_j(v^L_j)
-            final double inducedLocalField = outputInfo.inducedLocalField[neuron];
-            final double output = outputInfo.output[neuron];
+            final double inducedLocalField = yInfo.inducedLocalField[neuronNum];
+            final double output = yInfo.y[neuronNum];
 
-            return (example.expected[neuron] - output)
+            return (example.expected[neuronNum] - output)
                     * phi.derivative(inducedLocalField);
         }
         else
         {
-             return phi.derivative(outputInfo.inducedLocalField[neuron])
-                     * sumGradients(neuron, layer + 1);
+             return phi.derivative(yInfo.inducedLocalField[neuronNum])
+                     * sumGradients(neuronNum, layer + 1);
         }
     }
 
@@ -176,9 +190,11 @@ class NNBackprop
      * Find the sum of the gradients times the weights of the next layer
      * for the current neuron.
      *
-     * The weights that connect neuron j are found in column j of the weight matrix.
+     * The weights that connect neuron j are found in column (j+1) of the weight matrix
+     * (the column with index j)
      *
-     * @param j neuron j
+     * @param j is the neuronNum where the neuronNum starts at 1.
+     *          neuronIndex != neuronNum... indexes start at 0, neuronNum starts at 1
      * @param nextLayer
      *
      * @return
@@ -186,12 +202,15 @@ class NNBackprop
     protected double sumGradients(int j, int nextLayer)
     {
         double rslt = 0f;
-        DenseMatrix64F matrix = aLayers[nextLayer].getWeightMatrix();
 
-        for(int neuron=0; neuron < matrix.numRows; ++neuron)
+        int numberOfNeurons = aLayers[nextLayer].getNumberOfNeurons();
+
+        DenseMatrix64F weights = aLayers[nextLayer].getWeightMatrix();
+
+        for(int neuronIndex=0; neuronIndex < numberOfNeurons; ++neuronIndex)
         {
             // w_ij^(l+1) * delta_i^(l+1)
-            rslt += matrix.unsafe_get(neuron, j) * gradient(nextLayer, neuron);
+            rslt += weights.unsafe_get(neuronIndex, j) * gradient(nextLayer, neuronIndex+1);
         }
 
         return rslt;
@@ -199,7 +218,6 @@ class NNBackprop
 
     protected DenseMatrix64F[] updateCumulativeLearningTerms()
     {
-        //Δw^l_kj=ηδ^l_k * y^(l−1)_j
         for(int layer=0; layer<aLayers.length; ++layer) {
 
             DenseMatrix64F learningMatrix = aCumulativeLearningTermsMinusEta[layer];
@@ -208,6 +226,8 @@ class NNBackprop
                 for (int col = 0; col < learningMatrix.numCols; ++col)
                 {
                     double curTerm = learningMatrix.unsafe_get(row,col);
+
+                    //Δw^l_kj = η δ^l_k * y^(l−1)_j
 
                     double gradient_k = aGradientInfo[layer].gradients[row];
                     double prevOutput_j = getPreviousOutput(layer-1, col);
@@ -225,6 +245,6 @@ class NNBackprop
         {
             return example.input[neuron];
         }
-        return aOutputInfo[prevLayer].output[neuron];
+        return aYInfo[prevLayer].y[neuron];
     }
 }
