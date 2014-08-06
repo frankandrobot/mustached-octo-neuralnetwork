@@ -8,11 +8,11 @@ import org.ejml.data.DenseMatrix64F;
  * Assumes a specific relationship between input, output, neuron weights
  *
  * Example:
- * Input  Neuron Weights       Output
- * I0                          1
- * I1     N1: w10 w11 w12 w13  O1
- * I2     N2: w20 w21 w22 w23  O2
- * I3     N3: w30 w31 w32 w33  O3
+ * Input  Neuron Weights       Output  y
+ * I0                                  1
+ * I1     N1: w10 w11 w12 w13  O1      O1
+ * I2     N2: w20 w21 w22 w23  O2      O2
+ * I3     N3: w30 w31 w32 w33  O3      O3
  *
  * 1. rows in weight matrix are a neuron's weights
  * 2. weights are in specific order:
@@ -23,11 +23,15 @@ import org.ejml.data.DenseMatrix64F;
  * 3. the first value in the input is always 1
  *    (maps to the bias)
  * 4. output (including induced local field) is in specific order:
+ *    first value is output of first neuron
+ *    second value is output of second neuron,
+ *    etc.
+ * 5. y is in specific order:
  *    first value is always 1 (maps to bias),
  *    second value is output of first neuron,
  *    third value is output of second neuron,
  *    etc.
- * 5. input/outputs are 1D arrays but don't have to be.
+ * 6. input/outputs are 1D arrays but don't have to be.
  *
  * For simplicity we also assume that each neuron has the same activation function
  * (although it doesn't have to be).
@@ -37,9 +41,20 @@ import org.ejml.data.DenseMatrix64F;
 public interface INeuralLayer
 {
     /**
+     * y is the output with a +1 added at beginning (for the bias)
+     *
+     * we use the convention that the bias is at the beginning of the array i.e.,
+     * input[0] = +1  AND
+     * y[0] = +1
+     *
+     * @param input
+     * @return
+     */
+    public double[] generateY(double[] input);
+
+    /**
      * We use the convention that the bias is at the beginning of the array i.e.,
-     * input[0] = +1 and
-     * output[0] = +1
+     * input[0] = +1
      *
      * @param input
      * @return
@@ -48,8 +63,7 @@ public interface INeuralLayer
 
     /**
      * We use the convention that the bias is at the beginning of the array i.e.,
-     * input[0] = +1 and
-     * output[0] = +1
+     * input[0] = +1
      *
      * @param input
      * @return

@@ -4,75 +4,77 @@ import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuron;
 
 /**
- * By convention, the bias is at the _end_ of the weights list
+ * We arbitrarily put the bias at the *beginning* of the weights list
  *
  */
-public class Neuron implements INeuron<NVector>
+public class Neuron implements INeuron<double[]>
 {
-    NVector vWeights;
-    IActivationFunction phi;
+    IActivationFunction.IDifferentiableFunction phi;
 
-    public Neuron(IActivationFunction phi, NVector vWeights)
+    double[] weights;
+    double[] weightsWithoutBias;
+
+    public Neuron(IActivationFunction.IDifferentiableFunction phi, double... aWeights)
     {
-        this.vWeights = vWeights;
+        this.weights = aWeights;
         this.phi = phi;
-    }
 
-    public Neuron(IActivationFunction phi, double... aWeights)
-    {
-        this.vWeights = new NVector(aWeights);
-        this.phi = phi;
-    }
-
-    @Override
-    public double rawoutput(NVector input)
-    {
-        return vWeights.dot(input);
-    }
-
-    @Override
-    public double output(NVector input)
-    {
-        return phi.apply(rawoutput(input));
+        weightsWithoutBias = new double[weights.length - 1];
+        System.arraycopy(weights,1,weightsWithoutBias,0,weights.length-1);
     }
 
     @Override
     public double getWeight(int weight)
     {
-        return vWeights.get(weight);
-    }
-
-    @Override
-    public int getNumberOfWeights()
-    {
-        return vWeights.size();
-    }
-
-    @Override
-    public IActivationFunction phi()
-    {
-        return phi;
-    }
-
-    @Override
-    public NVector getWeightsWithoutBias()
-    {
-        return vWeights;
+        return weights[weight];
     }
 
     @Override
     public void setWeight(int weight, double newWeight)
     {
-        vWeights.set(weight, newWeight);
+        weights[weight] = newWeight;
+        if (weight > 0) weightsWithoutBias[weight-1] = newWeight;
+    }
+
+    @Override
+    public int getNumberOfWeights()
+    {
+        return weights.length;
+    }
+
+    /**
+     * This should be read only!!!
+     * @return
+     */
+    @Override
+    public double[] getWeightsWithoutBias()
+    {
+        return weightsWithoutBias;
+    }
+
+    /**
+     * This should be read only!!!!
+     * @return
+     */
+    @Override
+    public double[] getWeights()
+    {
+        return weights;
+    }
+
+    @Override
+    public IActivationFunction.IDifferentiableFunction phi()
+    {
+        return phi;
     }
 
     @Override
     public String toString()
     {
-        String rslt = String.format("%6.6g", vWeights.get(0));
-        for(int i=1; i<vWeights.size(); ++i)
+        String rslt = String.format("%6.6g", weights[0]);
+        for(int i=1; i< weights.length; ++i)
         {
-            rslt += "  "+String.format("%6.6g", vWeights.get(i));
+            rslt += "  "+String.format("%6.6g", weights[i]);
         }
         return rslt;
     }

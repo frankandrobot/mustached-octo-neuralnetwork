@@ -7,11 +7,16 @@ final public class ActivationFunctions
 
     public static class ThresholdFunction implements IActivationFunction
     {
-
         @Override
         public double apply(double v)
         {
             return v >= 0f ? 1f : 0f;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            return obj instanceof ThresholdFunction;
         }
     }
 
@@ -40,6 +45,16 @@ final public class ActivationFunctions
             double denom = (1.0 + exp);
 
             return ( (slope * exp) / (denom * denom) );
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            return obj instanceof SigmoidFunction ?
+                    slope == ((SigmoidFunction)obj).slope &&
+                            negSlope == ((SigmoidFunction)obj).negSlope
+                    : false;
+
         }
     }
 

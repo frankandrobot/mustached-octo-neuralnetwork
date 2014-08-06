@@ -6,19 +6,22 @@ package com.neuralnetwork.core.interfaces;
  */
 public interface INeuron<I>
 {
-    double rawoutput(I input);
-
-    double output(I input);
+    IActivationFunction phi();
 
     double getWeight(int weight);
 
+    void setWeight(int weight, double newWeight);
+
     int getNumberOfWeights();
 
-    IActivationFunction phi();
-
+    /**
+     * @deprecated ???
+     *
+     * @return
+     */
     I getWeightsWithoutBias();
 
-    void setWeight(int weight, double newWeight);
+    I getWeights();
 
     @Override
     String toString();
