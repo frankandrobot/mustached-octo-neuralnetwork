@@ -1,4 +1,4 @@
-package com.neuralnetwork.core.layer;
+package com.neuralnetwork.nn.layer;
 
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
@@ -108,10 +108,10 @@ public class NNLayerTest {
         DenseMatrix64F weights = layer.getWeightMatrix();
 
         for(int col=0; col<weights.numCols; ++col)
-            assertThat(weights.get(0,col), is(weights1[0]));
+            assertThat(weights.get(0,col), is(weights1[col]));
 
         for(int col=0; col<weights.numCols; ++col)
-            assertThat(weights.get(1,col), is(weights2[0]));
+            assertThat(weights.get(1,col), is(weights2[col]));
 
     }
 }

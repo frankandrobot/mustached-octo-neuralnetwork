@@ -1,13 +1,13 @@
-package com.neuralnetwork.core;
+package com.neuralnetwork.nn;
 
 import com.neuralnetwork.core.interfaces.INeuralLayer;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 
-public class MultiLayerNetwork<T> implements INeuralNetwork<T>
+public class MultiLayerNN implements INeuralNetwork<double[]>
 {
     private final INeuralLayer[] aLayers;
 
-    public MultiLayerNetwork(MultiLayerNetworkBuilder netBuilder)
+    public MultiLayerNN(MultiLayerNNBuilder netBuilder)
     {
         this.aLayers = netBuilder.getLayers();
 
@@ -17,19 +17,19 @@ public class MultiLayerNetwork<T> implements INeuralNetwork<T>
             INeuralLayer layer = aLayers[i];
             INeuralLayer layerNext = aLayers[i+1];
 
-            if (layer.getOutputDim() != layerNext.getInputDim())
-                throw new IllegalArgumentException("Output/inputs in layers must match: layers "+i+","+i+1);
+            if (layer.getOutputDim() + 1 != layerNext.getInputDim())
+                throw new IllegalArgumentException("Output/inputs in layers must match: layers "+i+","+(i+1));
         }
     }
 
-    public T generateOutput(T input)
+    public double[] generateOutput(double[] input)
     {
-        T _input = input;
-        T _output = null;
+        double[] _input = input;
+        double[] _output = null;
 
         for(int i=0; i<aLayers.length; i++)
         {
-            _output = aLayers[i].generateOutput(_input);
+            _output = aLayers[i].generateY(_input);
             _input = _output;
         }
         return _output;
