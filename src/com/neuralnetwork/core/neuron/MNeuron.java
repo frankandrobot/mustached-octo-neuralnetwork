@@ -8,6 +8,7 @@ import org.ejml.ops.CommonOps;
 import java.util.Arrays;
 
 /**
+ *
  * Internally, we pull out the weights from the bias for easy computations
  * but externally the bias is part of the weights
  *
@@ -88,6 +89,11 @@ public class MNeuron implements INeuron<DenseMatrix64F>
     public DenseMatrix64F getWeightsWithoutBias()
     {
         return mWeights;
+    }
+
+    @Override
+    public DenseMatrix64F getWeights() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setWeight(int weight, double newWeight)

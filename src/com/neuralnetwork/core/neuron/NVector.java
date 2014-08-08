@@ -5,6 +5,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+@Deprecated
 public class NVector implements Iterable<Double>
 {
     double[] aCoords;

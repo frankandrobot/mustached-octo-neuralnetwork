@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 public abstract class BaseCnnLayer
         implements OldINeuralNetwork.IMatrixNeuralNetwork,
-        INeuralLayer<DenseMatrix64F>
+        INeuralLayer
 {
     /**
      * the kernel is made of weights from this neuron.

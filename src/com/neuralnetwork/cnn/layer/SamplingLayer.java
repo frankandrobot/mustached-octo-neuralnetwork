@@ -1,6 +1,7 @@
 package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
+import com.neuralnetwork.core.interfaces.IActivationFunction;
 import org.ejml.data.DenseMatrix64F;
 
 public class SamplingLayer extends BaseCnnLayer
@@ -37,5 +38,30 @@ public class SamplingLayer extends BaseCnnLayer
         output = new DenseMatrix64F(
                 inputDim/kernelDim,
                 inputDim/kernelDim);
+    }
+
+    @Override
+    public double[] generateY(double[] input) {
+        return new double[0];  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public double[] generateOutput(double[] input) {
+        return new double[0];  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public double[] generateInducedLocalField(double[] input) {
+        return new double[0];  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public DenseMatrix64F getWeightMatrix() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public IActivationFunction.IDifferentiableFunction getImpulseFunction() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
