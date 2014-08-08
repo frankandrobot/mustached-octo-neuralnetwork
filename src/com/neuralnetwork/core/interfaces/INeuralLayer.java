@@ -3,7 +3,7 @@ package com.neuralnetwork.core.interfaces;
 import org.ejml.data.DenseMatrix64F;
 
 /**
- * Works in conjunction with {@link com.neuralnetwork.core.backprop.NNBackprop}
+ * Works in conjunction with {@link com.neuralnetwork.nn.backprop.NNBackprop}
  *
  * Assumes a specific relationship between input, output, neuron weights
  *

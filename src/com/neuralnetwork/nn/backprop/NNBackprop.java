@@ -1,4 +1,4 @@
-package com.neuralnetwork.core.backprop;
+package com.neuralnetwork.nn.backprop;
 
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
@@ -24,7 +24,7 @@ class NNBackprop
          * but first value is always = +1 (maps to bias)
          * so array length = numberOfNeurons + 1
          */
-        public double[] inducedLocalField;
+        public double[] yInducedLocalField;
         /**
          * each value maps to a neuron
          * but first value is always = +1 (maps to bias)
@@ -34,10 +34,10 @@ class NNBackprop
 
         public YInfo(int numberOfNeuronsInLayer)
         {
-            inducedLocalField = new double[numberOfNeuronsInLayer + 1];
+            yInducedLocalField = new double[numberOfNeuronsInLayer + 1];
             y = new double[numberOfNeuronsInLayer + 1];
 
-            inducedLocalField[0] = 1;
+            yInducedLocalField[0] = 1;
             y[0] = 1;
         }
     }
@@ -115,21 +115,23 @@ class NNBackprop
 
     protected void forwardProp()
     {
-        setOutput(0, example.input);
+        generateY(0, example.input);
 
         for(int i=1; i<aLayers.length; i++)
         {
-            setOutput(i, aYInfo[i - 1].y);
+            generateY(i, aYInfo[i - 1].y);
         }
     }
 
-    protected void setOutput(int index, double[] input)
+    protected void generateY(int index, double[] input)
     {
         double[] inducedLocalField = aLayers[index].generateInducedLocalField(input);
 
-        /**yes, we overwrite this array even though we initialize it in {@link YInfo} constructor
-         this is for consistencies sake (in the constructor) and is harmless**/
-        aYInfo[index].inducedLocalField = inducedLocalField;
+        System.arraycopy(inducedLocalField,0,
+                aYInfo[index].yInducedLocalField,1,
+                inducedLocalField.length);
+
+        inducedLocalField = aYInfo[index].yInducedLocalField;
 
         IActivationFunction.IDifferentiableFunction phi = aLayers[index].getImpulseFunction();
 
@@ -173,7 +175,7 @@ class NNBackprop
         if (layer == aLayers.length-1)
         {
             // (oj - tj) * phi'_j(v^L_j)
-            final double inducedLocalField = yInfo.inducedLocalField[neuronNum];
+            final double inducedLocalField = yInfo.yInducedLocalField[neuronNum];
             final double output = yInfo.y[neuronNum];
 
             return (example.expected[neuronNum] - output)
@@ -181,7 +183,7 @@ class NNBackprop
         }
         else
         {
-             return phi.derivative(yInfo.inducedLocalField[neuronNum])
+             return phi.derivative(yInfo.yInducedLocalField[neuronNum])
                      * sumGradients(neuronNum, layer + 1);
         }
     }
@@ -230,7 +232,7 @@ class NNBackprop
                     //Δw^l_kj = η δ^l_k * y^(l−1)_j
 
                     double gradient_k = aGradientInfo[layer].gradients[row]; //recall that rows in matrix correspond to neurons
-                    double prevOutput_j = getInput(layer - 1, col);
+                    double prevOutput_j = getY(layer - 1, col);
 
                     learningMatrix.unsafe_set(row,col, curTerm + gradient_k * prevOutput_j);
                 }
@@ -242,12 +244,14 @@ class NNBackprop
     /**
      * Necessary because {@link #aYInfo} doesn't keep track of actual NN input.
      *
-     * @param prevLayer
+     * Need to call {@link #forwardProp()} in order to work.
+     *
+     * @param prevLayer >= -1 (prevLayer == -1 corresponds to input layer)
      * @param neuronIndex corresponds to a neuron index except when neuronIndex = 0
      *                    (this is always +1 since it maps to the bias)
      * @return
      */
-    protected double getInput(int prevLayer, int neuronIndex)
+    protected double getY(int prevLayer, int neuronIndex)
     {
         if (prevLayer == -1)
         {

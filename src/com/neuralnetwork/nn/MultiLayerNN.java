@@ -25,13 +25,17 @@ public class MultiLayerNN implements INeuralNetwork<double[]>
     public double[] generateOutput(double[] input)
     {
         double[] _input = input;
-        double[] _output = null;
+        double[] y = null;
 
         for(int i=0; i<aLayers.length; i++)
         {
-            _output = aLayers[i].generateY(_input);
-            _input = _output;
+            y = aLayers[i].generateY(_input);
+            _input = y;
         }
-        return _output;
+
+        double[] output = new double[y.length-1];
+        System.arraycopy(y,1,output,0,output.length);
+
+        return output;
     }
 }

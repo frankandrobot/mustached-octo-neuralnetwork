@@ -98,6 +98,7 @@ public class NNLayer implements INeuralLayer
     public double[] generateInducedLocalField(double[] input)
     {
         assert(input.length == getInputDim());
+        assert(input[0] == 1.0);
 
         mInput.set(getInputDim(),1,false,input);
         CommonOps.mult(weights, mInput, mOutput);
