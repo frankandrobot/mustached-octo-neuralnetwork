@@ -51,6 +51,7 @@ public class MultiLayerNNTest {
 
         double[] results = nn.generateOutput(input);
 
-        assertThat(results[1], is(o2));
+        assertThat(results.length, is(1));
+        assertThat(results[0], is(o2));
     }
 }

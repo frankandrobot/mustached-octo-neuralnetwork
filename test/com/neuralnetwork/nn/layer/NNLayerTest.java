@@ -3,7 +3,7 @@ package com.neuralnetwork.nn.layer;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.neuron.Neuron;
-import com.neuralnetwork.helpers.NumberFormatter;
+import com.neuralnetwork.helpers.NumberAssert;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,10 +42,10 @@ public class NNLayerTest {
         double o2 = phi.apply(0.4f*1f + 0.5f*0.7f + 0.6f*0.8f);
 
         assertThat(result[0], is(1.0));
-        assertThat(NumberFormatter.toStr(result[1]),
-                is(NumberFormatter.toStr(o1)));
-        assertThat(NumberFormatter.toStr(result[2]),
-                is(NumberFormatter.toStr(o2)));
+        assertThat(NumberAssert.toStr(result[1]),
+                is(NumberAssert.toStr(o1)));
+        assertThat(NumberAssert.toStr(result[2]),
+                is(NumberAssert.toStr(o2)));
     }
 
     @Test
@@ -58,10 +58,10 @@ public class NNLayerTest {
         double o1 = phi.apply(0.1f*1f + 0.2f*0.7f + 0.3f*0.8f);
         double o2 = phi.apply(0.4f*1f + 0.5f*0.7f + 0.6f*0.8f);
 
-        assertThat(NumberFormatter.toStr(result[0]),
-                is(NumberFormatter.toStr(o1)));
-        assertThat(NumberFormatter.toStr(result[1]),
-                is(NumberFormatter.toStr(o2)));
+        assertThat(NumberAssert.toStr(result[0]),
+                is(NumberAssert.toStr(o1)));
+        assertThat(NumberAssert.toStr(result[1]),
+                is(NumberAssert.toStr(o2)));
 
     }
 
@@ -75,10 +75,10 @@ public class NNLayerTest {
         double o1 = 0.1f*1f + 0.2f*0.7f + 0.3f*0.8f;
         double o2 = 0.4f*1f + 0.5f*0.7f + 0.6f*0.8f;
 
-        assertThat(NumberFormatter.toStr(result[0]),
-                is(NumberFormatter.toStr(o1)));
-        assertThat(NumberFormatter.toStr(result[1]),
-                is(NumberFormatter.toStr(o2)));
+        assertThat(NumberAssert.toStr(result[0]),
+                is(NumberAssert.toStr(o1)));
+        assertThat(NumberAssert.toStr(result[1]),
+                is(NumberAssert.toStr(o2)));
     }
 
     @Test
