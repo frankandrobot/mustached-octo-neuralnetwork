@@ -7,7 +7,7 @@ import org.ejml.data.DenseMatrix64F;
 
 /**
  * On a single training example,
- * A single iteration of the backprop algorithm
+ * a single iteration of the backprop algorithm
  */
 class NNBackprop
 {
