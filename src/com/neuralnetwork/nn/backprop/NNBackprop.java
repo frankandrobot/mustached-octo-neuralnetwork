@@ -115,12 +115,29 @@ class NNBackprop
 
     protected void forwardProp()
     {
-        generateY(0, example.input);
-
-        for(int i=1; i<aLayers.length; i++)
+        for(int i=0; i<aLayers.length; i++)
         {
-            generateY(i, aYInfo[i - 1].y);
+            generateY(i, getY(i - 1));
         }
+    }
+
+    /**
+     * Necessary because {@link #aYInfo} doesn't keep track of actual NN input.
+     *
+     * Need to call {@link #forwardProp()} in order to work.
+     *
+     * @param prevLayer >= -1 (prevLayer == -1 corresponds to input layer)
+
+     * @return
+     */
+    protected double[] getY(int prevLayer)
+    {
+        if (prevLayer == -1)
+        {
+            return example.input;
+        }
+
+        return aYInfo[prevLayer].y;
     }
 
     protected void generateY(int index, double[] input)
@@ -232,32 +249,12 @@ class NNBackprop
                     //Δw^l_kj = η δ^l_k * y^(l−1)_j
 
                     double gradient_k = aGradientInfo[layer].gradients[row]; //recall that rows in matrix correspond to neurons
-                    double prevOutput_j = getY(layer - 1, col);
+                    double prevOutput_j = getY(layer - 1)[col];
 
                     learningMatrix.unsafe_set(row,col, curTerm + gradient_k * prevOutput_j);
                 }
         }
 
         return aCumulativeLearningTermsMinusEta;
-    }
-
-    /**
-     * Necessary because {@link #aYInfo} doesn't keep track of actual NN input.
-     *
-     * Need to call {@link #forwardProp()} in order to work.
-     *
-     * @param prevLayer >= -1 (prevLayer == -1 corresponds to input layer)
-     * @param neuronIndex corresponds to a neuron index except when neuronIndex = 0
-     *                    (this is always +1 since it maps to the bias)
-     * @return
-     */
-    protected double getY(int prevLayer, int neuronIndex)
-    {
-        if (prevLayer == -1)
-        {
-            return example.input[neuronIndex];
-        }
-
-        return aYInfo[prevLayer].y[neuronIndex];
     }
 }

@@ -66,7 +66,6 @@ public class NNBackpropTest {
 
         backprop.forwardProp();
 
-
         double[] inducedLocalField0 = layer1.generateInducedLocalField(example.input);
 
         double[] yInducedLocalField0 = new double[inducedLocalField0.length+1];
@@ -82,7 +81,7 @@ public class NNBackpropTest {
         _assert(y0, backprop.aYInfo[0].y);
 
 
-        double[] inducedLocalField1 = layer2.generateInducedLocalField(yInducedLocalField0);
+        double[] inducedLocalField1 = layer2.generateInducedLocalField(y0);
 
         double[] yInducedLocalField1 = new double[inducedLocalField1.length+1];
         yInducedLocalField1[0] = 1;
@@ -93,7 +92,7 @@ public class NNBackpropTest {
         _assert(yInducedLocalField1, backprop.aYInfo[1].yInducedLocalField);
 
 
-        double[] y1 = layer2.generateY(yInducedLocalField0);
+        double[] y1 = layer2.generateY(y0);
         _assert(y1, backprop.aYInfo[1].y);
 
     }
@@ -134,18 +133,18 @@ public class NNBackpropTest {
     {
         backprop.forwardProp();
 
-        double e1 = backprop.getY(-1, 0);
+        double e1 = backprop.getY(-1)[0];
         assertThat(e1, is(1.0));
 
-        double e2 = backprop.getY(-1, 1);
+        double e2 = backprop.getY(-1)[1];
         assertThat(e2, is(example.input[1]));
 
         double[] y = layer1.generateY(example.input);
 
-        assertThat(toStr(backprop.getY(0, 0)),
+        assertThat(toStr(backprop.getY(0)[0]),
                 is(toStr(y[0])));
 
-        assertThat(toStr(backprop.getY(0, 1)),
+        assertThat(toStr(backprop.getY(0)[1]),
                 is(toStr(y[1])));
     }
 }
