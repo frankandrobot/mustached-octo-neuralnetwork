@@ -214,7 +214,7 @@ class NNBackprop
      *
      * @param j is the neuronNum where the neuronNum starts at 1.
      *          neuronIndex != neuronNum... indexes start at 0, neuronNum starts at 1
-     * @param nextLayer
+     * @param nextLayer <= total number of layers
      *
      * @return
      */

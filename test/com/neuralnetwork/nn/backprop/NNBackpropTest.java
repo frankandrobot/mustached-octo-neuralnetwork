@@ -54,6 +54,8 @@ public class NNBackpropTest {
         example.expected = new double[]{0.8f};
 
         backprop.example = example;
+
+        backprop.forwardProp();
     }
 
     @Test
@@ -63,8 +65,6 @@ public class NNBackpropTest {
 
     @Test
     public void testForwardProp() throws Exception {
-
-        backprop.forwardProp();
 
         double[] inducedLocalField0 = layer1.generateInducedLocalField(example.input);
 
@@ -98,11 +98,6 @@ public class NNBackpropTest {
     }
 
     @Test
-    public void testSetOutput() throws Exception {
-
-    }
-
-    @Test
     public void testBackprop() throws Exception {
 
     }
@@ -120,6 +115,9 @@ public class NNBackpropTest {
     @Test
     public void testSumGradients() throws Exception {
 
+        double sum1 = backprop.sumGradients(1,1);
+
+        //neuron 1^0 is connected to .... neuron 1^1
     }
 
     @Test
