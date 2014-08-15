@@ -107,6 +107,9 @@ class NNBackprop
     {
         this.example = example;
 
+        assert(example.input.length == aLayers[0].getInputDim());
+        assert(example.expected.length == aLayers[aLayers.length-1].getOutputDim());
+
         forwardProp();
         backprop();
 

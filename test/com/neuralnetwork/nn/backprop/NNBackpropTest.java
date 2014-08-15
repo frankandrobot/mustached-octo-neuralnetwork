@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.neuralnetwork.helpers.NumberAssert.*;
+import static org.hamcrest.CoreMatchers.describedAs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -51,16 +52,11 @@ public class NNBackpropTest {
         backprop = new NNBackprop(layer1, layer2);
 
         example.input = new double[]{1f, 0.6f, 0.7f};
-        example.expected = new double[]{0.8f};
+        example.expected = new double[]{1f, 0.8f};
 
         backprop.example = example;
 
         backprop.forwardProp();
-    }
-
-    @Test
-    public void testGo() throws Exception {
-
     }
 
     @Test
@@ -108,16 +104,40 @@ public class NNBackpropTest {
     }
 
     @Test
-    public void testGradient() throws Exception {
+    public void testGradient1() throws Exception
+    {
+        //there's only one neuron in output
+        double actual = backprop.gradient(1,1);
 
+        double expected = (example.expected[1] - backprop.aYInfo[1].y[1])
+                * phi.derivative(backprop.aYInfo[1].yInducedLocalField[1]);
+
+        _assert(expected, actual);
     }
 
     @Test
-    public void testSumGradients() throws Exception {
+    public void testGradient2() throws Exception
+    {
+        //neuron 1^0 is connected to .... neuron 1^1
+        double actual = backprop.gradient(0,1);
 
-        double sum1 = backprop.sumGradients(1,1);
+        double gamma = phi.derivative(backprop.aYInfo[0].yInducedLocalField[1]);
+        double prod = backprop.gradient(1,1) * weights2[1];
+
+        _assert(gamma * prod, actual);
+    }
+
+    @Test
+    public void testSumGradients() throws Exception
+    {
+        double actual = backprop.sumGradients(1,1);
 
         //neuron 1^0 is connected to .... neuron 1^1
+        double weight = weights2[1];
+        double delta = (example.expected[1] - backprop.aYInfo[1].y[1])
+                        * phi.derivative(backprop.aYInfo[1].yInducedLocalField[1]);
+
+        _assert(weight*delta, actual);
     }
 
     @Test
