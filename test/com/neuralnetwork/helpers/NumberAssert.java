@@ -20,6 +20,11 @@ public class NumberAssert {
         assertThat(toStr(expected), is(toStr(actual)));
     }
 
+    public static void _assert(String reason, double expected, double actual)
+    {
+        assertThat(reason, toStr(expected), is(toStr(actual)));
+    }
+
     public static void _assert(double[] expected, double[] actual)
     {
         assertThat(expected.length, is(actual.length));
@@ -27,6 +32,16 @@ public class NumberAssert {
         for(int i=0; i<expected.length; ++i)
         {
             _assert(expected[i], actual[i]);
+        }
+    }
+
+    public static void _assert(String reason, double[] expected, double[] actual)
+    {
+        assertThat(reason, expected.length, is(actual.length));
+
+        for(int i=0; i<expected.length; ++i)
+        {
+            _assert(reason, expected[i], actual[i]);
         }
     }
 }

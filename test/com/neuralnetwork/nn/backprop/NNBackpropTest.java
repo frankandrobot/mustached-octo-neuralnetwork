@@ -57,6 +57,7 @@ public class NNBackpropTest {
         backprop.example = example;
 
         backprop.forwardProp();
+        backprop.backprop();
     }
 
     @Test
@@ -99,8 +100,27 @@ public class NNBackpropTest {
     }
 
     @Test
-    public void testConstructGradients() throws Exception {
+    public void testConstructGradients1() throws Exception
+    {
+        assertThat("output layer has 1 neuron",
+                backprop.aGradientInfo[1].gradients.length, is(1));
 
+        _assert("stored gradient equals calculated",
+                backprop.aGradientInfo[1].gradients[0],
+                backprop.gradient(1, 1));
+    }
+
+    @Test
+    public void testConstructGradients2() throws Exception
+    {
+        backprop.constructGradients(0);
+
+        assertThat("first layer has 1 neuron",
+                backprop.aGradientInfo[0].gradients.length, is(1));
+
+        _assert("stored gradient equals calculated",
+                backprop.aGradientInfo[0].gradients[0],
+                backprop.gradient(0, 1));
     }
 
     @Test
@@ -152,7 +172,7 @@ public class NNBackpropTest {
         backprop.forwardProp();
 
         double e1 = backprop.getY(-1)[0];
-        assertThat(e1, is(1.0));
+        assertThat("first value is bias", e1, is(1.0));
 
         double e2 = backprop.getY(-1)[1];
         assertThat(e2, is(example.input[1]));
