@@ -16,7 +16,7 @@ import static com.neuralnetwork.helpers.NumberAssert.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class NNBackpropTest {
+public class NNBackpropHelperTest {
 
     IActivationFunction.IDifferentiableFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
@@ -25,7 +25,7 @@ public class NNBackpropTest {
 
     Example example = new Example();
 
-    NNBackprop backprop;
+    NNBackpropHelper backprop;
 
     NNLayer layer1;
     NNLayer layer2;
@@ -48,17 +48,19 @@ public class NNBackpropTest {
                 .setLayers(layer1, layer2)
                 .build();
 
-        backprop = new NNBackprop(layer1, layer2);
+        backprop = new NNBackpropHelper(layer1, layer2);
 
         example.input = new double[]{1f, 0.6f, 0.7f};
         example.expected = new double[]{1f, 0.8f};
 
-        backprop.example = example;
+        //backprop.example = example;
 
-        backprop.forwardProp();
+        backprop.go(example);
+
+        /*backprop.forwardProp();
         backprop.backprop();
 
-        backprop.updateCumulativeLearningTerms();
+        backprop.updateCumulativeLearningTerms();*/
     }
 
     @Test
@@ -83,8 +85,8 @@ public class NNBackpropTest {
 
         double[] yInducedLocalField1 = new double[inducedLocalField1.length+1];
         yInducedLocalField1[0] = 1;
-        System.arraycopy(inducedLocalField1,0,
-                yInducedLocalField1,1,
+        System.arraycopy(inducedLocalField1, 0,
+                yInducedLocalField1, 1,
                 inducedLocalField1.length);
 
         _assert(yInducedLocalField1, backprop.aYInfo[1].yInducedLocalField);
