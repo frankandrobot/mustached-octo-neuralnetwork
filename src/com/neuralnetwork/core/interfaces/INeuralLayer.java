@@ -9,16 +9,19 @@ import org.ejml.data.DenseMatrix64F;
  *
  * Example:
  * Input  Neuron Weights       Output  y
- * I0                                  1
- * I1     N1: w10 w11 w12 w13  O1      O1
- * I2     N2: w20 w21 w22 w23  O2      O2
- * I3     N3: w30 w31 w32 w33  O3      O3
+ * --------------------------------------
+ *                                     1
+ * I0     N1: w00 w01 w02 w03  O1      O1
+ * I1     N2: w10 w11 w12 w13  O2      O2
+ * I2     N3: w20 w21 w22 w23  O3      O3
+ * I3
  *
- * 1. rows in weight matrix are a neuron's weights
+ * 1. rows in weight matrix are a neuron's weights.
+ *    columns in weight matrix match the input
  * 2. weights are in specific order:
- *    bias comes first (column 1),
- *    the second weight (column 2) maps to the first neuron,
- *    the third weight (column 3) maps the second neuron,
+ *    bias is first (column 1), maps to first input (always +1)
+ *    the second weight (column 2) maps to the second input (first neuron output),
+ *    the third weight (column 3) maps the third input (second neuron output),
  *    etc.
  * 3. the first value in the input is always 1
  *    (maps to the bias)
@@ -41,7 +44,7 @@ import org.ejml.data.DenseMatrix64F;
 public interface INeuralLayer
 {
     /**
-     * y is the output with a +1 added at beginning (for the bias)
+     * y is the output with a +1 in the beginning for the bias
      *
      * we use the convention that the bias is at the beginning of the array i.e.,
      * input[0] = +1  AND
@@ -81,9 +84,9 @@ public interface INeuralLayer
      * Neuron i's weights are in row i.
      *
      * Example:
-     * N1: w10 w11 w12 w13
-     * N2: w20 w21 w22 w23
-     * N3: w30 w31 w32 w33
+     * N1: w00 w01 w02 w03
+     * N2: w10 w11 w12 w13
+     * N3: w20 w21 w22 w23
      *
      * @return
      */
