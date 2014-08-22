@@ -4,16 +4,15 @@ import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.neuron.Neuron;
-import com.neuralnetwork.helpers.NumberAssert;
 import com.neuralnetwork.nn.MultiLayerNN;
 import com.neuralnetwork.nn.MultiLayerNNBuilder;
 import com.neuralnetwork.nn.layer.NNLayer;
 import com.neuralnetwork.nn.layer.NNLayerBuilder;
+import org.ejml.data.DenseMatrix64F;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.neuralnetwork.helpers.NumberAssert.*;
-import static org.hamcrest.CoreMatchers.describedAs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -58,6 +57,8 @@ public class NNBackpropTest {
 
         backprop.forwardProp();
         backprop.backprop();
+
+        backprop.updateCumulativeLearningTerms();
     }
 
     @Test
@@ -107,7 +108,7 @@ public class NNBackpropTest {
 
         _assert("stored gradient equals calculated",
                 backprop.aGradientInfo[1].gradients[0],
-                backprop.gradient(1, 1));
+                backprop.gradient(1, 0));
     }
 
     @Test
@@ -120,14 +121,14 @@ public class NNBackpropTest {
 
         _assert("stored gradient equals calculated",
                 backprop.aGradientInfo[0].gradients[0],
-                backprop.gradient(0, 1));
+                backprop.gradient(0, 0));
     }
 
     @Test
     public void testGradient1() throws Exception
     {
         //there's only one neuron in output
-        double actual = backprop.gradient(1,1);
+        double actual = backprop.gradient(1,0);
 
         double expected = (example.expected[1] - backprop.aYInfo[1].y[1])
                 * phi.derivative(backprop.aYInfo[1].yInducedLocalField[1]);
@@ -138,11 +139,12 @@ public class NNBackpropTest {
     @Test
     public void testGradient2() throws Exception
     {
+        //delta_j^((l)) = gamma_j^((l)) ( v_j^((l)) ) xx sum_k delta_k^((l+1)) xx w_(kj)^((l+1))
         //neuron 1^0 is connected to .... neuron 1^1
-        double actual = backprop.gradient(0,1);
+        double actual = backprop.gradient(0,0);
 
         double gamma = phi.derivative(backprop.aYInfo[0].yInducedLocalField[1]);
-        double prod = backprop.gradient(1,1) * weights2[1];
+        double prod = backprop.gradient(1,0) * weights2[1];
 
         _assert(gamma * prod, actual);
     }
@@ -150,7 +152,7 @@ public class NNBackpropTest {
     @Test
     public void testSumGradients() throws Exception
     {
-        double actual = backprop.sumGradients(1,1);
+        double actual = backprop.sumGradients(1, 0);
 
         //neuron 1^0 is connected to .... neuron 1^1
         double weight = weights2[1];
@@ -161,9 +163,35 @@ public class NNBackpropTest {
     }
 
     @Test
-    public void testUpdateCumulativeLearningTerms() throws Exception
+    public void testUpdateCumulativeLearningTerms1() throws Exception
     {
+        /**
+         * Delta w_(kj)^((l))[i] = eta delta_k^((l))[i] y_j^((l-1))[i]
+         *
+         */
+        DenseMatrix64F matrix = backprop.aCumulativeLearningTermsMinusEta[0];
 
+        double dw00 = backprop.gradient(0, 0) * backprop.getY(-1)[0];
+        _assert(dw00, matrix.get(0,0));
+
+        double dw01 = backprop.gradient(0,0) * backprop.getY(-1)[1];
+        _assert(dw01, matrix.get(0,1));
+    }
+
+    @Test
+    public void testUpdateCumulativeLearningTerms2() throws Exception
+    {
+        /**
+         * Delta w_(kj)^((l))[i] = eta delta_k^((l))[i] y_j^((l-1))[i]
+         *
+         */
+        DenseMatrix64F matrix = backprop.aCumulativeLearningTermsMinusEta[1];
+
+        double dw00 = backprop.gradient(1, 0) * backprop.getY(0)[0];
+        _assert(dw00, matrix.get(0,0));
+
+        double dw01 = backprop.gradient(1,0) * backprop.getY(0)[1];
+        _assert(dw01, matrix.get(0,1));
     }
 
     @Test

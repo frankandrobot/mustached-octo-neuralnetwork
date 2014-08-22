@@ -15,18 +15,20 @@ class NNBackprop
      * This is the output of the current layer that's used as the input to the next layer
      * The last YInfo is actually the output of the network.
      *
-     * To make array indexes easier, we don't actually store the input as a YInfo
+     * To make array indexes easier, we don't actually store the example input as a YInfo
      */
     protected class YInfo
     {
         /**
-         * each value maps to a neuron
+         * each value maps to a neuron output
          * but first value is always = +1 (maps to bias)
          * so array length = numberOfNeurons + 1
+         *
+         * NOTE: this is not the same as the induced local field
          */
         public double[] yInducedLocalField;
         /**
-         * each value maps to a neuron
+         * each value maps to a neuron output
          * but first value is always = +1 (maps to bias)
          * so array length = numberOfNeurons + 1
          */
@@ -175,7 +177,7 @@ class NNBackprop
 
         for(int neuronIndex=0; neuronIndex<numberOfNeurons; neuronIndex++)
         {
-            gradientInfo.gradients[neuronIndex] = gradient(layer, neuronIndex + 1);
+            gradientInfo.gradients[neuronIndex] = gradient(layer, neuronIndex);
         }
     }
 
@@ -183,14 +185,17 @@ class NNBackprop
      * Gradient for the given example, layer, and neuron
      *
      * @param layer
-     * @param neuronNum must be >= 1. neuronIndex != nueronNum... indexes start at 0, neuronNum at 1
+     * @param neuronIndex >= 0
      * @return gradient value for the given layer, and neuron
      */
-    protected double gradient(int layer, int neuronNum)
+    protected double gradient(int layer, int neuronIndex)
     {
+        int neuronNum = neuronIndex + 1;
+
         YInfo yInfo = aYInfo[layer];
 
         IActivationFunction.IDifferentiableFunction phi = aLayers[layer].getImpulseFunction();
+
 
         if (layer == aLayers.length-1)
         {
@@ -204,7 +209,7 @@ class NNBackprop
         else
         {
              return phi.derivative(yInfo.yInducedLocalField[neuronNum])
-                     * sumGradients(neuronNum, layer + 1);
+                     * sumGradients(layer + 1, neuronIndex);
         }
     }
 
@@ -212,16 +217,16 @@ class NNBackprop
      * Find the sum of the gradients times the weights of the next layer
      * for the current neuron.
      *
-     * The weights that connect neuron j are found in column (j+1) of the weight matrix
-     * (the column with index j)
+     * Nueron j in layer (nextLayer-1) is in (j+1) position y.
+     * Therefore, the weights that connect it to nextLayer are
+     * in the column with index (j+1)
      *
-     * @param j is the neuronNum where the neuronNum starts at 1.
-     *          neuronIndex != neuronNum... indexes start at 0, neuronNum starts at 1
      * @param nextLayer <= total number of layers
      *
+     * @param j >= 0 is the neuronIndex for neuron in layer (nextLayer-1)
      * @return
      */
-    protected double sumGradients(int j, int nextLayer)
+    protected double sumGradients(int nextLayer, int j)
     {
         double rslt = 0f;
 
@@ -232,7 +237,7 @@ class NNBackprop
         for(int neuronIndex=0; neuronIndex < numberOfNeurons; ++neuronIndex)
         {
             // w_ij^(l+1) * delta_i^(l+1)
-            rslt += weights.unsafe_get(neuronIndex, j) * gradient(nextLayer, neuronIndex+1);
+            rslt += weights.unsafe_get(neuronIndex, j+1) * gradient(nextLayer, neuronIndex);
         }
 
         return rslt;
