@@ -109,25 +109,34 @@ class NNBackpropHelper
      * @param example
      * @return the cumulative learning terms without eta
      */
-    DenseMatrix64F[] go(Example example)
+    public NNBackpropHelper init(Example example)
     {
         this.example = example;
 
         assertThat(example.input.length, is(aLayers[0].getInputDim()));
         assertThat(example.expected.length, is(aLayers[aLayers.length-1].getOutputDim() + 1));
 
-        forwardProp();
-        backprop();
-
-        return updateCumulativeLearningTerms();
+        return this;
     }
 
-    protected void forwardProp()
+    public NNBackpropHelper forwardProp()
     {
         for(int i=0; i<aLayers.length; i++)
         {
             generateY(i, getY(i - 1));
         }
+
+        return this;
+    }
+
+    public NNBackpropHelper backprop()
+    {
+        for(int i=aLayers.length-1; i>=0 ;i--)
+        {
+            constructGradients(i);
+        }
+
+        return this;
     }
 
     /**
@@ -163,14 +172,6 @@ class NNBackpropHelper
 
         for(int i=1; i<inducedLocalField.length; i++) /** i=1 skips bias **/
             aYInfo[index].y[i] = phi.apply(inducedLocalField[i]);
-    }
-
-    protected void backprop()
-    {
-        for(int i=aLayers.length-1; i>=0 ;i--)
-        {
-            constructGradients(i);
-        }
     }
 
     protected void constructGradients(int layer)
@@ -247,7 +248,7 @@ class NNBackpropHelper
         return rslt;
     }
 
-    protected DenseMatrix64F[] updateCumulativeLearningTerms()
+    NNBackpropHelper updateCumulativeLearningTerms()
     {
         for(int layer=0; layer<aLayers.length; ++layer) {
 
@@ -268,7 +269,7 @@ class NNBackpropHelper
                 }
         }
 
-        return aCumulativeLearningTermsMinusEta;
+        return this;
     }
 
     public DenseMatrix64F[] getCumulativeLearningTermsMinusEta()
@@ -276,13 +277,13 @@ class NNBackpropHelper
         return aCumulativeLearningTermsMinusEta;
     }
 
-    public void reset()
+    public NNBackpropHelper resetCumulativeLearningTerms()
     {
         for(DenseMatrix64F learningTerms:aCumulativeLearningTermsMinusEta)
         {
             CommonOps.fill(learningTerms,0);
         }
+
+        return this;
     }
-
-
 }

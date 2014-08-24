@@ -48,8 +48,6 @@ public class NNBackprop
         {
             CommonOps.fill(momemntum, 0);
         }
-
-        backprop.reset();
     }
 
     public void go(double epsilon)
@@ -58,9 +56,15 @@ public class NNBackprop
 
         while(error.calculate(net, examples) >= epsilon)
         {
+            backprop.resetCumulativeLearningTerms();
+
             for (Example example : examples)
             {
-                backprop.go(example);
+                backprop
+                        .init(example)
+                        .forwardProp()
+                        .backprop()
+                        .updateCumulativeLearningTerms();
             }
 
             addLearningTerms();

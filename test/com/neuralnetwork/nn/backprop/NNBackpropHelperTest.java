@@ -55,12 +55,11 @@ public class NNBackpropHelperTest {
 
         //backprop.example = example;
 
-        backprop.go(example);
+        backprop.init(example);
 
-        /*backprop.forwardProp();
+        backprop.forwardProp();
         backprop.backprop();
-
-        backprop.updateCumulativeLearningTerms();*/
+        backprop.updateCumulativeLearningTerms();
     }
 
     @Test
