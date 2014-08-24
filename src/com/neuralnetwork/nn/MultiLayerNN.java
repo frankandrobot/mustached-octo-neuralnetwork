@@ -22,6 +22,11 @@ public class MultiLayerNN implements INeuralNetwork<double[]>
         }
     }
 
+    public INeuralLayer[] getLayers()
+    {
+        return aLayers;
+    }
+
     public double[] generateOutput(double[] input)
     {
         double[] _input = input;

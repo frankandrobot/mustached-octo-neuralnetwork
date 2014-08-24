@@ -2,22 +2,77 @@ package com.neuralnetwork.nn.backprop;
 
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.nn.MultiLayerNN;
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 public class NNBackprop
 {
+    DenseMatrix64F[] aMomentumTerms;
 
-    public void go(double eta, INeuralLayer[] layers, Example... examples)
+    Example[] examples;
+
+    MultiLayerNN net;
+
+    double eta;
+    double gamma;
+
+    NNBackpropHelper backprop;
+
+    ErrorFunction error;
+
+    NNBackprop(NNBackpropBuilder builder)
     {
-        NNBackpropHelper backprop = new NNBackpropHelper(layers);
+        this.examples = builder.examples;
 
-        for(Example example:examples)
+        this.net = builder.net;
+
+        this.eta = builder.eta;
+        this.gamma = builder.gamma;
+
+        aMomentumTerms = new DenseMatrix64F[net.getLayers().length];
+
+        for(int i=0; i<aMomentumTerms.length; i++)
         {
-            backprop.go(example);
+            DenseMatrix64F weights = net.getLayers()[i].getWeightMatrix();
 
+            aMomentumTerms[0] = new DenseMatrix64F(weights.numRows, weights.numCols);
         }
 
-        //update weights
+        backprop = new NNBackpropHelper(net.getLayers());
+    }
+
+    private void reset()
+    {
+        for (DenseMatrix64F momemntum : aMomentumTerms)
+        {
+            CommonOps.fill(momemntum, 0);
+        }
+
+        backprop.reset();
+    }
+
+    public void go(double epsilon)
+    {
+        reset();
+
+        while(error.calculate(net, examples) >= epsilon)
+        {
+            for (Example example : examples)
+            {
+                backprop.go(example);
+            }
+
+            addLearningTerms();
+            addMomentumTerms();
+            updateMomemtumTerms();
+        }
+    }
+
+    private void addLearningTerms()
+    {
+        INeuralLayer[] layers = net.getLayers();
+
         DenseMatrix64F[] aLearningTerms = backprop.getCumulativeLearningTermsMinusEta();
 
         for(int i=0; i<layers.length; i++)
@@ -30,7 +85,37 @@ public class NNBackprop
                 weights.data[k] += eta * learningTerms.data[k];
             }
         }
+    }
 
+    private void addMomentumTerms()
+    {
+        INeuralLayer[] layers = net.getLayers();
 
+        for(int i=0; i<layers.length; i++)
+        {
+            DenseMatrix64F weights = layers[i].getWeightMatrix();
+            DenseMatrix64F momemtumTerms = aMomentumTerms[i];
+
+            for(int k=0; k<weights.data.length; k++)
+            {
+                weights.data[k] += gamma * momemtumTerms.data[k];
+            }
+        }
+    }
+
+    private void updateMomemtumTerms()
+    {
+        INeuralLayer[] layers = net.getLayers();
+
+        for(int i=0; i<layers.length; i++)
+        {
+            DenseMatrix64F weights = layers[i].getWeightMatrix();
+            DenseMatrix64F momemtumTerms = aMomentumTerms[i];
+
+            for(int k=0; k<weights.data.length; k++)
+            {
+                momemtumTerms.data[k] = weights.data[k];
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -259,7 +260,8 @@ class NNBackpropHelper
 
                     //Δw^l_kj = η δ^l_k * y^(l−1)_j
 
-                    double gradient_k = aGradientInfo[layer].gradients[row]; //recall that rows in matrix correspond to neurons
+                    //recall that rows in matrix correspond to neurons
+                    double gradient_k = aGradientInfo[layer].gradients[row];
                     double prevOutput_j = getY(layer - 1)[col];
 
                     learningMatrix.unsafe_set(row,col, curTerm + gradient_k * prevOutput_j);
@@ -273,4 +275,14 @@ class NNBackpropHelper
     {
         return aCumulativeLearningTermsMinusEta;
     }
+
+    public void reset()
+    {
+        for(DenseMatrix64F learningTerms:aCumulativeLearningTermsMinusEta)
+        {
+            CommonOps.fill(learningTerms,0);
+        }
+    }
+
+
 }
