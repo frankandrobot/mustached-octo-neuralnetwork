@@ -124,7 +124,7 @@ abstract public class OldFeatureMap implements OldINeuralNetwork.IMatrixNeuralNe
     }
 
     /**
-     * @param input unlike a {@link com.neuralnetwork.core.deprecated.MultiLayerNetworkOld}, this is a square matrix.
+     * @param input unlike a {@link com.neuralnetwork.deprecated.MultiLayerNetworkOld}, this is a square matrix.
      *              The implementation transforms it to a 1 x n matrix suitable for passing into a neuron
      * @return output
      */

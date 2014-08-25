@@ -1,9 +1,9 @@
-package com.neuralnetwork.core.deprecated;
+package com.neuralnetwork.deprecated;
 
+import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.OldINeuralNetwork;
 import com.neuralnetwork.core.neuron.NVector;
 import com.neuralnetwork.core.neuron.Neuron;
-import com.neuralnetwork.core.interfaces.IActivationFunction;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MultiLayerNetworkOld

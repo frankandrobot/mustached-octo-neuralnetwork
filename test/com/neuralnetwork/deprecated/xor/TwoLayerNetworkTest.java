@@ -1,9 +1,9 @@
-package com.neuralnetwork.core;
+package com.neuralnetwork.deprecated.xor;
 
+import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.neuron.NVector;
 import com.neuralnetwork.core.neuron.Neuron;
-import com.neuralnetwork.deprecated.MultiLayerNetworkOld;
 import com.neuralnetwork.deprecated.SingleLayerNeuralNetwork;
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import java.util.Random;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class MultiLayerNetworkTestOld
+public class TwoLayerNetworkTest
 {
     /**
      * Test 1-layer network
@@ -36,13 +36,13 @@ public class MultiLayerNetworkTestOld
         SingleLayerNeuralNetwork layer = new SingleLayerNeuralNetwork();
         layer.setNeurons(new Neuron(phi, 0.25, 0.75, 0.5));
 
-        MultiLayerNetworkOld.Builder builder = new MultiLayerNetworkOld.Builder();
+        TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
         builder.setLearningParam(0.9)
                .setMomentumParam(0.04)
                .setGlobalActivationFunction(phi)
-               .setLayers(layer);
+               .setFirstLayer(layer);
 
-        MultiLayerNetworkOld network = new MultiLayerNetworkOld(builder);
+        TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
         NVector rslt = network.output(new NVector(-1,2));
         assertThat(rslt.toString(), is("[0.851953]"));
@@ -61,13 +61,13 @@ public class MultiLayerNetworkTestOld
         SingleLayerNeuralNetwork layer = new SingleLayerNeuralNetwork();
         layer.setNeurons(new Neuron(phi, aWeights));
 
-        MultiLayerNetworkOld.Builder builder = new MultiLayerNetworkOld.Builder();
+        TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
         builder.setLearningParam(eta)
                .setMomentumParam(0.04)
                .setGlobalActivationFunction(phi)
-               .setLayers(layer);
+               .setFirstLayer(layer);
 
-        MultiLayerNetworkOld network = new MultiLayerNetworkOld(builder);
+        TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
         NVector example = new NVector(-1,2);
         NVector expected = new NVector(0.25);
@@ -101,13 +101,14 @@ public class MultiLayerNetworkTestOld
         SingleLayerNeuralNetwork layer2 = new SingleLayerNeuralNetwork();
         layer2.setNeurons(new Neuron(phi, 0.10, -0.25));
 
-        MultiLayerNetworkOld.Builder builder = new MultiLayerNetworkOld.Builder();
+        TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
         builder.setLearningParam(0.9)
                .setMomentumParam(0.04)
                .setGlobalActivationFunction(phi)
-               .setLayers(layer1, layer2);
+               .setFirstLayer(layer1)
+               .setSecondLayer(layer2);
 
-        MultiLayerNetworkOld network = new MultiLayerNetworkOld(builder);
+        TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
         double vh = 1.75;
         double vo = 0.10 * phi.apply(vh) - 0.25;
@@ -150,13 +151,14 @@ public class MultiLayerNetworkTestOld
         SingleLayerNeuralNetwork layer2 = new SingleLayerNeuralNetwork();
         layer2.setNeurons(new Neuron(phi, orig_wo));
 
-        MultiLayerNetworkOld.Builder builder = new MultiLayerNetworkOld.Builder();
+        TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder();
         builder.setLearningParam(ETA)
                .setMomentumParam(ALPHA)
                .setGlobalActivationFunction(phi)
-               .setLayers(layer1, layer2);
+               .setFirstLayer(layer1)
+               .setSecondLayer(layer2);
 
-        MultiLayerNetworkOld network = new MultiLayerNetworkOld(builder);
+        TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
         NVector example = new NVector(-1,2);
         NVector expected = new NVector(0.15);
@@ -229,13 +231,14 @@ public class MultiLayerNetworkTestOld
         SingleLayerNeuralNetwork secondLayer = new SingleLayerNeuralNetwork();
         secondLayer.setNeurons(new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()));
 
-        MultiLayerNetworkOld.Builder builder = new MultiLayerNetworkOld.Builder()
+        TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
                 .setMomentumParam(0.05)
                 .setLearningParam(0.9)
                 .setGlobalActivationFunction(phi)
-                .setLayers(firstLayer, secondLayer);
+                .setFirstLayer(firstLayer)
+                .setSecondLayer(secondLayer);
 
-        MultiLayerNetworkOld network = new MultiLayerNetworkOld(builder);
+        TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
         final NVector input = new NVector(0.5, 0.2);
         final NVector expected = new NVector(0.8);
@@ -265,14 +268,15 @@ public class MultiLayerNetworkTestOld
         SingleLayerNeuralNetwork secondLayer = new SingleLayerNeuralNetwork();
         secondLayer.setNeurons(new Neuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian()));
 
-        MultiLayerNetworkOld.Builder builder = new MultiLayerNetworkOld.Builder()
+        TwoLayerNetwork.Builder builder = new TwoLayerNetwork.Builder()
                 .setMomentumParam(0.00002)
                 .setLearningParam(0.1)
                 .setGlobalActivationFunction(phi)
-                .setLayers(firstLayer,secondLayer)
+                .setFirstLayer(firstLayer)
+                .setSecondLayer(secondLayer)
                 .setIterations(35000);
 
-        MultiLayerNetworkOld network = new MultiLayerNetworkOld(builder);
+        TwoLayerNetwork network = new TwoLayerNetwork(builder);
 
         final double errorTol = 0.0001;
         final NVector[] input = {
