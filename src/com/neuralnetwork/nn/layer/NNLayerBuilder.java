@@ -3,13 +3,16 @@ package com.neuralnetwork.nn.layer;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.neuron.Neuron;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class NNLayerBuilder {
 
-    Neuron[] aNeurons;
+    ArrayList<Neuron> aNeurons = new ArrayList();
 
     public NNLayerBuilder setNeurons(Neuron... neurons)
     {
-        this.aNeurons = neurons;
+        this.aNeurons.addAll(Arrays.asList(neurons));
 
         return this;
     }
@@ -29,7 +32,7 @@ public class NNLayerBuilder {
 
     private void validateActivationFunction() throws Exception
     {
-        IActivationFunction.IDifferentiableFunction phi = aNeurons[0].phi();
+        IActivationFunction.IDifferentiableFunction phi = aNeurons.get(0).phi();
 
         for(Neuron neuron:aNeurons)
         {
@@ -42,7 +45,7 @@ public class NNLayerBuilder {
 
     private void validateNeurons()
     {
-        int size = aNeurons[0].getNumberOfWeights();
+        int size = aNeurons.get(0).getNumberOfWeights();
 
         for(Neuron neuron:aNeurons)
         {

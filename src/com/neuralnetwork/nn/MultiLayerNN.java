@@ -3,6 +3,9 @@ package com.neuralnetwork.nn;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 public class MultiLayerNN implements INeuralNetwork<double[]>
 {
     private final INeuralLayer[] aLayers;
@@ -17,8 +20,9 @@ public class MultiLayerNN implements INeuralNetwork<double[]>
             INeuralLayer layer = aLayers[i];
             INeuralLayer layerNext = aLayers[i+1];
 
-            if (layer.getOutputDim() + 1 != layerNext.getInputDim())
-                throw new IllegalArgumentException("Output/inputs in layers must match: layers "+i+","+(i+1));
+            assertThat("layer input/output must match in layer "+i+","+(i+1),
+                    layer.getOutputDim() + 1,
+                    is(layerNext.getInputDim()));
         }
     }
 
@@ -27,7 +31,7 @@ public class MultiLayerNN implements INeuralNetwork<double[]>
         return aLayers;
     }
 
-    public double[] generateOutput(double[] input)
+    public double[] generateOutput(double... input)
     {
         double[] _input = input;
         double[] y = null;

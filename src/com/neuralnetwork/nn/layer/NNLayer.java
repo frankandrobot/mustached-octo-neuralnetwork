@@ -42,7 +42,7 @@ public class NNLayer implements INeuralLayer
 
     NNLayer(NNLayerBuilder builder)
     {
-        Neuron[] neurons = builder.aNeurons;
+        Neuron[] neurons = builder.aNeurons.toArray(new Neuron[builder.aNeurons.size()]);
 
         numberOfNuerons = neurons.length;
         numberOfWeightsInSingleNueron = neurons[0].getNumberOfWeights();

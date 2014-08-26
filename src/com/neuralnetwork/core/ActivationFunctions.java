@@ -5,7 +5,7 @@ import com.neuralnetwork.core.interfaces.IActivationFunction;
 final public class ActivationFunctions
 {
 
-    public static class ThresholdFunction implements IActivationFunction
+    public static class ThresholdFunction implements IActivationFunction.IDifferentiableFunction
     {
         @Override
         public double apply(double v)
@@ -17,6 +17,12 @@ final public class ActivationFunctions
         public boolean equals(Object obj)
         {
             return obj instanceof ThresholdFunction;
+        }
+
+        @Override
+        public double derivative(double v)
+        {
+            throw new Error();
         }
     }
 
@@ -80,6 +86,22 @@ final public class ActivationFunctions
             if (v<-15.0) return 0.0;
             else if (v>15.0) return 0.0;
             return super.derivative(v);
+        }
+    }
+
+    public static class IdentityFunction implements IActivationFunction.IDifferentiableFunction
+    {
+
+        @Override
+        public double derivative(double v)
+        {
+            return 1;
+        }
+
+        @Override
+        public double apply(double v)
+        {
+            return v;
         }
     }
 }
