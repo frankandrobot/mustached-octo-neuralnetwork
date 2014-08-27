@@ -4,7 +4,7 @@ import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
 import com.neuralnetwork.nn.MultiLayerNN;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class NNBackpropBuilder {
@@ -13,10 +13,10 @@ public class NNBackpropBuilder {
 
     MultiLayerNN net;
 
-    double eta;
-    double gamma;
+    double eta = 0.1;
+    double gamma = 0.1;
 
-    int iterations;
+    int iterations = 5000;
 
     public NNBackpropBuilder setNet(MultiLayerNN net)
     {
@@ -62,6 +62,9 @@ public class NNBackpropBuilder {
 
     private void validate()
     {
+        assertThat(examples, not(nullValue()));
+        assertThat(net, not(nullValue()));
+
         INeuralLayer[] layers = net.getLayers();
 
         for(Example example:examples)
