@@ -17,9 +17,13 @@ public class NNBackprop
     double eta;
     double gamma;
 
+    int maxIterations;
+
     NNBackpropHelper backprop;
 
     ErrorFunction error;
+
+    Output output = new Output();
 
     NNBackprop(NNBackpropBuilder builder)
     {
@@ -30,16 +34,20 @@ public class NNBackprop
         this.eta = builder.eta;
         this.gamma = builder.gamma;
 
+        this.maxIterations = builder.iterations;
+
         aMomentumTerms = new DenseMatrix64F[net.getLayers().length];
 
         for(int i=0; i<aMomentumTerms.length; i++)
         {
             DenseMatrix64F weights = net.getLayers()[i].getWeightMatrix();
 
-            aMomentumTerms[0] = new DenseMatrix64F(weights.numRows, weights.numCols);
+            aMomentumTerms[i] = new DenseMatrix64F(weights.numRows, weights.numCols);
         }
 
         backprop = new NNBackpropHelper(net.getLayers());
+
+        error = new ErrorFunction();
     }
 
     private void reset()
@@ -54,8 +62,14 @@ public class NNBackprop
     {
         reset();
 
-        while(error.calculate(net, examples) >= epsilon)
+        int len = 0;
+
+        double err = error.calculate(net, examples);
+
+        while(len++ < maxIterations && err >= epsilon)
         {
+            output.ouput(len-1, err);
+
             backprop.resetCumulativeLearningTerms();
 
             for (Example example : examples)
@@ -70,6 +84,8 @@ public class NNBackprop
             addLearningTerms();
             addMomentumTerms();
             updateMomemtumTerms();
+
+            err = error.calculate(net, examples);
         }
     }
 

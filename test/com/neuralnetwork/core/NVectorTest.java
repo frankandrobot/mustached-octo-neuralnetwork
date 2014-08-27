@@ -1,10 +1,10 @@
 package com.neuralnetwork.core;
 
-import com.neuralnetwork.core.neuron.NVector;
+import com.neuralnetwork.helpers.NVector;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class NVectorTest
 {

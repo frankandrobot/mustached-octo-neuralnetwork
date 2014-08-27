@@ -9,4 +9,10 @@ public class CnnBackprop implements INeuralNetwork<DenseMatrix64F> {
     public DenseMatrix64F generateOutput(DenseMatrix64F input) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public DenseMatrix64F generateYoutput(DenseMatrix64F input)
+    {
+        return null;
+    }
 }

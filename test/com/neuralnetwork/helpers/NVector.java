@@ -1,11 +1,10 @@
-package com.neuralnetwork.core.neuron;
+package com.neuralnetwork.helpers;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Arrays;
 import java.util.Iterator;
 
-@Deprecated
 public class NVector implements Iterable<Double>
 {
     double[] aCoords;
@@ -37,6 +36,11 @@ public class NVector implements Iterable<Double>
         this.aCoords = Arrays.copyOf(vector.aCoords, vector.aCoords.length + aCoords.length);
         for(int i=0; i<aCoords.length; i++)
             this.aCoords[vector.aCoords.length + i] = aCoords[i];
+    }
+
+    public double[] data()
+    {
+        return aCoords;
     }
 
     /**

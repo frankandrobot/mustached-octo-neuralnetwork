@@ -17,6 +17,14 @@ public class NNLayerBuilder {
         return this;
     }
 
+    public NNLayerBuilder setNeuron(IActivationFunction.IDifferentiableFunction phi,
+                                     double... weights)
+    {
+        setNeurons(new Neuron(phi, weights));
+
+        return this;
+    }
+
     public NNLayer build() throws Exception
     {
         validate();

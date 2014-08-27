@@ -31,7 +31,7 @@ public class MultiLayerNN implements INeuralNetwork<double[]>
         return aLayers;
     }
 
-    public double[] generateOutput(double... input)
+    public double[] generateYoutput(double... input)
     {
         double[] _input = input;
         double[] y = null;
@@ -42,9 +42,17 @@ public class MultiLayerNN implements INeuralNetwork<double[]>
             _input = y;
         }
 
+        return y;
+    }
+
+    public double[] generateOutput(double... input)
+    {
+        double[] y = generateYoutput(input);
+
         double[] output = new double[y.length-1];
         System.arraycopy(y,1,output,0,output.length);
 
         return output;
+
     }
 }

@@ -16,30 +16,39 @@ public class NNBackpropBuilder {
     double eta;
     double gamma;
 
-    NNBackpropBuilder setNet(MultiLayerNN net)
+    int iterations;
+
+    public NNBackpropBuilder setNet(MultiLayerNN net)
     {
         this.net = net;
 
         return this;
     }
 
-    NNBackpropBuilder setExamples(Example... examples)
+    public NNBackpropBuilder setExamples(Example... examples)
     {
         this.examples = examples;
 
         return this;
     }
 
-    NNBackpropBuilder setEta(double eta)
+    public NNBackpropBuilder setEta(double eta)
     {
         this.eta = eta;
 
         return this;
     }
 
-    NNBackpropBuilder setGamma(double gamma)
+    public NNBackpropBuilder setGamma(double gamma)
     {
         this.gamma = gamma;
+
+        return this;
+    }
+
+    public NNBackpropBuilder setIterations(int iterations)
+    {
+        this.iterations = iterations;
 
         return this;
     }

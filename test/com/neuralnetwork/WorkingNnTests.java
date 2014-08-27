@@ -1,0 +1,22 @@
+package com.neuralnetwork;
+
+import com.neuralnetwork.nn.MultiLayerNNTest;
+import com.neuralnetwork.nn.backprop.NNBackpropHelperTest;
+import com.neuralnetwork.nn.backprop.XORBackPropagationTest;
+import com.neuralnetwork.nn.backprop.XORNetworkTest;
+import com.neuralnetwork.nn.layer.NNLayerTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+        NNLayerTest.class,
+        MultiLayerNNTest.class,
+        NNBackpropHelperTest.class,
+        XORNetworkTest.class,
+        XORBackPropagationTest.class
+})
+public class WorkingNnTests
+{
+
+}

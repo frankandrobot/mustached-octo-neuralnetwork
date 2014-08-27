@@ -16,6 +16,7 @@ import org.junit.runners.Suite;
         MultiLayerNNTest.class,
         NNBackpropHelperTest.class
 })
-public class WorkingTests {
+public class WorkingCnnTests
+{
 
 }
