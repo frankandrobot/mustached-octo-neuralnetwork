@@ -6,11 +6,11 @@ import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class MultiLayerNN implements INeuralNetwork<double[]>
+public class NN implements INeuralNetwork<double[]>
 {
     private final INeuralLayer[] aLayers;
 
-    public MultiLayerNN(MultiLayerNNBuilder netBuilder)
+    public NN(NNBuilder netBuilder)
     {
         this.aLayers = netBuilder.getLayers();
 

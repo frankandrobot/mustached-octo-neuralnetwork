@@ -2,7 +2,7 @@ package com.neuralnetwork.nn.backprop;
 
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
-import com.neuralnetwork.nn.MultiLayerNN;
+import com.neuralnetwork.nn.NN;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -11,14 +11,14 @@ public class NNBackpropBuilder {
 
     Example[] examples;
 
-    MultiLayerNN net;
+    NN net;
 
     double eta = 0.1;
     double gamma = 0.1;
 
     int iterations = 5000;
 
-    public NNBackpropBuilder setNet(MultiLayerNN net)
+    public NNBackpropBuilder setNet(NN net)
     {
         this.net = net;
 

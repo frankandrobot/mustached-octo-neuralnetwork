@@ -2,7 +2,7 @@ package com.neuralnetwork.nn.backprop;
 
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
-import com.neuralnetwork.nn.MultiLayerNN;
+import com.neuralnetwork.nn.NN;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
@@ -12,7 +12,7 @@ public class NNBackprop
 
     Example[] examples;
 
-    MultiLayerNN net;
+    NN net;
 
     double eta;
     double gamma;

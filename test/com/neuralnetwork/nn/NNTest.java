@@ -11,14 +11,14 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class MultiLayerNNTest {
+public class NNTest {
 
     IActivationFunction.IDifferentiableFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
     double[] weights1 = new double[]{0.1f, 0.2f};
     double[] weights2 = new double[]{0.3f, 0.4f};
 
-    MultiLayerNN nn;
+    NN nn;
 
     @Before
     public void setup() throws Exception
@@ -34,7 +34,7 @@ public class MultiLayerNNTest {
                 .setNeurons(n2)
                 .build();
 
-        nn = new MultiLayerNNBuilder()
+        nn = new NNBuilder()
                 .setLayers(layer1, layer2)
                 .build();
     }

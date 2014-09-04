@@ -3,8 +3,8 @@ package com.neuralnetwork.nn.backprop;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.helpers.NVector;
-import com.neuralnetwork.nn.MultiLayerNN;
-import com.neuralnetwork.nn.MultiLayerNNBuilder;
+import com.neuralnetwork.nn.NN;
+import com.neuralnetwork.nn.NNBuilder;
 import com.neuralnetwork.nn.layer.NNLayer;
 import com.neuralnetwork.nn.layer.NNLayerBuilder;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class NNBackpropTest
                 .setNeuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian())
                 .build();
 
-        MultiLayerNN network = new MultiLayerNNBuilder()
+        NN network = new NNBuilder()
                 .setLayers(firstLayer, secondLayer)
                 .build();
 
@@ -78,7 +78,7 @@ public class NNBackpropTest
                 .setNeuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian())
                 .build();
 
-        MultiLayerNN network = new MultiLayerNNBuilder()
+        NN network = new NNBuilder()
                 .setLayers(firstLayer, secondLayer)
                 .build();
 
@@ -107,7 +107,7 @@ public class NNBackpropTest
         validateOutput(network, example2, errorTol);
     }
 
-    private void validateOutput(MultiLayerNN network, Example example, double errorTol)
+    private void validateOutput(NN network, Example example, double errorTol)
     {
         NVector rslt = new NVector(network.generateYoutput(example.input));
         NVector exp = new NVector(example.expected);

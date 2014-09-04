@@ -4,8 +4,8 @@ import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
 import com.neuralnetwork.helpers.NVector;
-import com.neuralnetwork.nn.MultiLayerNN;
-import com.neuralnetwork.nn.MultiLayerNNBuilder;
+import com.neuralnetwork.nn.NN;
+import com.neuralnetwork.nn.NNBuilder;
 import com.neuralnetwork.nn.layer.NNLayerBuilder;
 
 import java.util.Random;
@@ -37,7 +37,7 @@ public class XORBackPropagationTest
                         r.nextGaussian())
                 .build();
 
-        MultiLayerNN network = new MultiLayerNNBuilder()
+        NN network = new NNBuilder()
                 .setLayers(firstLayer, secondLayer)
                 .build();
 

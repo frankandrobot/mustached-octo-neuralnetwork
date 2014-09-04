@@ -5,11 +5,11 @@ import com.neuralnetwork.core.interfaces.INeuralLayer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MultiLayerNNBuilder
+public class NNBuilder
 {
     INeuralLayer[] aLayers;
 
-    public MultiLayerNNBuilder setLayers(INeuralLayer... aLayers)
+    public NNBuilder setLayers(INeuralLayer... aLayers)
     {
         ArrayList<INeuralLayer> layers = new ArrayList<INeuralLayer>();
 
@@ -28,8 +28,8 @@ public class MultiLayerNNBuilder
         return aLayers;
     }
 
-    public MultiLayerNN build() {
+    public NN build() {
 
-        return new MultiLayerNN(this);
+        return new NN(this);
     }
 }

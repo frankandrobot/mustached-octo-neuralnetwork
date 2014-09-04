@@ -4,15 +4,16 @@ import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.neuron.Neuron;
-import com.neuralnetwork.nn.MultiLayerNN;
-import com.neuralnetwork.nn.MultiLayerNNBuilder;
+import com.neuralnetwork.nn.NN;
+import com.neuralnetwork.nn.NNBuilder;
 import com.neuralnetwork.nn.layer.NNLayer;
 import com.neuralnetwork.nn.layer.NNLayerBuilder;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.neuralnetwork.helpers.NumberAssert.*;
+import static com.neuralnetwork.helpers.NumberAssert._assert;
+import static com.neuralnetwork.helpers.NumberAssert.toStr;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -44,7 +45,7 @@ public class NNBackpropHelperTest {
                 .setNeurons(n2)
                 .build();
 
-        MultiLayerNN nn = new MultiLayerNNBuilder()
+        NN nn = new NNBuilder()
                 .setLayers(layer1, layer2)
                 .build();
 
