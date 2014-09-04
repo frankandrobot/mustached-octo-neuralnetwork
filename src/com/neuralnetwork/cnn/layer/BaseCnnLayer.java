@@ -1,18 +1,13 @@
 package com.neuralnetwork.cnn.layer;
 
-import com.neuralnetwork.core.interfaces.OldINeuralNetwork;
-import com.neuralnetwork.core.neuron.MNeuron;
 import com.neuralnetwork.cnn.filter.IFilter;
+import com.neuralnetwork.core.Dimension;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
-import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
+import com.neuralnetwork.core.neuron.MNeuron;
 import org.ejml.data.DenseMatrix64F;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Iterator;
-
-public abstract class BaseCnnLayer
-        implements OldINeuralNetwork.IMatrixNeuralNetwork,
-        INeuralLayer
+public abstract class BaseCnnLayer implements IMatrixNeuralLayer
 {
     /**
      * the kernel is made of weights from this neuron.
@@ -35,6 +30,12 @@ public abstract class BaseCnnLayer
      * the filter used to convolve
      */
     protected IFilter filter;
+
+    @Override
+    public DenseMatrix64F generateY(DenseMatrix64F input)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
     @Override
     public DenseMatrix64F generateOutput(DenseMatrix64F input)
@@ -69,7 +70,11 @@ public abstract class BaseCnnLayer
         return output;
     }
 
-    @Override
+    /**
+     * @deprecated
+     *
+     * @return
+     */
     public DenseMatrix64F getOutput()
     {
         return output;
@@ -82,18 +87,23 @@ public abstract class BaseCnnLayer
     }
 
     @Override
-    public MNeuron getNeuron(int neuron)
+    public DenseMatrix64F getWeightMatrix()
     {
-        return sharedNeuron;
+        return kernel;
     }
 
     @Override
-    public Iterator<MNeuron> iterator()
-    {
-        throw new NotImplementedException();
+    public IActivationFunction.IDifferentiableFunction getImpulseFunction() {
+        return null;
     }
 
-    public int getInputDim() { return inputDim; }
+    public Dimension getInputDim()
+    {
+        return new Dimension(inputDim, inputDim);
+    }
 
-    public int getOutputDim() { return output.numRows; }
+    public Dimension getOutputDim()
+    {
+        return new Dimension(output.numRows, output.numCols);
+    }
 }

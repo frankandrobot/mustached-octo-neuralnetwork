@@ -68,7 +68,7 @@ public class NNBackprop
 
         while(len++ < maxIterations && err >= epsilon)
         {
-            output.ouput(len-1, err);
+            output.ouput(len - 1, err);
 
             backprop.resetCumulativeLearningTerms();
 

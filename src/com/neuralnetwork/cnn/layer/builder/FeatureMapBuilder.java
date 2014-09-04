@@ -1,7 +1,7 @@
 package com.neuralnetwork.cnn.layer.builder;
 
-import com.neuralnetwork.core.neuron.MNeuron;
 import com.neuralnetwork.cnn.filter.IFilter;
+import com.neuralnetwork.core.neuron.MNeuron;
 
 abstract class FeatureMapBuilder<Layer extends FeatureMapBuilder>
 {
@@ -19,20 +19,24 @@ abstract class FeatureMapBuilder<Layer extends FeatureMapBuilder>
     public Layer set1DInputSize(int inputSize)
     {
         this.inputDim = inputSize;
+
         return (Layer) this;
     }
 
     public Layer setNeuron(MNeuron neuron)
     {
         this.sharedNeuron = neuron;
+
         return (Layer) this;
     }
 
-    public int getInputDim() {
+    public int getInputDim()
+    {
         return inputDim;
     }
 
-    public MNeuron getSharedNeuron() {
+    public MNeuron getSharedNeuron()
+    {
         return sharedNeuron;
     }
 }

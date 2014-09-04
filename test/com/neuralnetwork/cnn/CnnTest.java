@@ -7,14 +7,11 @@ import com.neuralnetwork.cnn.layer.SamplingLayer;
 import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
 import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
-import com.neuralnetwork.nn.MultiLayerNNBuilder;
-import com.neuralnetwork.nn.MultiLayerNN;
 import com.neuralnetwork.core.neuron.MNeuron;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static com.neuralnetwork.helpers.NumberAssert._assert;
 
 public class CnnTest
 {
@@ -38,10 +35,6 @@ public class CnnTest
                 .set1DInputSize(3)
                 .build();
 
-        MultiLayerNN net = new MultiLayerNNBuilder()
-                .setLayers(layer)
-                .build();
-
         final double o11 = input.get(0,0)*weights[0] + input.get(0,1)*weights[1]
                 + input.get(1,0)*weights[2] + input.get(1,1)*weights[3]
                 + weights[4];
@@ -54,14 +47,11 @@ public class CnnTest
                 + input.get(2,0)*weights[2] + input.get(2,1)*weights[3]
                 + weights[4];
 
-/*        DenseMatrix64F output = net.generateOutput(input);
+        DenseMatrix64F output = layer.generateOutput(input);
 
-        //assertThat(network.getLayer(0).mInducedLocalField.get(0,0), is(o11));
-        assertThat(output.get(0,0), is(phi.apply(o11)));
-        //assertThat(network.getLayer(0).mInducedLocalField.get(0,1), is(o12));
-        assertThat(output.get(0,1), is(phi.apply(o12)));
-        //assertThat(network.getLayer(0).mInducedLocalField.get(1,0), is(o21));
-        assertThat(output.get(1,0), is(phi.apply(o21)));*/
+        _assert(phi.apply(o11), output.get(0,0));
+        _assert(phi.apply(o12), output.get(0,1));
+        _assert(phi.apply(o21), output.get(1,0));
     }
 
     @Test
@@ -76,16 +66,11 @@ public class CnnTest
 
         final double[] weights = {0.3, 0.3, 0.3, 0.3, 0.4};
 
-        SamplingLayerBuilder builder = new SamplingLayerBuilder()
+        SamplingLayer layer = new SamplingLayerBuilder()
                 .setNeuron(new MNeuron(phi, weights))
                 .setFilter(new SimpleSamplingFilter())
-                .set1DInputSize(4);
-        SamplingLayer layer = new SamplingLayer(builder);
-
-        MultiLayerNNBuilder netBuilder = new MultiLayerNNBuilder()
-                .setLayers(layer);
-
-        MultiLayerNN net = new MultiLayerNN(netBuilder);
+                .set1DInputSize(4)
+                .build();
 
         final double o11 = (1 + 2 + 5 + 6) * weights[0] + weights[4];
 
@@ -93,17 +78,14 @@ public class CnnTest
 
         final double o21 = (9 + 10 + 13 + 14) * weights[0] + weights[4];
 
-/*        DenseMatrix64F output = net.generateOutput(input);
+        DenseMatrix64F output = layer.generateOutput(input);
 
-        //assertThat(network.getLayer(0).mInducedLocalField.get(0,0), is(o11));
-        assertThat(output.get(0,0), is(phi.apply(o11)));
-        //assertThat(network.getLayer(0).mInducedLocalField.get(0,1), is(o12));
-        assertThat(output.get(0,1), is(phi.apply(o12)));
-        //assertThat(network.getLayer(0).mInducedLocalField.get(1,0), is(o21));
-        assertThat(output.get(1,0), is(phi.apply(o21)));*/
+        _assert(phi.apply(o11), output.get(0,0));
+        _assert(phi.apply(o12), output.get(0,1));
+        _assert(phi.apply(o21), output.get(1,0));
     }
 
-    @Test
+ /*   @Test
     public void testTwoLayer()
     {
         //construct convolution layer
@@ -162,10 +144,10 @@ public class CnnTest
 
         final double r11 = phi.apply( (o11 + o12 + o21 + o22)*weights2[0] + weights2[4] );
 
-        /*final DenseMatrix64F output = net.generateOutput(input);
+        *//*final DenseMatrix64F output = net.generateOutput(input);
 
         assertThat(output.numRows, is(1));
         assertThat(output.numCols, is(1));
-        assertThat(r11, is(output.get(0,0)));*/
-    }
+        assertThat(r11, is(output.get(0,0)));*//*
+    }*/
 }
