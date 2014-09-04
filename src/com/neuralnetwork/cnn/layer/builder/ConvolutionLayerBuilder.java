@@ -3,7 +3,7 @@ package com.neuralnetwork.cnn.layer.builder;
 import com.neuralnetwork.cnn.filter.IConvolutionFilter;
 import com.neuralnetwork.cnn.layer.ConvolutionLayer;
 
-public class ConvolutionLayerBuilder extends FeatureMapBuilder<ConvolutionLayerBuilder>
+public class ConvolutionLayerBuilder extends AbstractFeatureMapBuilder<ConvolutionLayerBuilder>
 {
     public ConvolutionLayerBuilder setFilter(IConvolutionFilter filter) {
 

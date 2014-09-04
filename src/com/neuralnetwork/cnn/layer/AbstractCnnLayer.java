@@ -4,16 +4,16 @@ import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.Dimension;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
-import com.neuralnetwork.core.neuron.MNeuron;
+import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 
-public abstract class BaseCnnLayer implements IMatrixNeuralLayer
+public abstract class AbstractCnnLayer implements IMatrixNeuralLayer
 {
     /**
      * the kernel is made of weights from this neuron.
      * the shared neuron contains most of the info necessary to build the layer
      */
-    protected MNeuron sharedNeuron;
+    protected Neuron sharedNeuron;
     protected DenseMatrix64F kernel;
 
     /**
@@ -44,6 +44,7 @@ public abstract class BaseCnnLayer implements IMatrixNeuralLayer
 
         //apply activation function to output
         IActivationFunction phi = sharedNeuron.phi();
+
         double[] _output = output.getData();
 
         for(int i=0; i<_output.length; i++)
@@ -62,11 +63,14 @@ public abstract class BaseCnnLayer implements IMatrixNeuralLayer
 
         //now the biases
         double bias = sharedNeuron.getBias();
+
         double[] o = output.getData();
+
         for(int i=0; i<o.length; i++)
         {
             o[i] += bias;
         }
+
         return output;
     }
 

@@ -1,13 +1,13 @@
 package com.neuralnetwork.cnn.layer.builder;
 
 import com.neuralnetwork.cnn.filter.IFilter;
-import com.neuralnetwork.core.neuron.MNeuron;
+import com.neuralnetwork.core.neuron.Neuron;
 
-abstract class FeatureMapBuilder<Layer extends FeatureMapBuilder>
+abstract class AbstractFeatureMapBuilder<Layer extends AbstractFeatureMapBuilder>
 {
     protected int inputDim;
 
-    protected MNeuron sharedNeuron;
+    protected Neuron sharedNeuron;
 
     protected IFilter filter;
 
@@ -23,7 +23,7 @@ abstract class FeatureMapBuilder<Layer extends FeatureMapBuilder>
         return (Layer) this;
     }
 
-    public Layer setNeuron(MNeuron neuron)
+    public Layer setNeuron(Neuron neuron)
     {
         this.sharedNeuron = neuron;
 
@@ -35,7 +35,7 @@ abstract class FeatureMapBuilder<Layer extends FeatureMapBuilder>
         return inputDim;
     }
 
-    public MNeuron getSharedNeuron()
+    public Neuron getSharedNeuron()
     {
         return sharedNeuron;
     }

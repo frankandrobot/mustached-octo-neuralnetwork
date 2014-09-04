@@ -3,7 +3,7 @@ package com.neuralnetwork.cnn.layer;
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
-import com.neuralnetwork.core.neuron.MNeuron;
+import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,10 +29,10 @@ public class ConvolutionLayerTest
                 ,7, 8, 9
         });
 
-        weights = new double[]{0.1, 0.2, 0.3, 0.4, 0.5};
+        weights = new double[]{0.5, 0.1, 0.2, 0.3, 0.4};
 
         builder = new ConvolutionLayerBuilder()
-            .setNeuron(new MNeuron(phi, weights))
+            .setNeuron(new Neuron(phi, weights))
             .set1DInputSize(3)
             .setFilter(new SimpleConvolutionFilter());
      }
@@ -54,19 +54,19 @@ public class ConvolutionLayerTest
     {
         ConvolutionLayer layer = builder.build();
 
-        double o11 = input.get(0,0)*weights[0] + input.get(0,1)*weights[1]
-                + input.get(1,0)*weights[2] + input.get(1,1)*weights[3]
-                + weights[4];
+        double o11 = input.get(0,0)*weights[1] + input.get(0,1)*weights[2]
+                + input.get(1,0)*weights[3] + input.get(1,1)*weights[4]
+                + weights[0];
         o11 = phi.apply(o11);
 
-        double o12 = input.get(0,1)*weights[0] + input.get(0,2)*weights[1]
-                + input.get(1,1)*weights[2] + input.get(1,2)*weights[3]
-                + weights[4];
+        double o12 = input.get(0,1)*weights[1] + input.get(0,2)*weights[2]
+                + input.get(1,1)*weights[3] + input.get(1,2)*weights[4]
+                + weights[0];
         o12 = phi.apply(o12);
 
-        double o21 = input.get(1,0)*weights[0] + input.get(1,1)*weights[1]
-                + input.get(2,0)*weights[2] + input.get(2,1)*weights[3]
-                + weights[4];
+        double o21 = input.get(1,0)*weights[1] + input.get(1,1)*weights[2]
+                + input.get(2,0)*weights[3] + input.get(2,1)*weights[4]
+                + weights[0];
         o21 = phi.apply(o21);
 
         DenseMatrix64F output = layer.generateOutput(input);

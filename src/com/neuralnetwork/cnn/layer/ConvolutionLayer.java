@@ -3,7 +3,7 @@ package com.neuralnetwork.cnn.layer;
 import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
 import org.ejml.data.DenseMatrix64F;
 
-public class ConvolutionLayer extends BaseCnnLayer
+public class ConvolutionLayer extends AbstractCnnLayer
 {
     public ConvolutionLayer(ConvolutionLayerBuilder builder) throws IllegalArgumentException
     {
@@ -21,7 +21,7 @@ public class ConvolutionLayer extends BaseCnnLayer
             throw new IllegalArgumentException("Input can't be smaller than kernel");
 
         //build
-        double[] weights = sharedNeuron.getWeightsWithoutBias().getData();
+        double[] weights = sharedNeuron.getWeightsWithoutBias();
         kernel = new DenseMatrix64F(kernelDim, kernelDim, true, weights);
 
         filter.setKernel(kernel);

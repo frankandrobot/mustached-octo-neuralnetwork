@@ -3,7 +3,7 @@ package com.neuralnetwork.cnn.layer.builder;
 import com.neuralnetwork.cnn.filter.ISamplingFilter;
 import com.neuralnetwork.cnn.layer.SamplingLayer;
 
-public class SamplingLayerBuilder extends FeatureMapBuilder<SamplingLayerBuilder>
+public class SamplingLayerBuilder extends AbstractFeatureMapBuilder<SamplingLayerBuilder>
 {
     public SamplingLayerBuilder setFilter(ISamplingFilter filter) {
 

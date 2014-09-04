@@ -62,6 +62,11 @@ public class Neuron implements INeuron<double[]>
         return weights;
     }
 
+    public double getBias()
+    {
+        return weights[0];
+    }
+
     @Override
     public IActivationFunction.IDifferentiableFunction phi()
     {

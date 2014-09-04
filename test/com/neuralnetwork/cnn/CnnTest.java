@@ -7,7 +7,7 @@ import com.neuralnetwork.cnn.layer.SamplingLayer;
 import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
 import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
-import com.neuralnetwork.core.neuron.MNeuron;
+import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class CnnTest
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
         ConvolutionLayer layer = new ConvolutionLayerBuilder()
-                .setNeuron(new MNeuron(phi, weights))
+                .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleConvolutionFilter())
                 .set1DInputSize(3)
                 .build();
@@ -67,7 +67,7 @@ public class CnnTest
         final double[] weights = {0.3, 0.3, 0.3, 0.3, 0.4};
 
         SamplingLayer layer = new SamplingLayerBuilder()
-                .setNeuron(new MNeuron(phi, weights))
+                .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleSamplingFilter())
                 .set1DInputSize(4)
                 .build();

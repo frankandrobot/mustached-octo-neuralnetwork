@@ -3,7 +3,7 @@ package com.neuralnetwork.cnn.layer;
 import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
 import org.ejml.data.DenseMatrix64F;
 
-public class SamplingLayer extends BaseCnnLayer
+public class SamplingLayer extends AbstractCnnLayer
 {
     public SamplingLayer(SamplingLayerBuilder builder) throws IllegalArgumentException
     {
@@ -22,7 +22,7 @@ public class SamplingLayer extends BaseCnnLayer
         if (inputDim % kernelDim != 0)
             throw new IllegalArgumentException("Input size must be a multiple of the kernel size");
 
-        double[] weights = sharedNeuron.getWeightsWithoutBias().getData();
+        double[] weights = sharedNeuron.getWeightsWithoutBias();
         double weight = weights[0];
 
         for(int i=1; i<weights.length; i++)
