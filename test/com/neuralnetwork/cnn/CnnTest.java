@@ -85,7 +85,7 @@ public class CnnTest
         _assert(phi.apply(o21), output.get(1,0));
     }
 
- /*   @Test
+    @Test
     public void testTwoLayer()
     {
         //construct convolution layer
@@ -100,21 +100,29 @@ public class CnnTest
 
         //build first layer
         ConvolutionLayer convolvLayer = new ConvolutionLayerBuilder()
-                .setNeuron(new MNeuron(phi, weights))
+                .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleConvolutionFilter())
                 .set1DInputSize(4)
+                .build();
+
+
+        final double[] weights2 = {0.3, 0.3, 0.3, 0.3, 0.4};
+
+        //build second layer
+        SamplingLayer subSamplingLayer = new SamplingLayerBuilder()
+                .setNeuron(new Neuron(phi, weights2))
+                .setFilter(new SimpleSamplingFilter())
+                .set1DInputSize(2)
+                .build();
+
+        CNN net = new CNNBuilder()
+                .setLayer(new CNNConnection(convolvLayer))
+                .setLayer(new CNNConnection(subSamplingLayer, convolvLayer))
                 .build();
 
         assertThat(convolvLayer.getOutput().numCols, is(2));
         assertThat(convolvLayer.getOutput().numRows, is(2));
 
-        //build second layer
-        final double[] weights2 = {0.3, 0.3, 0.3, 0.3, 0.4};
-        SamplingLayer subSamplingLayer = new SamplingLayerBuilder()
-                .setNeuron(new MNeuron(phi, weights2))
-                .setFilter(new SimpleSamplingFilter())
-                .set1DInputSize(2)
-                .build();
 
         assertThat(subSamplingLayer.getOutput().numCols, is(1));
         assertThat(subSamplingLayer.getOutput().numRows, is(1));
@@ -149,5 +157,5 @@ public class CnnTest
         assertThat(output.numRows, is(1));
         assertThat(output.numCols, is(1));
         assertThat(r11, is(output.get(0,0)));*//*
-    }*/
+    }
 }
