@@ -1,6 +1,6 @@
 package com.neuralnetwork.core.interfaces;
 
-import com.neuralnetwork.core.Dimension;
+import com.neuralnetwork.core.helpers.Dimension;
 import org.ejml.data.DenseMatrix64F;
 
 public interface IMatrixNeuralLayer

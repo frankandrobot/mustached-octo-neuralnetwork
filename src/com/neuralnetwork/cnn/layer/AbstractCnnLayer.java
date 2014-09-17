@@ -1,7 +1,7 @@
 package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.filter.IFilter;
-import com.neuralnetwork.core.Dimension;
+import com.neuralnetwork.core.helpers.Dimension;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
 import com.neuralnetwork.core.neuron.Neuron;

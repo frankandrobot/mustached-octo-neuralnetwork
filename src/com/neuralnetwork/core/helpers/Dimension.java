@@ -1,4 +1,4 @@
-package com.neuralnetwork.core;
+package com.neuralnetwork.core.helpers;
 
 public class Dimension
 {
