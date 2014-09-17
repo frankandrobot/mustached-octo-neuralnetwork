@@ -5,14 +5,16 @@ import org.ejml.data.DenseMatrix64F;
 
 public class CNN implements INeuralNetwork<DenseMatrix64F>
 {
-    protected CNNConnections[] connections;
+    protected OutputInfoStorage outputInfo = new OutputInfoStorage();
+
+    protected CNNLayer[] aLayers = new CNNLayer[];
 
     @Override
     public DenseMatrix64F generateOutput(DenseMatrix64F input) {
 
         for(int i=0; i<connections.length; i++)
         {
-            CNNConnections conns = connections[i];
+            CNNLayer conns = connections[i];
 
         }
     }

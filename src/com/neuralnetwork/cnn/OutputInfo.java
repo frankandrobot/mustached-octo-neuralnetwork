@@ -1,5 +1,5 @@
 package com.neuralnetwork.cnn;
 
-public class OutputInfo
+class OutputInfo
 {
 }

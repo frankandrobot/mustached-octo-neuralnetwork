@@ -4,7 +4,7 @@ import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
 
 import java.util.HashMap;
 
-public class DataStorage
+class OutputInfoStorage
 {
     private HashMap<IMatrixNeuralLayer,HashMap<IMatrixNeuralLayer,OutputInfo>> storage
             = new HashMap<IMatrixNeuralLayer, HashMap<IMatrixNeuralLayer, OutputInfo>>();

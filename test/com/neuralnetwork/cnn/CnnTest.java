@@ -2,10 +2,10 @@ package com.neuralnetwork.cnn;
 
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
-import com.neuralnetwork.cnn.layer.ConvolutionLayer;
-import com.neuralnetwork.cnn.layer.SamplingLayer;
-import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
-import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
+import com.neuralnetwork.cnn.layer.ConvolutionMap;
+import com.neuralnetwork.cnn.layer.SamplingMap;
+import com.neuralnetwork.cnn.layer.builder.ConvolutionMapBuilder;
+import com.neuralnetwork.cnn.layer.builder.SamplingMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
@@ -29,7 +29,7 @@ public class CnnTest
 
         final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-        ConvolutionLayer layer = new ConvolutionLayerBuilder()
+        ConvolutionMap layer = new ConvolutionMapBuilder()
                 .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleConvolutionFilter())
                 .set1DInputSize(3)
@@ -66,7 +66,7 @@ public class CnnTest
 
         final double[] weights = {0.3, 0.3, 0.3, 0.3, 0.4};
 
-        SamplingLayer layer = new SamplingLayerBuilder()
+        SamplingMap layer = new SamplingMapBuilder()
                 .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleSamplingFilter())
                 .set1DInputSize(4)
@@ -99,7 +99,7 @@ public class CnnTest
         final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
 
         //build first layer
-        ConvolutionLayer convolvLayer = new ConvolutionLayerBuilder()
+        ConvolutionMap convolvLayer = new ConvolutionMapBuilder()
                 .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleConvolutionFilter())
                 .set1DInputSize(4)
@@ -109,7 +109,7 @@ public class CnnTest
         final double[] weights2 = {0.3, 0.3, 0.3, 0.3, 0.4};
 
         //build second layer
-        SamplingLayer subSamplingLayer = new SamplingLayerBuilder()
+        SamplingMap subSamplingMap = new SamplingMapBuilder()
                 .setNeuron(new Neuron(phi, weights2))
                 .setFilter(new SimpleSamplingFilter())
                 .set1DInputSize(2)
@@ -117,19 +117,19 @@ public class CnnTest
 
         CNN net = new CNNBuilder()
                 .setLayer(new CNNConnection(convolvLayer))
-                .setLayer(new CNNConnection(subSamplingLayer, convolvLayer))
+                .setLayer(new CNNConnection(subSamplingMap, convolvLayer))
                 .build();
 
         assertThat(convolvLayer.getOutput().numCols, is(2));
         assertThat(convolvLayer.getOutput().numRows, is(2));
 
 
-        assertThat(subSamplingLayer.getOutput().numCols, is(1));
-        assertThat(subSamplingLayer.getOutput().numRows, is(1));
+        assertThat(subSamplingMap.getOutput().numCols, is(1));
+        assertThat(subSamplingMap.getOutput().numRows, is(1));
 
         //build network
         MultiLayerNNBuilder netBuilder = new MultiLayerNNBuilder()
-                .setLayers(convolvLayer, subSamplingLayer);
+                .setLayers(convolvLayer, subSamplingMap);
 
         MultiLayerNN net = new MultiLayerNN(netBuilder);
 

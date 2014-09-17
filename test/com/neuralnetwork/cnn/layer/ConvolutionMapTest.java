@@ -1,7 +1,7 @@
 package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
-import com.neuralnetwork.cnn.layer.builder.ConvolutionLayerBuilder;
+import com.neuralnetwork.cnn.layer.builder.ConvolutionMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
@@ -11,14 +11,14 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ConvolutionLayerTest
+public class ConvolutionMapTest
 {
 
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
     private DenseMatrix64F input;
     private double[] weights;
-    private ConvolutionLayerBuilder builder;
+    private ConvolutionMapBuilder builder;
 
     @Before
     public void setup()
@@ -31,7 +31,7 @@ public class ConvolutionLayerTest
 
         weights = new double[]{0.5, 0.1, 0.2, 0.3, 0.4};
 
-        builder = new ConvolutionLayerBuilder()
+        builder = new ConvolutionMapBuilder()
             .setNeuron(new Neuron(phi, weights))
             .set1DInputSize(3)
             .setFilter(new SimpleConvolutionFilter());
@@ -40,7 +40,7 @@ public class ConvolutionLayerTest
     @Test
     public void testConvolution1()
     {
-        ConvolutionLayer layer = builder.build();
+        ConvolutionMap layer = builder.build();
 
         DenseMatrix64F output = layer.generateOutput(input);
 
@@ -52,7 +52,7 @@ public class ConvolutionLayerTest
     @Test
     public void testConvolution2()
     {
-        ConvolutionLayer layer = builder.build();
+        ConvolutionMap layer = builder.build();
 
         double o11 = input.get(0,0)*weights[1] + input.get(0,1)*weights[2]
                 + input.get(1,0)*weights[3] + input.get(1,1)*weights[4]

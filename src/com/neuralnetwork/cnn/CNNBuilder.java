@@ -7,15 +7,15 @@ import java.util.HashSet;
 
 public class CNNBuilder {
 
-    ArrayList<CNNConnections> layers = new ArrayList<CNNConnections>();
+    ArrayList<CNNLayer> layers = new ArrayList<CNNLayer>();
 
     private int len = 0;
 
     public CNNBuilder setLayer(CNNConnection... layers)
     {
-        if (this.layers.get(len) == null) this.layers.add(new CNNConnections());
+        if (this.layers.get(len) == null) this.layers.add(new CNNLayer());
 
-        CNNConnections conns = this.layers.get(len++);
+        CNNLayer conns = this.layers.get(len++);
 
         for(CNNConnection conn:layers)
             conns.connectionList.add(conn);
@@ -33,8 +33,8 @@ public class CNNBuilder {
     private void validate() throws Exception {
         for(int i=0; i<layers.size()-1; i++)
         {
-            CNNConnections cur = layers.get(i);
-            CNNConnections next = layers.get(i+1);
+            CNNLayer cur = layers.get(i);
+            CNNLayer next = layers.get(i+1);
 
             HashSet<IMatrixNeuralLayer> curMaps = getMapsAtLayer(i);
 

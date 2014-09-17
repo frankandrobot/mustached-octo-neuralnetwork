@@ -7,7 +7,7 @@ import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 
-public abstract class AbstractCnnLayer implements IMatrixNeuralLayer
+public abstract class AbstractCnnMap implements IMatrixNeuralLayer
 {
     /**
      * the kernel is made of weights from this neuron.

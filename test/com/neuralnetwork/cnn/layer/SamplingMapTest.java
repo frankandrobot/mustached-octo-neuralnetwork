@@ -1,7 +1,7 @@
 package com.neuralnetwork.cnn.layer;
 
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
-import com.neuralnetwork.cnn.layer.builder.SamplingLayerBuilder;
+import com.neuralnetwork.cnn.layer.builder.SamplingMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
@@ -11,14 +11,14 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class SamplingLayerTest
+public class SamplingMapTest
 {
 
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
     private DenseMatrix64F input;
     private double[] weights;
-    private SamplingLayerBuilder builder;
+    private SamplingMapBuilder builder;
 
     @Before
     public void setup()
@@ -32,7 +32,7 @@ public class SamplingLayerTest
 
         weights = new double[]{0.4, 0.3, 0.3, 0.3, 0.3};
 
-        builder = new SamplingLayerBuilder()
+        builder = new SamplingMapBuilder()
                 .set1DInputSize(4)
                 .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleSamplingFilter());
@@ -41,7 +41,7 @@ public class SamplingLayerTest
     @Test
     public void testSubsampling1()
     {
-        SamplingLayer layer = new SamplingLayer(builder);
+        SamplingMap layer = new SamplingMap(builder);
 
         DenseMatrix64F output = layer.generateOutput(input);
 
@@ -53,7 +53,7 @@ public class SamplingLayerTest
     @Test
     public void testSubsampling2()
     {
-        SamplingLayer layer = new SamplingLayer(builder);
+        SamplingMap layer = new SamplingMap(builder);
 
         double o11 = (1 + 2 + 5 + 6);
         o11 = o11 * weights[1] + weights[0];
