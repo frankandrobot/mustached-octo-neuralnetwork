@@ -2,11 +2,25 @@ package com.neuralnetwork.core.helpers;
 
 public class Dimension
 {
-    public int width, height;
+    public int rows, cols;
 
-    public Dimension(int w, int h)
+    public Dimension(int r, int c)
     {
-        this.width = w;
-        this.height = h;
+        this.rows = r;
+        this.cols = c;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Dimension dimension = (Dimension) o;
+
+        if (cols != dimension.cols) return false;
+        if (rows != dimension.rows) return false;
+
+        return true;
     }
 }

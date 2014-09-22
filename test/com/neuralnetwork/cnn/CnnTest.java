@@ -2,16 +2,17 @@ package com.neuralnetwork.cnn;
 
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
-import com.neuralnetwork.cnn.layer.ConvolutionMap;
-import com.neuralnetwork.cnn.layer.SamplingMap;
-import com.neuralnetwork.cnn.layer.builder.ConvolutionMapBuilder;
-import com.neuralnetwork.cnn.layer.builder.SamplingMapBuilder;
+import com.neuralnetwork.cnn.map.ConvolutionMap;
+import com.neuralnetwork.cnn.map.SamplingMap;
+import com.neuralnetwork.cnn.map.builder.ConvolutionMapBuilder;
+import com.neuralnetwork.cnn.map.builder.SamplingMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 
-import static com.neuralnetwork.helpers.NumberAssert._assert;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class CnnTest
 {
@@ -19,74 +20,7 @@ public class CnnTest
     private final ActivationFunctions.SigmoidUnityFunction phi = new ActivationFunctions.SigmoidUnityFunction();
 
     @Test
-    public void testOutputSingleConvolutionLayer()
-    {
-        final DenseMatrix64F input = new DenseMatrix64F(3,3,true, new double[] {
-                1, 2, 3
-                ,4, 5, 6
-                ,7, 8, 9
-        });
-
-        final double[] weights = {0.1, 0.2, 0.3, 0.4, 0.5};
-
-        ConvolutionMap layer = new ConvolutionMapBuilder()
-                .setNeuron(new Neuron(phi, weights))
-                .setFilter(new SimpleConvolutionFilter())
-                .set1DInputSize(3)
-                .build();
-
-        final double o11 = input.get(0,0)*weights[0] + input.get(0,1)*weights[1]
-                + input.get(1,0)*weights[2] + input.get(1,1)*weights[3]
-                + weights[4];
-
-        final double o12 = input.get(0,1)*weights[0] + input.get(0,2)*weights[1]
-                + input.get(1, 1)*weights[2] + input.get(1,2)*weights[3]
-                + weights[4];
-
-        final double o21 = input.get(1,0)*weights[0] + input.get(1,1)*weights[1]
-                + input.get(2,0)*weights[2] + input.get(2,1)*weights[3]
-                + weights[4];
-
-        DenseMatrix64F output = layer.generateOutput(input);
-
-        _assert(phi.apply(o11), output.get(0,0));
-        _assert(phi.apply(o12), output.get(0,1));
-        _assert(phi.apply(o21), output.get(1,0));
-    }
-
-    @Test
-    public void testOutputSubsampleSingleLayer()
-    {
-        final DenseMatrix64F input = new DenseMatrix64F(4,4,true, new double[] {
-                1, 2, 3, 4
-                ,5, 6, 7, 8
-                ,9, 10, 11, 12
-                ,13, 14, 15, 16
-        });
-
-        final double[] weights = {0.3, 0.3, 0.3, 0.3, 0.4};
-
-        SamplingMap layer = new SamplingMapBuilder()
-                .setNeuron(new Neuron(phi, weights))
-                .setFilter(new SimpleSamplingFilter())
-                .set1DInputSize(4)
-                .build();
-
-        final double o11 = (1 + 2 + 5 + 6) * weights[0] + weights[4];
-
-        final double o12 = (3 + 4 + 7 + 8) * weights[0] + weights[4];
-
-        final double o21 = (9 + 10 + 13 + 14) * weights[0] + weights[4];
-
-        DenseMatrix64F output = layer.generateOutput(input);
-
-        _assert(phi.apply(o11), output.get(0,0));
-        _assert(phi.apply(o12), output.get(0,1));
-        _assert(phi.apply(o21), output.get(1,0));
-    }
-
-    @Test
-    public void testTwoLayer()
+    public void testTwoLayer() throws Exception
     {
         //construct convolution layer
         final DenseMatrix64F input = new DenseMatrix64F(4,4,true, new double[] {
@@ -96,42 +30,31 @@ public class CnnTest
                 ,13, 14, 15, 16
         });
 
-        final double[] weights = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};
+        final double[] weights = {0.1, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09};
 
         //build first layer
-        ConvolutionMap convolvLayer = new ConvolutionMapBuilder()
+        ConvolutionMap convolutionMap = new ConvolutionMapBuilder()
                 .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleConvolutionFilter())
                 .set1DInputSize(4)
                 .build();
 
 
-        final double[] weights2 = {0.3, 0.3, 0.3, 0.3, 0.4};
+        final double[] weights2 = {0.4, 0.3, 0.3, 0.3, 0.3};
 
         //build second layer
-        SamplingMap subSamplingMap = new SamplingMapBuilder()
+        SamplingMap samplingMap = new SamplingMapBuilder()
                 .setNeuron(new Neuron(phi, weights2))
                 .setFilter(new SimpleSamplingFilter())
                 .set1DInputSize(2)
                 .build();
 
+        //build network
         CNN net = new CNNBuilder()
-                .setLayer(new CNNConnection(convolvLayer))
-                .setLayer(new CNNConnection(subSamplingMap, convolvLayer))
+                .setLayer(new CNNConnection(convolutionMap))
+                .setLayer(new CNNConnection(samplingMap, convolutionMap))
                 .build();
 
-        assertThat(convolvLayer.getOutput().numCols, is(2));
-        assertThat(convolvLayer.getOutput().numRows, is(2));
-
-
-        assertThat(subSamplingMap.getOutput().numCols, is(1));
-        assertThat(subSamplingMap.getOutput().numRows, is(1));
-
-        //build network
-        MultiLayerNNBuilder netBuilder = new MultiLayerNNBuilder()
-                .setLayers(convolvLayer, subSamplingMap);
-
-        MultiLayerNN net = new MultiLayerNN(netBuilder);
 
         final double o11 = phi.apply(
                 1*0.01 + 2*0.02 + 3*0.03
@@ -150,12 +73,12 @@ public class CnnTest
                         + 10*0.04 + 11*0.05 + 12*0.06
                         + 14*0.07 + 15*0.08 + 16*0.09 + 0.1);
 
-        final double r11 = phi.apply( (o11 + o12 + o21 + o22)*weights2[0] + weights2[4] );
+        final double r11 = phi.apply( (o11 + o12 + o21 + o22)*weights2[1] + weights2[0] );
 
-        *//*final DenseMatrix64F output = net.generateOutput(input);
+        final DenseMatrix64F output = net.generateOutput(input);
 
-        assertThat(output.numRows, is(1));
-        assertThat(output.numCols, is(1));
-        assertThat(r11, is(output.get(0,0)));*//*
+        assertThat(1, is(output.numRows));
+        assertThat(1, is(output.numCols));
+        assertThat(output.get(0,0), is(r11));
     }
 }

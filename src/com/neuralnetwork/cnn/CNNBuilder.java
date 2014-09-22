@@ -1,24 +1,42 @@
 package com.neuralnetwork.cnn;
 
+import com.neuralnetwork.core.helpers.Dimension;
 import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class CNNBuilder {
 
     ArrayList<CNNLayer> layers = new ArrayList<CNNLayer>();
 
-    private int len = 0;
+    private HashMap<IMatrixNeuralLayer,MapInfo> hsMapInfos = new HashMap<IMatrixNeuralLayer,MapInfo>();
 
-    public CNNBuilder setLayer(CNNConnection... layers)
+
+    public CNNBuilder setLayer(CNNConnection... connections)
     {
-        if (this.layers.get(len) == null) this.layers.add(new CNNLayer());
+        CNNLayer layer = new CNNLayer();
 
-        CNNLayer conns = this.layers.get(len++);
+        this.layers.add(layer);
 
-        for(CNNConnection conn:layers)
-            conns.connectionList.add(conn);
+        for(CNNConnection conn:connections)
+        {
+            MapInfo mapInfo = new MapInfo(conn.map);
+            hsMapInfos.put(conn.map, mapInfo);
+
+            for(IMatrixNeuralLayer inputMap:conn.lInputMaps)
+            {
+                MapInfo inputMapInfo = hsMapInfos.get(inputMap);
+
+                if (inputMapInfo == null)
+                    throw new IllegalArgumentException("Input map must exist in previous layer");
+
+                mapInfo.lInputMaps.add(inputMapInfo);
+            }
+
+            layer.lMaps.add(mapInfo);
+        }
 
         return this;
     }
@@ -27,35 +45,41 @@ public class CNNBuilder {
     {
         validate();
 
-        return null;
+        return new CNN(this);
     }
 
-    private void validate() throws Exception {
-        for(int i=0; i<layers.size()-1; i++)
+    private void validate() throws Exception
+    {
+        if (layers.get(0).getInputMaps().size() != 0)
+            throw new IllegalArgumentException("Input layers do not have input maps");
+
+        for(int i=1; i<layers.size(); i++)
         {
             CNNLayer cur = layers.get(i);
-            CNNLayer next = layers.get(i+1);
+            CNNLayer prev = layers.get(i-1);
 
-            HashSet<IMatrixNeuralLayer> curMaps = getMapsAtLayer(i);
+            for(MapInfo inputMap:cur.getInputMaps())
+            {
+                if (!prev.lMaps.contains(inputMap))
+                    throw new IllegalArgumentException(
+                            "Maps must be connected to maps in previous layer. " +
+                                    "Failure in layer "+i);
+            }
 
-            for(CNNConnection conn:next.connectionList)
-                for(IMatrixNeuralLayer prevMap:conn.next)
+            for(MapInfo map:cur.lMaps)
+            {
+                Dimension inputDims = map.map.getInputDim();
+
+                for(MapInfo inputMap:map.lInputMaps)
                 {
-                    if (!curMaps.contains(prevMap))
-                        throw new Exception("Maps must be connected to maps in previous layer");
+                    Dimension outputDims = inputMap.map.getOutputDim();
+
+                    if (!inputDims.equals(outputDims))
+                        throw new IllegalArgumentException(
+                                "Input dimensions must match." +
+                                        "Failure in layer " + i);
                 }
+            }
         }
-    }
-
-    private HashSet<IMatrixNeuralLayer> getMapsAtLayer(int layer)
-    {
-        HashSet<IMatrixNeuralLayer> maps = new HashSet<IMatrixNeuralLayer>();
-
-        for(CNNConnection conn:layers.get(layer).connectionList)
-        {
-            maps.add(conn.current);
-        }
-
-        return maps;
     }
 }

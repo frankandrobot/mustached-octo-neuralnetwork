@@ -1,7 +1,7 @@
-package com.neuralnetwork.cnn.layer.builder;
+package com.neuralnetwork.cnn.map.builder;
 
 import com.neuralnetwork.cnn.filter.IConvolutionFilter;
-import com.neuralnetwork.cnn.layer.ConvolutionMap;
+import com.neuralnetwork.cnn.map.ConvolutionMap;
 
 public class ConvolutionMapBuilder extends AbstractFeatureMapBuilder<ConvolutionMapBuilder>
 {

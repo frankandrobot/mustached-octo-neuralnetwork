@@ -1,7 +1,7 @@
-package com.neuralnetwork.cnn.layer.builder;
+package com.neuralnetwork.cnn.map.builder;
 
 import com.neuralnetwork.cnn.filter.ISamplingFilter;
-import com.neuralnetwork.cnn.layer.SamplingMap;
+import com.neuralnetwork.cnn.map.SamplingMap;
 
 public class SamplingMapBuilder extends AbstractFeatureMapBuilder<SamplingMapBuilder>
 {

@@ -1,8 +1,8 @@
 package com.neuralnetwork;
 
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilterTest;
-import com.neuralnetwork.cnn.layer.ConvolutionMapTest;
-import com.neuralnetwork.cnn.layer.SamplingMapTest;
+import com.neuralnetwork.cnn.map.ConvolutionMapTest;
+import com.neuralnetwork.cnn.map.SamplingMapTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

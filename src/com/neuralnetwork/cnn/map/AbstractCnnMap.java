@@ -1,4 +1,4 @@
-package com.neuralnetwork.cnn.layer;
+package com.neuralnetwork.cnn.map;
 
 import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.helpers.Dimension;

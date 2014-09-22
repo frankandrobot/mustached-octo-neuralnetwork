@@ -8,12 +8,14 @@ import java.util.List;
 
 public class CNNConnection
 {
-    IMatrixNeuralLayer current;
-    List<IMatrixNeuralLayer> next;
+    IMatrixNeuralLayer map;
 
-    public CNNConnection(IMatrixNeuralLayer current, IMatrixNeuralLayer... next)
+    List<IMatrixNeuralLayer> lInputMaps = new LinkedList<IMatrixNeuralLayer>();
+
+
+    public CNNConnection(IMatrixNeuralLayer map, IMatrixNeuralLayer... lInputMaps)
     {
-        this.current = current;
-        this.next = new LinkedList<IMatrixNeuralLayer>(Arrays.asList(next));
+        this.map = map;
+        this.lInputMaps = new LinkedList<IMatrixNeuralLayer>(Arrays.asList(lInputMaps));
     }
 }

@@ -1,4 +1,4 @@
-package com.neuralnetwork.cnn.layer.builder;
+package com.neuralnetwork.cnn.map.builder;
 
 import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.neuron.Neuron;

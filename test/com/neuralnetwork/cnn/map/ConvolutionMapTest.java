@@ -1,7 +1,7 @@
-package com.neuralnetwork.cnn.layer;
+package com.neuralnetwork.cnn.map;
 
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
-import com.neuralnetwork.cnn.layer.builder.ConvolutionMapBuilder;
+import com.neuralnetwork.cnn.map.builder.ConvolutionMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
