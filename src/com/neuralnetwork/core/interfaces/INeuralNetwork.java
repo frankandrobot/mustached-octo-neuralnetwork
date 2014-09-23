@@ -1,8 +1,8 @@
 package com.neuralnetwork.core.interfaces;
 
-public interface INeuralNetwork<T>
+public interface INeuralNetwork<Input,Output>
 {
-    public T generateOutput(T input);
+    public Output generateOutput(Input input);
 
-    public T generateYoutput(T input);
+    public Output generateYoutput(Input input);
 }

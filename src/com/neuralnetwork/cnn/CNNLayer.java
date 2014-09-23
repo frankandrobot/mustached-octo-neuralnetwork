@@ -20,7 +20,7 @@ class CNNLayer {
         HashSet<MapInfo> hsInputMaps = new HashSet<MapInfo>();
 
         for(MapInfo mapInfo:lMaps)
-            hsInputMaps.addAll(mapInfo.lInputMaps);
+            hsInputMaps.addAll(mapInfo.getInputMaps());
 
         return hsInputMaps;
     }

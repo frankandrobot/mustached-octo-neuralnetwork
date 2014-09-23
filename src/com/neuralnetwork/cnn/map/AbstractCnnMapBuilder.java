@@ -5,10 +5,11 @@ import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 
-abstract class AbstractFeatureMapBuilder<Builder extends AbstractFeatureMapBuilder,
-        Map extends AbstractCnnMap>
+abstract class AbstractCnnMapBuilder<Builder extends AbstractCnnMapBuilder,Map extends AbstractCnnMap>
 {
     int inputDim;
+
+    int numberOfInputs;
 
     Neuron[] aSharedNeurons;
 
@@ -45,8 +46,9 @@ abstract class AbstractFeatureMapBuilder<Builder extends AbstractFeatureMapBuild
 
         aKernels = new DenseMatrix64F[aFilters.length];
         kernelDim = (int) Math.sqrt(aSharedNeurons[0].getNumberOfWeights()-1);
+        numberOfInputs = aFilters.length;
 
-        for(int i=0; i<aFilters.length; i++)
+        for(int i=0; i<numberOfInputs; i++)
         {
             double[] weights = aSharedNeurons[i].getWeightsWithoutBias();
             aKernels[i] = new DenseMatrix64F(kernelDim, kernelDim, true, weights);

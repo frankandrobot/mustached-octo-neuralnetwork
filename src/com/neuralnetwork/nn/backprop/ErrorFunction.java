@@ -10,7 +10,7 @@ public class ErrorFunction
 {
     public double error;
 
-    public double calculate(INeuralNetwork<double[]> network, Example[] examples)
+    public double calculate(INeuralNetwork<double[],double[]> network, Example[] examples)
     {
         error = 0;
 

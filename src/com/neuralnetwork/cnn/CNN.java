@@ -6,7 +6,7 @@ import org.ejml.ops.CommonOps;
 
 import java.util.Map;
 
-public class CNN implements INeuralNetwork<DenseMatrix64F>
+public class CNN implements INeuralNetwork<DenseMatrix64F[],DenseMatrix64F>
 {
     protected CNNLayer[] aLayers;
 
@@ -18,12 +18,15 @@ public class CNN implements INeuralNetwork<DenseMatrix64F>
 
 
     @Override
-    public DenseMatrix64F generateOutput(DenseMatrix64F input)
+    public DenseMatrix64F generateOutput(DenseMatrix64F... input)
     {
         for(MapInfo inputMap:aLayers[0].lMaps)
         {
-            MapInfo _input = new MapInfo(input);
-            inputMap.lInputMaps.add(_input);
+            for(DenseMatrix64F _input:input)
+            {
+                MapInfo _inputMap = new MapInfo(_input);
+                inputMap.addInput(_inputMap);
+            }
         }
 
 
@@ -40,7 +43,7 @@ public class CNN implements INeuralNetwork<DenseMatrix64F>
 
 
     @Override
-    public DenseMatrix64F generateYoutput(DenseMatrix64F denseMatrix64F)
+    public DenseMatrix64F generateYoutput(DenseMatrix64F... denseMatrix64F)
     {
         return null;
     }

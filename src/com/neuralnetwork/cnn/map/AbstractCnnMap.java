@@ -6,8 +6,9 @@ import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.CommonOps;
 
-public abstract class AbstractCnnMap implements IMatrixNeuralLayer
+public abstract class AbstractCnnMap<Builder extends AbstractCnnMapBuilder> implements IMatrixNeuralLayer
 {
     /**
      * the kernel is made of weights from this neuron.
@@ -20,16 +21,36 @@ public abstract class AbstractCnnMap implements IMatrixNeuralLayer
      * one dimension of the input. assumes input is square
      */
     protected int inputDim;
+    protected int numberOfInputs;
 
     /**
      * matrix used to store latest output
      */
     protected DenseMatrix64F output;
+    protected DenseMatrix64F tmp;
 
     /**
      * the filter used to convolve
      */
-    protected IFilter[] filter;
+    protected IFilter[] aFilters;
+
+
+    public AbstractCnnMap(Builder builder)
+    {
+        //extract from builder
+        aSharedNeurons = builder.aSharedNeurons;
+        inputDim = builder.inputDim;
+        numberOfInputs = builder.numberOfInputs;
+        aKernels = builder.aKernels;
+
+        createFilters(builder);
+        createOutputMatrix(builder);
+
+        tmp = new DenseMatrix64F(output.numRows, output.numCols);
+    }
+
+    abstract protected void createFilters(Builder builder);
+    abstract protected void createOutputMatrix(Builder builder);
 
     @Override
     public DenseMatrix64F generateY(DenseMatrix64F[] input)
@@ -37,7 +58,7 @@ public abstract class AbstractCnnMap implements IMatrixNeuralLayer
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public DenseMatrix64F generateOutput(DenseMatrix64F input)
+    DenseMatrix64F generateOutput(DenseMatrix64F input)
     {
         return generateOutput(new DenseMatrix64F[] { input });
     }
@@ -64,8 +85,14 @@ public abstract class AbstractCnnMap implements IMatrixNeuralLayer
     public DenseMatrix64F generateInducedLocalField(DenseMatrix64F[] input)
     {
         //first the weights
+        CommonOps.fill(output, 0);
+
         for(int i=0; i<input.length; i++)
-            filter[i].convolve(input[i], output);
+        {
+            aFilters[i].convolve(input[i], tmp);
+            CommonOps.addEquals(output, tmp);
+        }
+
 
         //now the biases
         double bias = aSharedNeurons[0].getBias();
@@ -115,5 +142,10 @@ public abstract class AbstractCnnMap implements IMatrixNeuralLayer
     public Dimension getOutputDim()
     {
         return new Dimension(output.numRows, output.numCols);
+    }
+
+    public int getNumberOfInputs()
+    {
+        return numberOfInputs;
     }
 }

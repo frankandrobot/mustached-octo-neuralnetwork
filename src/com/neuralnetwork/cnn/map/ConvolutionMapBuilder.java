@@ -2,7 +2,7 @@ package com.neuralnetwork.cnn.map;
 
 import com.neuralnetwork.cnn.filter.IConvolutionFilter;
 
-public class ConvolutionMapBuilder extends AbstractFeatureMapBuilder<ConvolutionMapBuilder,ConvolutionMap>
+public class ConvolutionMapBuilder extends AbstractCnnMapBuilder<ConvolutionMapBuilder,ConvolutionMap>
 {
     public ConvolutionMapBuilder setFilter(IConvolutionFilter... filter) {
 

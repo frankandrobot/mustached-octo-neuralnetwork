@@ -2,16 +2,22 @@ package com.neuralnetwork.cnn.map;
 
 import org.ejml.data.DenseMatrix64F;
 
-public class SamplingMap extends AbstractCnnMap
+public class SamplingMap extends AbstractCnnMap<SamplingMapBuilder>
 {
     SamplingMap(SamplingMapBuilder builder) throws IllegalArgumentException
     {
-        //extract from the builder
-        aSharedNeurons = builder.aSharedNeurons;
-        inputDim = builder.inputDim;
-        filter = builder.getFilters();
-        aKernels = builder.aKernels;
+        super(builder);
+    }
 
+    @Override
+    protected void createFilters(SamplingMapBuilder builder)
+    {
+        aFilters = builder.getFilters();
+    }
+
+    @Override
+    protected void createOutputMatrix(SamplingMapBuilder builder)
+    {
         output = new DenseMatrix64F(
                 inputDim/builder.kernelDim,
                 inputDim/builder.kernelDim);

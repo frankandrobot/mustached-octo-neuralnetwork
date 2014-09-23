@@ -32,7 +32,7 @@ public class CNNBuilder {
                 if (inputMapInfo == null)
                     throw new IllegalArgumentException("Input map must exist in previous layer");
 
-                mapInfo.lInputMaps.add(inputMapInfo);
+                mapInfo.addInput(inputMapInfo);
             }
 
             layer.lMaps.add(mapInfo);
@@ -70,7 +70,7 @@ public class CNNBuilder {
             {
                 Dimension inputDims = map.map.getInputDim();
 
-                for(MapInfo inputMap:map.lInputMaps)
+                for(MapInfo inputMap:map.getInputMaps())
                 {
                     Dimension outputDims = inputMap.map.getOutputDim();
 

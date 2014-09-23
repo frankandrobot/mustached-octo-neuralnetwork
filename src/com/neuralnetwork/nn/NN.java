@@ -6,7 +6,7 @@ import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class NN implements INeuralNetwork<double[]>
+public class NN implements INeuralNetwork<double[],double[]>
 {
     private final INeuralLayer[] aLayers;
 

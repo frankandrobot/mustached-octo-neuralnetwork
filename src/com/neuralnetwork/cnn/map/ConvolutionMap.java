@@ -2,20 +2,24 @@ package com.neuralnetwork.cnn.map;
 
 import org.ejml.data.DenseMatrix64F;
 
-public class ConvolutionMap extends AbstractCnnMap
+public class ConvolutionMap extends AbstractCnnMap<ConvolutionMapBuilder>
 {
-    ConvolutionMap(ConvolutionMapBuilder builder) throws IllegalArgumentException
+    public ConvolutionMap(ConvolutionMapBuilder builder)
     {
-        //extract from builder
-        aSharedNeurons = builder.aSharedNeurons;
-        inputDim = builder.inputDim;
-        aKernels = builder.aKernels;
-        filter = builder.getFilter();
+        super(builder);
+    }
 
-        int kernelDim = (int) Math.sqrt(aSharedNeurons[0].getNumberOfWeights() - 1);
+    @Override
+    protected void createFilters(ConvolutionMapBuilder builder)
+    {
+        aFilters = builder.getFilter();
+    }
 
+    @Override
+    protected void createOutputMatrix(ConvolutionMapBuilder builder)
+    {
         output = new DenseMatrix64F(
-                inputDim-kernelDim+1,
-                inputDim-kernelDim+1);
+                inputDim-builder.kernelDim+1,
+                inputDim-builder.kernelDim+1);
     }
 }

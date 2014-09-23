@@ -11,6 +11,8 @@ public interface IMatrixNeuralLayer
 
     public DenseMatrix64F generateInducedLocalField(DenseMatrix64F[] input);
 
+    public int getNumberOfInputs();
+
     public Dimension getInputDim();
 
     public Dimension getOutputDim();

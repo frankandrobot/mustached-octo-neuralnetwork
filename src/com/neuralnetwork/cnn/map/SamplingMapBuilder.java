@@ -3,7 +3,7 @@ package com.neuralnetwork.cnn.map;
 import com.neuralnetwork.cnn.filter.ISamplingFilter;
 import com.neuralnetwork.core.neuron.Neuron;
 
-public class SamplingMapBuilder extends AbstractFeatureMapBuilder<SamplingMapBuilder,SamplingMap>
+public class SamplingMapBuilder extends AbstractCnnMapBuilder<SamplingMapBuilder,SamplingMap>
 {
     public SamplingMapBuilder setFilter(ISamplingFilter... filter) {
 
