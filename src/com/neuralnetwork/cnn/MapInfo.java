@@ -43,7 +43,7 @@ class MapInfo
         {
             DenseMatrix64F _yOutput = inputMap.yOutput;
 
-            DenseMatrix64F output = map.generateOutput(_yOutput);
+            DenseMatrix64F output = map.generateOutput(new DenseMatrix64F[]{ _yOutput });
 
             CommonOps.addEquals(this.yOutput, output);
         }

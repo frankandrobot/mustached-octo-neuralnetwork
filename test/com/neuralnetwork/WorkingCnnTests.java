@@ -1,5 +1,6 @@
 package com.neuralnetwork;
 
+import com.neuralnetwork.cnn.CnnTest;
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilterTest;
 import com.neuralnetwork.cnn.map.ConvolutionMapTest;
 import com.neuralnetwork.cnn.map.SamplingMapTest;
@@ -10,7 +11,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         SimpleConvolutionFilterTest.class,
         ConvolutionMapTest.class,
-        SamplingMapTest.class
+        SamplingMapTest.class,
+        CnnTest.class
 })
 public class WorkingCnnTests
 {

@@ -1,30 +1,18 @@
 package com.neuralnetwork.cnn.map;
 
-import com.neuralnetwork.cnn.map.builder.ConvolutionMapBuilder;
 import org.ejml.data.DenseMatrix64F;
 
 public class ConvolutionMap extends AbstractCnnMap
 {
-    public ConvolutionMap(ConvolutionMapBuilder builder) throws IllegalArgumentException
+    ConvolutionMap(ConvolutionMapBuilder builder) throws IllegalArgumentException
     {
         //extract from builder
-        sharedNeuron = builder.getSharedNeuron();
-        inputDim = builder.getInputDim();
+        aSharedNeurons = builder.aSharedNeurons;
+        inputDim = builder.inputDim;
+        aKernels = builder.aKernels;
         filter = builder.getFilter();
 
-        int kernelDim = (int) Math.sqrt(sharedNeuron.getNumberOfWeights()-1);
-
-        //checks
-        if (kernelDim*kernelDim != sharedNeuron.getNumberOfWeights()-1)
-            throw new IllegalArgumentException("Kernel must be square");
-        if (inputDim < kernelDim)
-            throw new IllegalArgumentException("Input can't be smaller than kernel");
-
-        //build
-        double[] weights = sharedNeuron.getWeightsWithoutBias();
-        kernel = new DenseMatrix64F(kernelDim, kernelDim, true, weights);
-
-        filter.setKernel(kernel);
+        int kernelDim = (int) Math.sqrt(aSharedNeurons[0].getNumberOfWeights() - 1);
 
         output = new DenseMatrix64F(
                 inputDim-kernelDim+1,

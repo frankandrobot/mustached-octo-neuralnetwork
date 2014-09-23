@@ -1,7 +1,6 @@
 package com.neuralnetwork.cnn.map;
 
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
-import com.neuralnetwork.cnn.map.builder.SamplingMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
@@ -41,7 +40,7 @@ public class SamplingMapTest
     @Test
     public void testSubsampling1()
     {
-        SamplingMap layer = new SamplingMap(builder);
+        SamplingMap layer = builder.build();
 
         DenseMatrix64F output = layer.generateOutput(input);
 
@@ -53,7 +52,7 @@ public class SamplingMapTest
     @Test
     public void testSubsampling2()
     {
-        SamplingMap layer = new SamplingMap(builder);
+        SamplingMap layer = builder.build();
 
         double o11 = (1 + 2 + 5 + 6);
         o11 = o11 * weights[1] + weights[0];

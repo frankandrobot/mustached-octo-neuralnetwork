@@ -13,8 +13,8 @@ public abstract class AbstractCnnMap implements IMatrixNeuralLayer
      * the kernel is made of weights from this neuron.
      * the shared neuron contains most of the info necessary to build the layer
      */
-    protected Neuron sharedNeuron;
-    protected DenseMatrix64F kernel;
+    protected Neuron[] aSharedNeurons;
+    protected DenseMatrix64F[] aKernels;
 
     /**
      * one dimension of the input. assumes input is square
@@ -29,21 +29,26 @@ public abstract class AbstractCnnMap implements IMatrixNeuralLayer
     /**
      * the filter used to convolve
      */
-    protected IFilter filter;
+    protected IFilter[] filter;
 
     @Override
-    public DenseMatrix64F generateY(DenseMatrix64F input)
+    public DenseMatrix64F generateY(DenseMatrix64F[] input)
     {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
     public DenseMatrix64F generateOutput(DenseMatrix64F input)
+    {
+        return generateOutput(new DenseMatrix64F[] { input });
+    }
+
+    @Override
+    public DenseMatrix64F generateOutput(DenseMatrix64F[] input)
     {
         output = generateInducedLocalField(input);
 
         //apply activation function to output
-        IActivationFunction phi = sharedNeuron.phi();
+        IActivationFunction phi = aSharedNeurons[0].phi();
 
         double[] _output = output.getData();
 
@@ -56,13 +61,14 @@ public abstract class AbstractCnnMap implements IMatrixNeuralLayer
     }
 
     @Override
-    public DenseMatrix64F generateInducedLocalField(DenseMatrix64F input)
+    public DenseMatrix64F generateInducedLocalField(DenseMatrix64F[] input)
     {
         //first the weights
-        filter.convolve(input, output);
+        for(int i=0; i<input.length; i++)
+            filter[i].convolve(input[i], output);
 
         //now the biases
-        double bias = sharedNeuron.getBias();
+        double bias = aSharedNeurons[0].getBias();
 
         double[] o = output.getData();
 
@@ -93,7 +99,7 @@ public abstract class AbstractCnnMap implements IMatrixNeuralLayer
     @Override
     public DenseMatrix64F getWeightMatrix()
     {
-        return kernel;
+        return null;
     }
 
     @Override
