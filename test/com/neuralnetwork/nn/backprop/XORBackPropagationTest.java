@@ -2,7 +2,7 @@ package com.neuralnetwork.nn.backprop;
 
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.Example;
-import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.core.interfaces.INnLayer;
 import com.neuralnetwork.helpers.NVector;
 import com.neuralnetwork.nn.NN;
 import com.neuralnetwork.nn.NNBuilder;
@@ -23,13 +23,13 @@ public class XORBackPropagationTest
         final long stableSeed = 99991000;
         Random r = new Random(stableSeed);
 
-        INeuralLayer firstLayer = new NNLayerBuilder()
+        INnLayer firstLayer = new NNLayerBuilder()
                 .setNeuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian())
                 .setNeuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian())
                 .setNeuron(phi, r.nextGaussian(), r.nextGaussian(), r.nextGaussian())
                 .build();
 
-        INeuralLayer secondLayer = new NNLayerBuilder()
+        INnLayer secondLayer = new NNLayerBuilder()
                 .setNeuron(phi,
                         r.nextGaussian(),
                         r.nextGaussian(),

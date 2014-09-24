@@ -2,7 +2,7 @@ package com.neuralnetwork.nn.backprop;
 
 import com.neuralnetwork.core.Example;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
-import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.core.interfaces.INnLayer;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
@@ -64,7 +64,7 @@ class NNBackpropHelper
 
     protected Example example;
 
-    protected INeuralLayer[] aLayers;
+    protected INnLayer[] aLayers;
 
     protected YInfo[] aYInfo;
     protected GradientInfo[] aGradientInfo;
@@ -75,7 +75,7 @@ class NNBackpropHelper
      */
     protected DenseMatrix64F[] aCumulativeLearningTermsMinusEta;
 
-    NNBackpropHelper(INeuralLayer... aLayers)
+    NNBackpropHelper(INnLayer... aLayers)
     {
         this.aLayers = aLayers;
 

@@ -1,11 +1,8 @@
 package com.neuralnetwork.cnn;
 
-import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
+import com.neuralnetwork.core.interfaces.ICnnMap;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +11,7 @@ class MapInfo
     /**
      * could be null
      */
-    IMatrixNeuralLayer map;
+    ICnnMap map;
 
     DenseMatrix64F yOutput;
 
@@ -23,7 +20,7 @@ class MapInfo
     private DenseMatrix64F[] aInputs;
 
 
-    public MapInfo(IMatrixNeuralLayer map)
+    public MapInfo(ICnnMap map)
     {
         if (map != null)
         {

@@ -1,29 +1,29 @@
 package com.neuralnetwork.nn;
 
-import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.core.interfaces.INnLayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class NNBuilder
 {
-    INeuralLayer[] aLayers;
+    INnLayer[] aLayers;
 
-    public NNBuilder setLayers(INeuralLayer... aLayers)
+    public NNBuilder setLayers(INnLayer... aLayers)
     {
-        ArrayList<INeuralLayer> layers = new ArrayList<INeuralLayer>();
+        ArrayList<INnLayer> layers = new ArrayList<INnLayer>();
 
         if (this.aLayers != null && this.aLayers.length > 0)
             layers.addAll(Arrays.asList(this.aLayers));
 
         layers.addAll(Arrays.asList(aLayers));
 
-        this.aLayers = layers.toArray(new INeuralLayer[layers.size()]);
+        this.aLayers = layers.toArray(new INnLayer[layers.size()]);
 
         return this;
     }
 
-    public INeuralLayer[] getLayers()
+    public INnLayer[] getLayers()
     {
         return aLayers;
     }

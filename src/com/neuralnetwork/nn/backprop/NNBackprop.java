@@ -1,7 +1,7 @@
 package com.neuralnetwork.nn.backprop;
 
 import com.neuralnetwork.core.Example;
-import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.core.interfaces.INnLayer;
 import com.neuralnetwork.nn.NN;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
@@ -91,7 +91,7 @@ public class NNBackprop
 
     private void addLearningTerms()
     {
-        INeuralLayer[] layers = net.getLayers();
+        INnLayer[] layers = net.getLayers();
 
         DenseMatrix64F[] aLearningTerms = backprop.getCumulativeLearningTermsMinusEta();
 
@@ -109,7 +109,7 @@ public class NNBackprop
 
     private void addMomentumTerms()
     {
-        INeuralLayer[] layers = net.getLayers();
+        INnLayer[] layers = net.getLayers();
 
         for(int i=0; i<layers.length; i++)
         {
@@ -125,7 +125,7 @@ public class NNBackprop
 
     private void updateMomemtumTerms()
     {
-        INeuralLayer[] layers = net.getLayers();
+        INnLayer[] layers = net.getLayers();
 
         for(int i=0; i<layers.length; i++)
         {

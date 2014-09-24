@@ -1,14 +1,14 @@
 package com.neuralnetwork.nn;
 
-import com.neuralnetwork.core.interfaces.INeuralLayer;
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
+import com.neuralnetwork.core.interfaces.INnLayer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class NN implements INeuralNetwork<double[],double[]>
 {
-    private final INeuralLayer[] aLayers;
+    private final INnLayer[] aLayers;
 
     public NN(NNBuilder netBuilder)
     {
@@ -17,8 +17,8 @@ public class NN implements INeuralNetwork<double[],double[]>
         //check layers output---inputs must match
         for(int i=0; i<aLayers.length-1; i++)
         {
-            INeuralLayer layer = aLayers[i];
-            INeuralLayer layerNext = aLayers[i+1];
+            INnLayer layer = aLayers[i];
+            INnLayer layerNext = aLayers[i+1];
 
             assertThat("layer input/output must match in layer "+i+","+(i+1),
                     layer.getOutputDim().cols + 1,
@@ -26,7 +26,7 @@ public class NN implements INeuralNetwork<double[],double[]>
         }
     }
 
-    public INeuralLayer[] getLayers()
+    public INnLayer[] getLayers()
     {
         return aLayers;
     }

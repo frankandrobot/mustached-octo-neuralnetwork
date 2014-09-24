@@ -1,7 +1,7 @@
 package com.neuralnetwork.nn.backprop;
 
 import com.neuralnetwork.core.Example;
-import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.core.interfaces.INnLayer;
 import com.neuralnetwork.nn.NN;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -65,7 +65,7 @@ public class NNBackpropBuilder {
         assertThat(examples, not(nullValue()));
         assertThat(net, not(nullValue()));
 
-        INeuralLayer[] layers = net.getLayers();
+        INnLayer[] layers = net.getLayers();
 
         for(Example example:examples)
         {

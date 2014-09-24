@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Don't confuse this with a {@link com.neuralnetwork.nn.layer.NNLayer}
  *
- * A single CNNLayer is composed of several {@link com.neuralnetwork.core.interfaces.IMatrixNeuralLayer}
+ * A single CNNLayer is composed of several {@link com.neuralnetwork.core.interfaces.ICnnMap}
  *
  */
 class CNNLayer {

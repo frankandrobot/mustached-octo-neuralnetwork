@@ -1,7 +1,7 @@
 package com.neuralnetwork.cnn;
 
 import com.neuralnetwork.core.Dimension;
-import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
+import com.neuralnetwork.core.interfaces.ICnnMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ public class CNNBuilder {
 
     ArrayList<CNNLayer> layers = new ArrayList<CNNLayer>();
 
-    private HashMap<IMatrixNeuralLayer,MapInfo> hsMapInfos = new HashMap<IMatrixNeuralLayer,MapInfo>();
+    private HashMap<ICnnMap,MapInfo> hsMapInfos = new HashMap<ICnnMap,MapInfo>();
 
 
     public CNNBuilder setLayer(CNNConnection... connections)
@@ -24,7 +24,7 @@ public class CNNBuilder {
             MapInfo mapInfo = new MapInfo(conn.map);
             hsMapInfos.put(conn.map, mapInfo);
 
-            for(IMatrixNeuralLayer inputMap:conn.lInputMaps)
+            for(ICnnMap inputMap:conn.lInputMaps)
             {
                 MapInfo inputMapInfo = hsMapInfos.get(inputMap);
 

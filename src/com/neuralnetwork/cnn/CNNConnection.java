@@ -1,6 +1,6 @@
 package com.neuralnetwork.cnn;
 
-import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
+import com.neuralnetwork.core.interfaces.ICnnMap;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -8,14 +8,14 @@ import java.util.List;
 
 public class CNNConnection
 {
-    IMatrixNeuralLayer map;
+    ICnnMap map;
 
-    List<IMatrixNeuralLayer> lInputMaps = new LinkedList<IMatrixNeuralLayer>();
+    List<ICnnMap> lInputMaps = new LinkedList<ICnnMap>();
 
 
-    public CNNConnection(IMatrixNeuralLayer map, IMatrixNeuralLayer... lInputMaps)
+    public CNNConnection(ICnnMap map, ICnnMap... lInputMaps)
     {
         this.map = map;
-        this.lInputMaps = new LinkedList<IMatrixNeuralLayer>(Arrays.asList(lInputMaps));
+        this.lInputMaps = new LinkedList<ICnnMap>(Arrays.asList(lInputMaps));
     }
 }

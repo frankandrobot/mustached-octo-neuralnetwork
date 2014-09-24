@@ -3,12 +3,12 @@ package com.neuralnetwork.cnn.map;
 import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.Dimension;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
-import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
+import com.neuralnetwork.core.interfaces.ICnnMap;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-public abstract class AbstractCnnMap<Builder extends AbstractCnnMapBuilder> implements IMatrixNeuralLayer
+public abstract class AbstractCnnMap<Builder extends AbstractCnnMapBuilder> implements ICnnMap
 {
     /**
      * the kernel is made of weights from this neuron.

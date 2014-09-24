@@ -2,12 +2,13 @@ package com.neuralnetwork.nn.layer;
 
 import com.neuralnetwork.core.Dimension;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
-import com.neuralnetwork.core.interfaces.INeuralLayer;
+import com.neuralnetwork.core.interfaces.ICnnMap;
+import com.neuralnetwork.core.interfaces.INnLayer;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-public class NNLayer implements INeuralLayer
+public class NNLayer implements INnLayer, ICnnMap
 {
     /**
      * for simplicity we assume all neurons have the same activation function
@@ -90,7 +91,6 @@ public class NNLayer implements INeuralLayer
     @Override
     public double[] generateOutput(double[] input)
     {
-
         double[] output = generateInducedLocalField(input);
 
         for(int i=0; i<output.length; ++i)
@@ -107,6 +107,7 @@ public class NNLayer implements INeuralLayer
         assert(input.length == getInputDim().cols);
         assert(input[0] == 1.0);
 
+        //create column major matrix
         mInput.set(getInputDim().cols,1,false,input);
         CommonOps.mult(weights, mInput, mOutput);
 
@@ -141,5 +142,55 @@ public class NNLayer implements INeuralLayer
     public IActivationFunction.IDifferentiableFunction getImpulseFunction()
     {
         return phi;
+    }
+
+
+    /**
+     * When used as an {@link com.neuralnetwork.core.interfaces.ICnnMap}
+     * each nueron is fully connected to every unit in the input
+     *
+     * assumes inputs are all same size
+     *
+     * @param inputs
+     * @return
+     */
+    @Override
+    public DenseMatrix64F generateOutput(DenseMatrix64F... inputs)
+    {
+        generateInducedLocalField(inputs);
+
+        for(int i=0; i<mOutput.data.length; ++i)
+        {
+            mOutput.data[i] = phi.apply(mOutput.data[i]);
+        }
+
+        return mOutput;
+    }
+
+    @Override
+    public DenseMatrix64F generateInducedLocalField(DenseMatrix64F... inputs)
+    {
+        //copy over input into mInput
+
+        mInput.data[0] = 1.0;
+
+        for(int i=0; i<inputs.length; ++i)
+        {
+            int length = inputs[i].data.length;
+
+            System.arraycopy(inputs[i].data, 1, mInput.data, i*length, length);
+        }
+
+
+        //perform multiplication
+
+        CommonOps.mult(weights, mInput, mOutput);
+
+        return mOutput;
+    }
+
+    @Override
+    public int getNumberOfInputs() {
+        return 0;
     }
 }
