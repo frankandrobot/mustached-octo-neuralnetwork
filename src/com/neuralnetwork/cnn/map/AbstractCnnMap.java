@@ -1,7 +1,7 @@
 package com.neuralnetwork.cnn.map;
 
 import com.neuralnetwork.cnn.filter.IFilter;
-import com.neuralnetwork.core.helpers.Dimension;
+import com.neuralnetwork.core.Dimension;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
 import com.neuralnetwork.core.neuron.Neuron;
@@ -51,12 +51,6 @@ public abstract class AbstractCnnMap<Builder extends AbstractCnnMapBuilder> impl
 
     abstract protected void createFilters(Builder builder);
     abstract protected void createOutputMatrix(Builder builder);
-
-    @Override
-    public DenseMatrix64F generateY(DenseMatrix64F[] input)
-    {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     DenseMatrix64F generateOutput(DenseMatrix64F input)
     {
@@ -115,12 +109,6 @@ public abstract class AbstractCnnMap<Builder extends AbstractCnnMapBuilder> impl
     public DenseMatrix64F getOutput()
     {
         return output;
-    }
-
-    @Override
-    public int getNumberOfNeurons()
-    {
-        return 1;
     }
 
     @Override

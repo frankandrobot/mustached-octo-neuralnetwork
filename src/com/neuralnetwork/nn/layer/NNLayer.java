@@ -1,5 +1,6 @@
 package com.neuralnetwork.nn.layer;
 
+import com.neuralnetwork.core.Dimension;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.interfaces.INeuralLayer;
 import com.neuralnetwork.core.neuron.Neuron;
@@ -40,12 +41,18 @@ public class NNLayer implements INeuralLayer
     protected int numberOfNuerons;
     protected int numberOfWeightsInSingleNueron;
 
+    final protected Dimension inputDim;
+    final protected Dimension outputDim;
+
     NNLayer(NNLayerBuilder builder)
     {
         Neuron[] neurons = builder.aNeurons.toArray(new Neuron[builder.aNeurons.size()]);
 
         numberOfNuerons = neurons.length;
         numberOfWeightsInSingleNueron = neurons[0].getNumberOfWeights();
+
+        inputDim = new Dimension(1, numberOfWeightsInSingleNueron);
+        outputDim = new Dimension(1, numberOfNuerons);
 
         //get phi
         phi = neurons[0].phi();
@@ -97,25 +104,25 @@ public class NNLayer implements INeuralLayer
     @Override
     public double[] generateInducedLocalField(double[] input)
     {
-        assert(input.length == getInputDim());
+        assert(input.length == getInputDim().cols);
         assert(input[0] == 1.0);
 
-        mInput.set(getInputDim(),1,false,input);
+        mInput.set(getInputDim().cols,1,false,input);
         CommonOps.mult(weights, mInput, mOutput);
 
         return mOutput.getData();
     }
 
     @Override
-    public int getInputDim()
+    public Dimension getInputDim()
     {
-        return numberOfWeightsInSingleNueron;
+        return inputDim;
     }
 
     @Override
-    public int getOutputDim()
+    public Dimension getOutputDim()
     {
-        return numberOfNuerons;
+        return outputDim;
     }
 
     @Override

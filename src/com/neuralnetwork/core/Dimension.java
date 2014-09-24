@@ -1,8 +1,8 @@
-package com.neuralnetwork.core.helpers;
+package com.neuralnetwork.core;
 
 public class Dimension
 {
-    public int rows, cols;
+    final public int rows, cols;
 
     public Dimension(int r, int c)
     {

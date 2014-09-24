@@ -69,8 +69,8 @@ public class NNBackpropBuilder {
 
         for(Example example:examples)
         {
-            assertThat(example.input.length, is(layers[0].getInputDim()));
-            assertThat(example.expected.length, is(layers[layers.length - 1].getOutputDim() + 1));
+            assertThat(example.input.length, is(layers[0].getInputDim().cols));
+            assertThat(example.expected.length, is(layers[layers.length - 1].getOutputDim().cols + 1));
         }
     }
 }

@@ -1,23 +1,14 @@
 package com.neuralnetwork.core.interfaces;
 
-import com.neuralnetwork.core.helpers.Dimension;
 import org.ejml.data.DenseMatrix64F;
 
-public interface IMatrixNeuralLayer
+public interface IMatrixNeuralLayer extends IBasicLayer
 {
-    public DenseMatrix64F generateY(DenseMatrix64F[] input);
-
     public DenseMatrix64F generateOutput(DenseMatrix64F[] input);
 
     public DenseMatrix64F generateInducedLocalField(DenseMatrix64F[] input);
 
     public int getNumberOfInputs();
-
-    public Dimension getInputDim();
-
-    public Dimension getOutputDim();
-
-    public int getNumberOfNeurons();
 
     public DenseMatrix64F getWeightMatrix();
 

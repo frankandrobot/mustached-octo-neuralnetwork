@@ -41,7 +41,7 @@ import org.ejml.data.DenseMatrix64F;
  *
  * Again, we also arbitrarily define the first weight in a neuron to be the bias.
  */
-public interface INeuralLayer
+public interface INeuralLayer extends IBasicLayer
 {
     /**
      * y is the output with a +1 in the beginning for the bias
@@ -73,9 +73,6 @@ public interface INeuralLayer
      */
     public double[] generateInducedLocalField(double[] input);
 
-    public int getInputDim();
-
-    public int getOutputDim();
 
     public int getNumberOfNeurons();
 

@@ -1,11 +1,10 @@
 package com.neuralnetwork.cnn;
 
-import com.neuralnetwork.core.helpers.Dimension;
+import com.neuralnetwork.core.Dimension;
 import com.neuralnetwork.core.interfaces.IMatrixNeuralLayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class CNNBuilder {
 
