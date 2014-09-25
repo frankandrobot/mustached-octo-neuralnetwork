@@ -23,4 +23,12 @@ public class Dimension
 
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Dimension{" +
+                rows +
+                "x" + cols +
+                '}';
+    }
 }

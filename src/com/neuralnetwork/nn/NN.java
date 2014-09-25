@@ -21,8 +21,8 @@ public class NN implements INeuralNetwork<double[],double[]>
             INnLayer layerNext = aLayers[i+1];
 
             assertThat("layer input/output must match in layer "+i+","+(i+1),
-                    layer.getOutputDim().cols + 1,
-                    is(layerNext.getInputDim().cols));
+                    layer.getOutputDim().rows + 1,
+                    is(layerNext.getInputDim().rows));
         }
     }
 

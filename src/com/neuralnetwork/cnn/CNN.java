@@ -2,9 +2,6 @@ package com.neuralnetwork.cnn;
 
 import com.neuralnetwork.core.interfaces.INeuralNetwork;
 import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-
-import java.util.Map;
 
 public class CNN implements INeuralNetwork<DenseMatrix64F[],DenseMatrix64F>
 {
@@ -18,13 +15,13 @@ public class CNN implements INeuralNetwork<DenseMatrix64F[],DenseMatrix64F>
 
 
     @Override
-    public DenseMatrix64F generateOutput(DenseMatrix64F... input)
+    public DenseMatrix64F generateOutput(DenseMatrix64F... inputs)
     {
         for(MapInfo inputMap:aLayers[0].lMaps)
         {
-            for(DenseMatrix64F _input:input)
+            for(DenseMatrix64F input:inputs)
             {
-                MapInfo _inputMap = new MapInfo(_input);
+                MapInfo _inputMap = new MapInfo(input);
                 inputMap.addInput(_inputMap);
             }
         }

@@ -8,6 +8,8 @@ import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
+import java.util.List;
+
 public class NNLayer implements INnLayer, ICnnMap
 {
     /**
@@ -52,9 +54,6 @@ public class NNLayer implements INnLayer, ICnnMap
         numberOfNuerons = neurons.length;
         numberOfWeightsInSingleNueron = neurons[0].getNumberOfWeights();
 
-        inputDim = new Dimension(1, numberOfWeightsInSingleNueron);
-        outputDim = new Dimension(1, numberOfNuerons);
-
         //get phi
         phi = neurons[0].phi();
 
@@ -69,9 +68,11 @@ public class NNLayer implements INnLayer, ICnnMap
 
         //build input
         mInput = new DenseMatrix64F(numberOfWeightsInSingleNueron, 1);
+        inputDim = new Dimension(mInput.numRows, mInput.numCols);
 
         //build output
         mOutput = new DenseMatrix64F(numberOfNuerons, 1);
+        outputDim = new Dimension(mOutput.numRows, mOutput.numCols);
 
         //build y
         y = new double[numberOfNuerons + 1];
@@ -104,11 +105,11 @@ public class NNLayer implements INnLayer, ICnnMap
     @Override
     public double[] generateInducedLocalField(double[] input)
     {
-        assert(input.length == getInputDim().cols);
+        assert(input.length == getInputDim().rows);
         assert(input[0] == 1.0);
 
         //create column major matrix
-        mInput.set(getInputDim().cols,1,false,input);
+        mInput.set(getInputDim().rows,1,false,input);
         CommonOps.mult(weights, mInput, mOutput);
 
         return mOutput.getData();
@@ -187,6 +188,24 @@ public class NNLayer implements INnLayer, ICnnMap
         CommonOps.mult(weights, mInput, mOutput);
 
         return mOutput;
+    }
+
+    @Override
+    public void validateInputs(List<ICnnMap> inputMaps)
+    {
+        int totalUnits = 0;
+
+        for(ICnnMap map:inputMaps)
+        {
+            Dimension dims = map.getOutputDim();
+
+            totalUnits += dims.cols * dims.rows;
+        }
+
+        int inputUnits = getInputDim().rows - 1;
+
+        if (totalUnits != inputUnits)
+            throw new IllegalArgumentException("Inputs don't match. "+totalUnits+"!="+inputUnits);
     }
 
     @Override

@@ -3,11 +3,13 @@ package com.neuralnetwork.cnn;
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
 import com.neuralnetwork.cnn.map.ConvolutionMap;
-import com.neuralnetwork.cnn.map.SamplingMap;
 import com.neuralnetwork.cnn.map.ConvolutionMapBuilder;
+import com.neuralnetwork.cnn.map.SamplingMap;
 import com.neuralnetwork.cnn.map.SamplingMapBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.neuron.Neuron;
+import com.neuralnetwork.nn.layer.NNLayer;
+import com.neuralnetwork.nn.layer.NNLayerBuilder;
 import org.ejml.data.DenseMatrix64F;
 import org.junit.Test;
 
@@ -132,5 +134,42 @@ public class CnnTest
         assertThat(output.get(0,1), is(o12));
         assertThat(output.get(1,0), is(o21));
         assertThat(output.get(1,1), is(o22));
+    }
+
+    @Test
+    public void testFullyConnectedLayer() throws Exception
+    {
+        DenseMatrix64F input = new DenseMatrix64F(2,2,true,new double[] {
+           1, 2,
+           3, 4
+        });
+
+
+        double[] weights = { -0.5, 0.1, 0.1, 0.1, 0.1 };
+
+        SamplingMap samplingMap1 = new SamplingMapBuilder()
+                .setFilter(new SimpleSamplingFilter())
+                .set1DInputSize(2)
+                .setNeuron(new Neuron(phi, weights))
+                .build();
+
+        SamplingMap samplingMap2 = new SamplingMapBuilder()
+                .setFilter(new SimpleSamplingFilter())
+                .set1DInputSize(2)
+                .setNeuron(new Neuron(phi, weights))
+                .build();
+
+
+        double[] weights2 = { -0.4, 0.1, 0.2 };
+
+        NNLayer nnLayer = new NNLayerBuilder()
+                .setNeuron(phi, weights2)
+                .build();
+
+
+        CNN net = new CNNBuilder()
+                .setLayer(new CNNConnection(samplingMap1), new CNNConnection(samplingMap2))
+                .setLayer(new CNNConnection(nnLayer, samplingMap1, samplingMap2))
+                .build();
     }
 }

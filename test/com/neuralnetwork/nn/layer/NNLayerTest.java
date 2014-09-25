@@ -84,14 +84,14 @@ public class NNLayerTest {
     @Test
     public void testGetInputDim() throws Exception
     {
-        assertThat(layer.getInputDim().cols,
+        assertThat(layer.getInputDim().rows,
                 is(3));
     }
 
     @Test
     public void testGetOutputDim() throws Exception {
 
-        assertThat(layer.getOutputDim().cols,
+        assertThat(layer.getOutputDim().rows,
                 is(2));
     }
 

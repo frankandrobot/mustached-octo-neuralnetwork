@@ -1,6 +1,5 @@
 package com.neuralnetwork.cnn;
 
-import com.neuralnetwork.core.Dimension;
 import com.neuralnetwork.core.interfaces.ICnnMap;
 
 import java.util.ArrayList;
@@ -67,17 +66,7 @@ public class CNNBuilder {
 
             for(MapInfo map:cur.lMaps)
             {
-                Dimension inputDims = map.map.getInputDim();
-
-                for(MapInfo inputMap:map.getInputMaps())
-                {
-                    Dimension outputDims = inputMap.map.getOutputDim();
-
-                    if (!inputDims.equals(outputDims))
-                        throw new IllegalArgumentException(
-                                "Input dimensions must match." +
-                                        "Failure in layer " + i);
-                }
+                map.validateInputs();
             }
         }
     }

@@ -113,8 +113,8 @@ class NNBackpropHelper
     {
         this.example = example;
 
-        assertThat(example.input.length, is(aLayers[0].getInputDim().cols));
-        assertThat(example.expected.length, is(aLayers[aLayers.length-1].getOutputDim().cols + 1));
+        assertThat(example.input.length, is(aLayers[0].getInputDim().rows));
+        assertThat(example.expected.length, is(aLayers[aLayers.length-1].getOutputDim().rows + 1));
 
         return this;
     }

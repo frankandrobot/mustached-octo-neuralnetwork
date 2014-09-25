@@ -8,6 +8,8 @@ import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
+import java.util.List;
+
 public abstract class AbstractCnnMap<Builder extends AbstractCnnMapBuilder> implements ICnnMap
 {
     /**
@@ -49,8 +51,11 @@ public abstract class AbstractCnnMap<Builder extends AbstractCnnMapBuilder> impl
         tmp = new DenseMatrix64F(output.numRows, output.numCols);
     }
 
+
     abstract protected void createFilters(Builder builder);
+
     abstract protected void createOutputMatrix(Builder builder);
+
 
     DenseMatrix64F generateOutput(DenseMatrix64F input)
     {
@@ -99,6 +104,25 @@ public abstract class AbstractCnnMap<Builder extends AbstractCnnMapBuilder> impl
         }
 
         return output;
+    }
+
+    @Override
+    public void validateInputs(List<ICnnMap> inputMaps)
+    {
+        Dimension inputDims = getInputDim();
+
+        int len =0;
+
+        for(ICnnMap inputMap:inputMaps)
+        {
+            Dimension outputDims = inputMap.getOutputDim();
+
+            if (!inputDims.equals(outputDims))
+                throw new IllegalArgumentException(
+                        "Input dimensions must match. Failure in ´input map "+len);
+
+            len++;
+        }
     }
 
     /**
