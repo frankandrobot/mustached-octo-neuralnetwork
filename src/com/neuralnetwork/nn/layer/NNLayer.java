@@ -179,7 +179,7 @@ public class NNLayer implements INnLayer, ICnnMap
         {
             int length = inputs[i].data.length;
 
-            System.arraycopy(inputs[i].data, 1, mInput.data, i*length, length);
+            System.arraycopy(inputs[i].data, 0, mInput.data, i*length+1, length);
         }
 
 

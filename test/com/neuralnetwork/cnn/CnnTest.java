@@ -171,5 +171,17 @@ public class CnnTest
                 .setLayer(new CNNConnection(samplingMap1), new CNNConnection(samplingMap2))
                 .setLayer(new CNNConnection(nnLayer, samplingMap1, samplingMap2))
                 .build();
+
+
+        DenseMatrix64F output1 = samplingMap1.generateOutput(new DenseMatrix64F[] { input });
+        DenseMatrix64F output2 = samplingMap2.generateOutput(new DenseMatrix64F[] { input });
+
+        double output = phi.apply(
+                output1.get(0,0)*0.1 + output2.get(0,0)*0.2 - 0.4
+        );
+
+        DenseMatrix64F actual = net.generateOutput(new DenseMatrix64F[] { input });
+
+        assertThat(actual.get(0,0), is(output));
     }
 }
