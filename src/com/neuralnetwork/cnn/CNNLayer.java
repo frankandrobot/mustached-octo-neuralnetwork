@@ -6,22 +6,21 @@ import java.util.List;
 
 /**
  * Not to be confused with {@link com.neuralnetwork.nn.layer.NNLayer}
- * The equivalent to this class is a {@link com.neuralnetwork.core.interfaces.ICnnMap}
  *
  * A single CNNLayer is composed of several {@link com.neuralnetwork.core.interfaces.ICnnMap}
  *
  */
 class CNNLayer {
 
-    List<MapInfo> lMaps = new LinkedList<MapInfo>();
+    List<MapNode> lMaps = new LinkedList<MapNode>();
 
 
-    public HashSet<MapInfo> getInputMaps()
+    public HashSet<MapNode> getInputMaps()
     {
-        HashSet<MapInfo> hsInputMaps = new HashSet<MapInfo>();
+        HashSet<MapNode> hsInputMaps = new HashSet<MapNode>();
 
-        for(MapInfo mapInfo:lMaps)
-            hsInputMaps.addAll(mapInfo.getInputMapInfo());
+        for(MapNode mapNode :lMaps)
+            hsInputMaps.addAll(mapNode.getParents());
 
         return hsInputMaps;
     }

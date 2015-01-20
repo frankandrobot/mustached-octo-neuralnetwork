@@ -9,9 +9,15 @@ public class CNNBuilder {
 
     ArrayList<CNNLayer> layers = new ArrayList<CNNLayer>();
 
-    private HashMap<ICnnMap,MapInfo> hsMapInfos = new HashMap<ICnnMap,MapInfo>();
+    private HashMap<ICnnMap,MapNode> hsMapInfos = new HashMap<ICnnMap,MapNode>();
 
 
+    /**
+     * Create {@link CNNLayer} from {@link CNNConnection}s
+     *
+     * @param connections
+     * @return
+     */
     public CNNBuilder setLayer(CNNConnection... connections)
     {
         CNNLayer layer = new CNNLayer();
@@ -20,20 +26,20 @@ public class CNNBuilder {
 
         for(CNNConnection conn:connections)
         {
-            MapInfo mapInfo = new MapInfo(conn.map);
-            hsMapInfos.put(conn.map, mapInfo);
+            MapNode mapNode = new MapNode(conn.map);
+            hsMapInfos.put(conn.map, mapNode);
 
             for(ICnnMap inputMap:conn.lInputMaps)
             {
-                MapInfo inputMapInfo = hsMapInfos.get(inputMap);
+                MapNode inputMapNode = hsMapInfos.get(inputMap);
 
-                if (inputMapInfo == null)
+                if (inputMapNode == null)
                     throw new IllegalArgumentException("Input map must exist in previous layer");
 
-                mapInfo.addInput(inputMapInfo);
+                mapNode.addInput(inputMapNode);
             }
 
-            layer.lMaps.add(mapInfo);
+            layer.lMaps.add(mapNode);
         }
 
         return this;
@@ -56,7 +62,7 @@ public class CNNBuilder {
             CNNLayer cur = layers.get(i);
             CNNLayer prev = layers.get(i-1);
 
-            for(MapInfo inputMap:cur.getInputMaps())
+            for(MapNode inputMap:cur.getInputMaps())
             {
                 if (!prev.lMaps.contains(inputMap))
                     throw new IllegalArgumentException(
@@ -64,7 +70,7 @@ public class CNNBuilder {
                                     "Failure in layer "+i);
             }
 
-            for(MapInfo map:cur.lMaps)
+            for(MapNode map:cur.lMaps)
             {
                 map.validateInputs();
             }

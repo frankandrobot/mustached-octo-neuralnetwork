@@ -17,11 +17,11 @@ public class CNN implements INeuralNetwork<DenseMatrix64F[],DenseMatrix64F>
     @Override
     public DenseMatrix64F generateOutput(DenseMatrix64F... inputs)
     {
-        for(MapInfo inputMap:aLayers[0].lMaps)
+        for(MapNode inputMap:aLayers[0].lMaps)
         {
             for(DenseMatrix64F input:inputs)
             {
-                MapInfo _inputMap = new MapInfo(input);
+                MapNode _inputMap = new MapNode(input);
                 inputMap.addInput(_inputMap);
             }
         }
@@ -29,9 +29,9 @@ public class CNN implements INeuralNetwork<DenseMatrix64F[],DenseMatrix64F>
 
         for(CNNLayer curLayer:aLayers)
         {
-            for(MapInfo mapInfo:curLayer.lMaps)
+            for(MapNode mapNode :curLayer.lMaps)
             {
-                mapInfo.generateOutput();
+                mapNode.generateOutput();
             }
         }
 
