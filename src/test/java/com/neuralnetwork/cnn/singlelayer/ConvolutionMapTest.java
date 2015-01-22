@@ -1,4 +1,4 @@
-package com.neuralnetwork.cnn.map;
+package com.neuralnetwork.cnn.singlelayer;
 
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.core.ActivationFunctions;
@@ -17,7 +17,7 @@ public class ConvolutionMapTest
 
     private DenseMatrix64F input;
     private double[] weights;
-    private ConvolutionMapBuilder builder;
+    private ConvolutionSingleLayerBuilder builder;
 
     @Before
     public void setup()
@@ -30,7 +30,7 @@ public class ConvolutionMapTest
 
         weights = new double[]{0.5, 0.1, 0.2, 0.3, 0.4};
 
-        builder = new ConvolutionMapBuilder()
+        builder = new ConvolutionSingleLayerBuilder()
             .setNeuron(new Neuron(phi, weights))
             .set1DInputSize(3)
             .setFilter(new SimpleConvolutionFilter());
@@ -39,7 +39,7 @@ public class ConvolutionMapTest
     @Test
     public void testConvolution1()
     {
-        ConvolutionMap layer = builder.build();
+        ConvolutionSingleLayer layer = builder.build();
 
         DenseMatrix64F output = layer.generateOutput(input);
 
@@ -51,7 +51,7 @@ public class ConvolutionMapTest
     @Test
     public void testConvolution2()
     {
-        ConvolutionMap layer = builder.build();
+        ConvolutionSingleLayer layer = builder.build();
 
         double o11 = input.get(0,0)*weights[1] + input.get(0,1)*weights[2]
                 + input.get(1,0)*weights[3] + input.get(1,1)*weights[4]

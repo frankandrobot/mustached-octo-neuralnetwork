@@ -1,0 +1,3 @@
+* TODO fix wierd naming conventions
+ + CnnMap ... ah ok There's a layer. that's composed of single layers
+* TODO it doens't make sense anymore to share interface between libraries

@@ -1,11 +1,11 @@
-package com.neuralnetwork.cnn.map;
+package com.neuralnetwork.cnn.singlelayer;
 
 import com.neuralnetwork.cnn.filter.ISamplingFilter;
 import com.neuralnetwork.core.neuron.Neuron;
 
-public class SamplingMapBuilder extends AbstractCnnMapBuilder<SamplingMapBuilder,SamplingMap>
+public class SamplingSingleLayerBuilder extends AbstractCNNSingleLayerBuilder<SamplingSingleLayerBuilder,SamplingSingleLayer>
 {
-    public SamplingMapBuilder setFilter(ISamplingFilter... filter) {
+    public SamplingSingleLayerBuilder setFilter(ISamplingFilter... filter) {
 
         this.aFilters = filter;
 
@@ -18,11 +18,11 @@ public class SamplingMapBuilder extends AbstractCnnMapBuilder<SamplingMapBuilder
     }
 
 
-    protected SamplingMap buildMap()
+    protected SamplingSingleLayer buildMap()
     {
         validate();
 
-        return new SamplingMap(this);
+        return new SamplingSingleLayer(this);
     }
 
     private void validate()

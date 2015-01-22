@@ -2,10 +2,10 @@ package com.neuralnetwork.cnn;
 
 import com.neuralnetwork.cnn.filter.SimpleConvolutionFilter;
 import com.neuralnetwork.cnn.filter.SimpleSamplingFilter;
-import com.neuralnetwork.cnn.map.ConvolutionMap;
-import com.neuralnetwork.cnn.map.ConvolutionMapBuilder;
-import com.neuralnetwork.cnn.map.SamplingMap;
-import com.neuralnetwork.cnn.map.SamplingMapBuilder;
+import com.neuralnetwork.cnn.singlelayer.ConvolutionSingleLayer;
+import com.neuralnetwork.cnn.singlelayer.ConvolutionSingleLayerBuilder;
+import com.neuralnetwork.cnn.singlelayer.SamplingSingleLayer;
+import com.neuralnetwork.cnn.singlelayer.SamplingSingleLayerBuilder;
 import com.neuralnetwork.core.ActivationFunctions;
 import com.neuralnetwork.core.neuron.Neuron;
 import com.neuralnetwork.nn.layer.NNLayer;
@@ -35,7 +35,7 @@ public class CnnTest
         final double[] weights = {0.1, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09};
 
         //build first layer
-        ConvolutionMap convolutionMap = new ConvolutionMapBuilder()
+        ConvolutionSingleLayer convolutionMap = new ConvolutionSingleLayerBuilder()
                 .setNeuron(new Neuron(phi, weights))
                 .setFilter(new SimpleConvolutionFilter())
                 .set1DInputSize(4)
@@ -45,7 +45,7 @@ public class CnnTest
         final double[] weights2 = {0.4, 0.3, 0.3, 0.3, 0.3};
 
         //build second layer
-        SamplingMap samplingMap = new SamplingMapBuilder()
+        SamplingSingleLayer samplingMap = new SamplingSingleLayerBuilder()
                 .setNeuron(new Neuron(phi, weights2))
                 .setFilter(new SimpleSamplingFilter())
                 .set1DInputSize(2)
@@ -98,7 +98,7 @@ public class CnnTest
         final double[] weights = {0.1, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09};
 
         //build first layer
-        ConvolutionMap convolutionMap = new ConvolutionMapBuilder()
+        ConvolutionSingleLayer convolutionMap = new ConvolutionSingleLayerBuilder()
                 .setNeuron(new Neuron(phi,weights), new Neuron(phi,weights))
                 .setFilter(new SimpleConvolutionFilter(), new SimpleConvolutionFilter())
                 .set1DInputSize(4)
@@ -147,13 +147,13 @@ public class CnnTest
 
         double[] weights = { -0.5, 0.1, 0.1, 0.1, 0.1 };
 
-        SamplingMap samplingMap1 = new SamplingMapBuilder()
+        SamplingSingleLayer samplingMap1 = new SamplingSingleLayerBuilder()
                 .setFilter(new SimpleSamplingFilter())
                 .set1DInputSize(2)
                 .setNeuron(new Neuron(phi, weights))
                 .build();
 
-        SamplingMap samplingMap2 = new SamplingMapBuilder()
+        SamplingSingleLayer samplingMap2 = new SamplingSingleLayerBuilder()
                 .setFilter(new SimpleSamplingFilter())
                 .set1DInputSize(2)
                 .setNeuron(new Neuron(phi, weights))

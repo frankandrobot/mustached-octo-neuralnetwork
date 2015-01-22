@@ -1,11 +1,11 @@
-package com.neuralnetwork.cnn.map;
+package com.neuralnetwork.cnn.singlelayer;
 
 import com.neuralnetwork.cnn.filter.IFilter;
 import com.neuralnetwork.core.interfaces.IActivationFunction;
 import com.neuralnetwork.core.neuron.Neuron;
 import org.ejml.data.DenseMatrix64F;
 
-abstract class AbstractCnnMapBuilder<Builder extends AbstractCnnMapBuilder,Map extends AbstractCnnMap>
+abstract class AbstractCNNSingleLayerBuilder<Builder extends AbstractCNNSingleLayerBuilder,Map extends AbstractCNNSingleLayer>
 {
     int inputDim;
 
